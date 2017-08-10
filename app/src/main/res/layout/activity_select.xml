@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.ldzs.recyclerlibrary.PullToRefreshRecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        auto:pl_refreshMode="none"
+        auto:pv_choiceMaxCount="5">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:gravity="center"
+        android:text="I am from Xml1!"
+        auto:pv_adapterView="header"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="I am from Xml2!"
+        auto:pv_adapterView="header"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:gravity="center"
+        android:text="I am from Xml3!"
+        auto:pv_adapterView="header"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:gravity="center"
+        android:text="I am from Xml1!"
+        auto:pv_adapterView="footer"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        android:padding="12dp"
+        android:gravity="center"
+        android:text="I am from Xml2!"
+        auto:pv_adapterView="footer"/>
+
+    <TextView
+        android:id="@+id/tv_last"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/blue"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="I am from Xml3!"
+        auto:pv_adapterView="footer"/>
+
+
+    </com.ldzs.recyclerlibrary.PullToRefreshRecyclerView>
+
+    <com.ldzs.pulltorefreshrecyclerview.widget.RadioLayout
+        android:id="@+id/choiceLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="right|bottom"
+        auto:rl_items="@array/choice"
+        />
+</FrameLayout>

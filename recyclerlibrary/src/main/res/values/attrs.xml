@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PullToRefreshRecyclerView">
+        <attr name="pv_listDivide" format="reference" />
+        <attr name="pv_listDivideHeight" format="dimension" />
+        <attr name="pv_divideHorizontalPadding" format="dimension" />
+        <attr name="pv_divideVerticalPadding" format="dimension" />
+        <attr name="pv_dissatisfiedScreenLoad" format="boolean"/>
+        <attr name="pv_choiceMode" format="enum">
+            <enum name="click" value="0x00" />
+            <enum name="single_choice" value="0x01" />
+            <enum name="multi_choice" value="0x02" />
+            <enum name="rectangle_choice" value="0x03" />
+        </attr>
+        <attr name="pv_choiceMaxCount" format="integer"/>
+        <attr name="pv_adapterView" format="enum">
+            <enum name="header" value="0x00"/>
+            <enum name="footer" value="0x01"/>
+            <enum name="none" value="0x02"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="PullToRefreshStickyRecyclerView">
+        <attr name="pv_stickyView" format="reference"/>
+        <attr name="pv_layoutStickyView" format="boolean"/>
+    </declare-styleable>
+
+    <attr name="footerStyle" format="reference"/>
+
+    <declare-styleable name="FrameFooterView">
+        <attr name="footer_footerHeight" format="dimension"/>
+        <attr name="footer_clickTextHint" format="string"/>
+        <attr name="footer_textSize" format="dimension"/>
+        <attr name="footer_textColor" format="color"/>
+        <attr name="footer_errorHint" format="reference"/>
+        <attr name="footer_complete" format="string"/>
+        <attr name="footer_retryItemSelector" format="reference"/>
+        <attr name="footer_retry" format="string"/>
+        <attr name="footer_load" format="string"/>
+    </declare-styleable>
+
+
+
+</resources>

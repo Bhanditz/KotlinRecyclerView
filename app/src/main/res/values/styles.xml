@@ -1,0 +1,38 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:listDivider">@drawable/divider</item>
+        <item name="walletView">@style/MyWalletView</item>
+    </style>
+
+    <style name="MyWalletView">
+        <item name="wv_radius">16dp</item>
+        <item name="wv_strokeWidth">1.2dp</item>
+        <item name="wv_maxStrokeWidth">10dp</item>
+        <item name="wv_color">@color/yellow</item>
+        <item name="wv_innerStrokeWidth">1.2dp</item>
+        <item name="wv_innerPadding">8dp</item>
+        <item name="wv_innerColor">@color/yellow</item>
+        <item name="wv_interval">2dp</item>
+    </style>
+
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+
+</resources>
