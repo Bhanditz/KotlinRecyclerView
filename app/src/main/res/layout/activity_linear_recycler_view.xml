@@ -4,20 +4,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ldzs.recyclerlibrary.PullToRefreshRecyclerView
+    <com.cz.recyclerlibrary.PullToRefreshRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         auto:pv_divideVerticalPadding="@dimen/activity_margin"
         auto:pv_listDivideHeight="0.8dp"
-        auto:pv_listDivide="@color/divide" />
+        auto:pv_listDivide="@color/divide"
+        auto:pv_dissatisfiedScreenLoad="false"/>
 
 
-    <com.ldzs.pulltorefreshrecyclerview.widget.RadioLayout
+    <com.cz.sample.widget.RadioLayout
         android:id="@+id/refreshModeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="right|bottom"
+        android:layout_marginBottom="40dp"
         auto:rl_items="@array/refreshMode"/>
 </FrameLayout>

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ldzs.recyclerlibrary.PullToRefreshRecyclerView
+    <com.cz.recyclerlibrary.PullToRefreshRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -73,9 +73,9 @@
         auto:pv_adapterView="footer"/>
 
 
-    </com.ldzs.recyclerlibrary.PullToRefreshRecyclerView>
+    </com.cz.recyclerlibrary.PullToRefreshRecyclerView>
 
-    <com.ldzs.pulltorefreshrecyclerview.widget.RadioLayout
+    <com.cz.sample.widget.RadioLayout
         android:id="@+id/choiceLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

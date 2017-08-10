@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
 
-    <com.ldzs.recyclerlibrary.PullToRefreshStickyRecyclerView
+    <com.cz.recyclerlibrary.PullToRefreshStickyRecyclerView
         android:id="@+id/refreshStickyRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -51,7 +51,7 @@
             android:paddingBottom="24dp"
             android:background="@color/blue"/>-->
 
-    </com.ldzs.recyclerlibrary.PullToRefreshStickyRecyclerView>
+    </com.cz.recyclerlibrary.PullToRefreshStickyRecyclerView>
 
     <Button
         android:id="@+id/buttonWrap"

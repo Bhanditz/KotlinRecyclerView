@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "1.7.9"
+version = "1.0.1"
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
@@ -23,16 +23,16 @@ android {
     }
 }
 
-def siteUrl = 'https://github.com/momodae/RecyclerViewLibrary'
-def gitUrl = 'https://github.com/momodae/RecyclerViewLibrary.git'
-group = "com.ldzs.recyclerlibrary"
+def siteUrl = 'https://github.com/momodae/KotlinRecyclerView'
+def gitUrl = 'https://github.com/momodae/KotlinRecyclerView.git'
+group = "com.cz.recyclerlibrary"
 install {
     repositories.mavenInstaller {
         pom {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'Android RecyclerView Library'
+                name 'Android Kotlin RecyclerView Library'
                 url siteUrl
                 // Set your license
                     licenses {
@@ -83,7 +83,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "RecyclerViewLibrary"  //发布到Bintray上的项目名字
+        name = "KotlinRecyclerViewLibrary"  //发布到Bintray上的项目名字
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
@@ -96,6 +96,6 @@ bintray {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:recyclerview-v7:25.3.0'
-    compile 'cz.refreshlayout.library:refreshlayout:1.0.9'
+    compile 'cz.refreshlayout.library:refreshlayout:1.1.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

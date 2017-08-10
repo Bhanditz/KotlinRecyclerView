@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ldzs.recyclerlibrary.PullToRefreshRecyclerView
+    <com.cz.recyclerlibrary.PullToRefreshRecyclerView
         xmlns:auto="http://schemas.android.com/apk/res-auto"
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         auto:pv_listDivide="@color/divide"
         auto:pv_listDivideHeight="1dp" />
 
-    <com.ldzs.pulltorefreshrecyclerview.widget.RadioLayout
+    <com.cz.sample.widget.RadioLayout
         android:id="@+id/refreshModeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
