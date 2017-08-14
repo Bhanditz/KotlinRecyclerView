@@ -10,7 +10,7 @@ import com.cz.recyclerlibrary.callback.StickyCallback
 /**
  * Created by Administrator on 2017/5/20.
  */
-abstract class GridStickyAdapter<E>(context: Context, items: List<E>) : BaseViewAdapter<E>(context, items), StickyCallback<E>, GridSpanCallback {
+abstract class GridStickyAdapter<E>(context: Context, items: List<E>?) : BaseViewAdapter<E>(context, items), StickyCallback<E>, GridSpanCallback {
 
     override fun getSpanSize(layoutManager: RecyclerView.LayoutManager, position: Int): Int {
         var spanCount = 1

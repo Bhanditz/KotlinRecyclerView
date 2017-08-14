@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         }
         recyclerView.layoutManager= LinearLayoutManager(this)
         val items = FuncTemplate[id]
-        items?.let { recyclerView.setAdapter(Adapter(it)) }
+        items?.let { recyclerView.adapter=Adapter(it) }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

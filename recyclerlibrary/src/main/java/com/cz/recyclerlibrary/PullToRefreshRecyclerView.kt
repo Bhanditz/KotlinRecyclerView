@@ -19,9 +19,8 @@ import com.cz.recyclerlibrary.divide.SimpleItemDecoration
 import com.cz.recyclerlibrary.footer.RefreshFrameFooter
 import com.cz.recyclerlibrary.observe.DynamicAdapterDataObserve
 
-import java.util.ArrayList
 
-import cz.refreshlayout.library.BasePullToRefreshLayout
+import cz.refreshlayout.library.PullToRefreshLayout
 import cz.refreshlayout.library.RefreshMode
 
 
@@ -52,7 +51,7 @@ import cz.refreshlayout.library.RefreshMode
 
  * 以上.2016/9/24
  */
-open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) : BasePullToRefreshLayout(context, attrs, defStyleAttr), IRecyclerView {
+open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int = 0) : PullToRefreshLayout(context, attrs, defStyleAttr), IRecyclerView {
 
     companion object {
         const val END_NONE = 0x00
@@ -68,14 +67,14 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     @IntDef(value = *longArrayOf(CLICK.toLong(), SINGLE_SELECT.toLong(), MULTI_SELECT.toLong(), RECTANGLE_SELECT.toLong()))
     annotation class SelectMode
 
-    private val adapter=SelectAdapter(null)
+    private val wrapperAdapter=SelectAdapter(null)
     private val itemDecoration: SimpleItemDecoration
     private var listener: OnPullFooterToRefreshListener? = null
-    private var dataObserve = DynamicAdapterDataObserve(adapter)
+    private var dataObserve = DynamicAdapterDataObserve(wrapperAdapter)
     private var refreshState: Int = END_NONE
     private var dissatisfiedScrollLoad=false
     private val refreshFooter by lazy { RefreshFrameFooter(context) }
-    protected val refreshView by lazy { getRefreshView<RecyclerView>() }
+    val refreshView by lazy{ getRefreshView<RecyclerView>() }
 
     constructor(context: Context) : this(context, null, 0) {
         addRefreshView(refreshView)
@@ -84,9 +83,11 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     init {
         refreshState = END_NORMAL
         itemDecoration = SimpleItemDecoration()
-        initFooterViewByMode(getRefreshMode())
+        //初始化最初刷新状态
+        val refreshMode = getRefreshMode()
+        initFooterViewByMode(refreshMode)
 
-        val a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefreshRecyclerView)
+        val a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefreshRecyclerView,R.attr.pullToRefreshRecyclerView,R.style.PullToRefreshRecyclerView)
         setListDivide(a.getDrawable(R.styleable.PullToRefreshRecyclerView_pv_listDivide))
         setListDivideHeight(a.getDimension(R.styleable.PullToRefreshRecyclerView_pv_listDivideHeight, 0f))
         setDivideHorizontalPadding(a.getDimension(R.styleable.PullToRefreshRecyclerView_pv_divideHorizontalPadding, 0f))
@@ -111,9 +112,9 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
             val childView = getChildAt(i)
             val layoutParams = childView.layoutParams as LayoutParams
             if (LayoutParams.ITEM_HEADER == layoutParams.itemType) {
-                adapter.addHeaderView(childView)
+                wrapperAdapter.addHeaderView(childView)
             } else if (LayoutParams.ITEM_FOOTER == layoutParams.itemType) {
-                adapter.addFooterView(childView)
+                wrapperAdapter.addFooterView(childView)
             }
             removeViewAt(0)
         }
@@ -155,13 +156,18 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
     private fun setSelectModeInner(mode: Int) {
-        adapter.setSelectMode(mode)
+        wrapperAdapter.setSelectMode(mode)
         invalidate()
     }
 
     override fun setHasStableIds(hasStableId: Boolean) {
-        adapter.setHasStableIds(hasStableId)
+        wrapperAdapter.setHasStableIds(hasStableId)
 //        itemAnimator?.setSupportsChangeAnimations(false)
+    }
+
+    override fun setRefreshMode(refreshMode: RefreshMode) {
+        super.setRefreshMode(refreshMode)
+        initFooterViewByMode(refreshMode)
     }
 
     /**
@@ -169,7 +175,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * @param count
      */
     fun setSelectMaxCount(count: Int) {
-        this.adapter.setSelectMaxCount(count)
+        this.wrapperAdapter.setSelectMaxCount(count)
     }
 
     /**
@@ -181,7 +187,6 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
 
     override fun getTargetRefreshView(): View? {
         val recyclerView = RecyclerView(context)
-        recyclerView.itemAnimator = null
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -197,8 +202,6 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
     override var itemAnimator: RecyclerView.ItemAnimator?
         set(value) {
-            //TODO 未知原因,设置了stableId,后再设置动画,操作会崩溃
-            setHasStableIds(false)
             refreshView.itemAnimator = value
         }
         get() = this.refreshView.itemAnimator
@@ -216,62 +219,65 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
         get() = this.refreshView.layoutManager
 
     override var headerViewCount: Int=0
-        get() = this.adapter.headerViewCount
+        get() = this.wrapperAdapter.headerViewCount
 
     override var footerViewCount: Int=0
-        get() = adapter.footerViewCount
+        get() = wrapperAdapter.footerViewCount
 
-    override fun addHeaderView(view: View) {
+    override var itemCount:Int=0
+        get() = wrapperAdapter?.adapter?.itemCount?:0
+
+    override fun addHeaderView(view: View?) {
         checkNullObjectRef(view)
-        adapter.addHeaderView(view)
+        wrapperAdapter.addHeaderView(view)
         itemDecoration.setHeaderCount(headerViewCount)
     }
 
-    override fun removeHeaderView(view: View) {
+    override fun removeHeaderView(view: View?) {
         checkNullObjectRef(view)
-        adapter.removeDynamicView(view)
+        wrapperAdapter.removeDynamicView(view)
         itemDecoration.setHeaderCount(headerViewCount)
     }
 
     override fun removeHeaderView(index: Int) {
         checkIndexInBounds(index, headerViewCount)
-        adapter.removeHeaderView(index)
+        wrapperAdapter.removeHeaderView(index)
         itemDecoration.setHeaderCount(headerViewCount)
     }
 
     override fun addFooterView(view: View) {
         checkNullObjectRef(view)
-        adapter.addFooterView(view)
+        wrapperAdapter.addFooterView(view)
         itemDecoration.setFooterCount(footerViewCount)
     }
 
     override fun removeFooterView(view: View) {
         checkNullObjectRef(view)
-        adapter.removeFooterView(view)
+        wrapperAdapter.removeFooterView(view)
         itemDecoration.setFooterCount(footerViewCount)
     }
 
     override fun removeFooterView(index: Int) {
         checkIndexInBounds(index, footerViewCount)
-        adapter.removeFooterView(index)
+        wrapperAdapter.removeFooterView(index)
         itemDecoration.setFooterCount(footerViewCount)
     }
 
 
     fun addDynamicView(view: View?, position: Int) {
         if (null != view) {
-            adapter.addDynamicView(view, position)
+            wrapperAdapter.addDynamicView(view, position)
         }
     }
 
     fun removeDynamicView(view: View?) {
         if (null != view) {
-            adapter.removeDynamicView(view)
+            wrapperAdapter.removeDynamicView(view)
         }
     }
 
     fun itemRangeGlobalRemoved(positionStart: Int, itemCount: Int) {
-        adapter.itemRangeGlobalRemoved(positionStart, itemCount)
+        wrapperAdapter.itemRangeGlobalRemoved(positionStart, itemCount)
     }
 
     override fun addOnScrollListener(listener: RecyclerView.OnScrollListener) {
@@ -283,7 +289,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
     override fun setOnItemClickListener(listener: OnItemClickListener) {
-        this.adapter.setOnItemClickListener(listener)
+        this.wrapperAdapter.setOnItemClickListener(listener)
     }
 
     override fun setOnFootRetryListener(listener: View.OnClickListener) {
@@ -292,29 +298,29 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
 
-    override fun setAdapter(adapter: RecyclerView.Adapter<*>) {
-        this.adapter.adapter?.unregisterAdapterDataObserver(dataObserve)
-        adapter.registerAdapterDataObserver(dataObserve)
-        this.adapter.adapter=adapter
-        if(null==refreshView.adapter){
-            refreshView.adapter=this.adapter
-        } else {
-            this.adapter.notifyDataSetChanged()
+    /**
+     * adapter属性集
+     */
+    override var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>?
+        get() = wrapperAdapter.adapter
+        set(adapter) {
+            val adapter=adapter?:return
+            wrapperAdapter.adapter?.unregisterAdapterDataObserver(dataObserve)
+            adapter.registerAdapterDataObserver(dataObserve)
+            wrapperAdapter.adapter=adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>?
+            if(null==refreshView.adapter){
+                refreshView.adapter=this.wrapperAdapter
+            } else {
+                wrapperAdapter.notifyDataSetChanged()
+            }
         }
-    }
 
     val originalAdapter: RecyclerView.Adapter<*>
-        get() = this.adapter
+        get() = this.wrapperAdapter
 
-    fun getAdapter(): RecyclerView.Adapter<*> =this.adapter.adapter
 
     fun setRefreshFooterState(@RefreshFrameFooter.RefreshState state: Int) {
         refreshFooter.setRefreshState(state)
-    }
-
-    override fun setRefreshMode(refreshMode: RefreshMode) {
-        super.setRefreshMode(refreshMode)
-        initFooterViewByMode(refreshMode)
     }
 
     /**
@@ -328,12 +334,12 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
         val footerView = refreshFooter.footerView
         if (mode.enableEnd()) {
             refreshState = END_NORMAL
-            adapter.addRefreshFooterView(footerView)
+            wrapperAdapter.addRefreshView(footerView)
             refreshFooter.setRefreshState(RefreshFrameFooter.FRAME_LOAD)
             scrollStateChanged(RecyclerView.SCROLL_STATE_IDLE)
         } else {
             refreshState = END_NONE
-            adapter.removeRefreshFooterView(footerView)
+            wrapperAdapter.removeRefreshView(footerView)
         }
         itemDecoration.setFooterCount(footerViewCount)
     }
@@ -347,10 +353,10 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     fun findAdapterView(@IdRes id: Int): View? {
         var findView: View? = findViewById(id)
         if (null == findView) {
-            findView = adapter.findRefreshView(id)
+            findView = wrapperAdapter.findHeaderFooterView(id)
         }
         if (null == findView) {
-            findView = adapter.findDynamicView(id)
+            findView = wrapperAdapter.findDynamicView(id)
         }
         return findView
     }
@@ -385,7 +391,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * @return
      */
     fun getItemPosition(position: Int): Int {
-        return position - adapter.getStartIndex(position)
+        return position - wrapperAdapter.getStartIndex(position)
     }
 
     /**
@@ -393,8 +399,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * @param state
      */
     private fun scrollStateChanged(state: Int) {
-        val refreshMode = getRefreshMode()
-        if (state == RecyclerView.SCROLL_STATE_IDLE && null != listener && refreshMode.enableEnd()) {
+        if (state == RecyclerView.SCROLL_STATE_IDLE && null != listener && enableEnd()) {
             val layoutManager = refreshView.layoutManager
             val firstVisiblePosition = firstVisiblePosition
             val lastVisibleItemPosition = lastVisiblePosition
@@ -473,7 +478,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
     fun setRectangleSelectPosition(start: Int, end: Int) {
-        this.adapter.setRectangleSelectPosition(start, end)
+        this.wrapperAdapter.setRectangleSelectPosition(start, end)
     }
 
     /*
@@ -482,25 +487,25 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * @param singleSelectListener
      */
     fun setOnSingleSelectListener(singleSelectListener: OnSingleSelectListener) {
-        adapter.setOnSingleSelectListener(singleSelectListener)
+        wrapperAdapter.setOnSingleSelectListener(singleSelectListener)
     }
 
     var singleSelectPosition: Int
-        get() = this.adapter.singleSelectPosition
+        get() = this.wrapperAdapter.singleSelectPosition
         set(position) {
-            this.adapter.singleSelectPosition = position
+            this.wrapperAdapter.singleSelectPosition = position
         }
 
 
     var multiSelectItems: List<Int>
-        get() = this.adapter.multiSelectItems
+        get() = this.wrapperAdapter.multiSelectItems
         set(items) {
-            this.adapter.multiSelectItems = items
+            this.wrapperAdapter.multiSelectItems = ArrayList(items)
         }
 
 
     val rectangleSelectPosition: IntRange
-        get() = this.adapter.rectangleSelectPosition
+        get() = this.wrapperAdapter.rectangleSelectPosition
 
     /*
     * 设置多选选择监听
@@ -508,7 +513,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     * @param singleSelectListener
     */
     fun setOnMultiSelectListener(multiSelectListener: OnMultiSelectListener) {
-        adapter.setOnMultiSelectListener(multiSelectListener)
+        wrapperAdapter.setOnMultiSelectListener(multiSelectListener)
     }
 
     /*
@@ -517,7 +522,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     * @param singleSelectListener
     */
     fun setOnRectangleSelectListener(rectangleSelectListener: OnRectangleSelectListener) {
-        adapter.setOnRectangleSelectListener(rectangleSelectListener)
+        wrapperAdapter.setOnRectangleSelectListener(rectangleSelectListener)
     }
 
     /**

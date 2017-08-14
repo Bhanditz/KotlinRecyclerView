@@ -9,7 +9,6 @@ import android.widget.TextView
 import com.cz.sample.R
 import com.cz.recyclerlibrary.adapter.BaseViewAdapter
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
-import com.cz.recyclerlibrary.adapter.CacheViewHolder
 import com.cz.recyclerlibrary.callback.Selectable
 
 import java.util.Arrays
@@ -33,7 +32,7 @@ class SimpleSelectAdapter<E>(context: Context, @param:LayoutRes private val layo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        return CacheViewHolder(inflateView(parent, layout))
+        return BaseViewHolder(inflateView(parent, layout))
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {

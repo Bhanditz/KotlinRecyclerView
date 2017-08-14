@@ -13,7 +13,7 @@ import com.cz.recyclerlibrary.adapter.expand.ExpandAdapter
 /**
  * Created by cz on 16/1/22.
  */
-class FriendAdapter(context: Context, items: List<ExpandAdapter.Entry<String, List<String>>>, expand: Boolean) : ExpandAdapter<String, String>(context, items, expand) {
+class FriendAdapter(context: Context, items: MutableList<ExpandAdapter.Entry<String, List<String>>>, expand: Boolean) : ExpandAdapter<String, String>(context, items, expand) {
 
 
     override fun createGroupHolder(parent: ViewGroup): BaseViewHolder {
@@ -31,11 +31,10 @@ class FriendAdapter(context: Context, items: List<ExpandAdapter.Entry<String, Li
         groupHolder.count.text = "(" + getChildrenCount(groupPosition) + ")"//子孩子个数
     }
 
-    override fun onBindChildHolder(holder: BaseViewHolder, groupPosition: Int, childPosition: Int): BaseViewHolder? {
+    override fun onBindChildHolder(holder: BaseViewHolder, groupPosition: Int, childPosition: Int) {
         val itemHolder = holder as ItemHolder
         val item = getChild(groupPosition, childPosition)
         itemHolder.textView.text = item
-        return null
     }
 
     override fun onGroupExpand(holder: BaseViewHolder, expand: Boolean, groupPosition: Int) {

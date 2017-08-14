@@ -23,7 +23,7 @@ class ChannelAdapter(context: Context, items: List<Channel>) : BaseViewAdapter<C
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         holder.itemView.find<TextView>(R.id.tv_name).text = item.name
         holder.itemView.find<View>(R.id.iv_flag).visibility = if (item.use) View.GONE else View.VISIBLE
         holder.itemView.find<View>(R.id.iv_delete_icon).visibility = if (dragStatus && item.use) View.VISIBLE else View.GONE

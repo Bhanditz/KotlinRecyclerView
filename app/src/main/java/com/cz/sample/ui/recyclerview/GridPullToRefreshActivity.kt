@@ -9,14 +9,15 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
+import com.cz.recyclerlibrary.onFooterRefresh
+import com.cz.recyclerlibrary.onItemClick
+import com.cz.recyclerlibrary.onRefresh
 
 import com.cz.sample.R
 import com.cz.sample.adapter.SimpleAdapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
-import com.cz.sample.onFooterRefresh
-import com.cz.sample.onItemClick
-import com.cz.sample.onRefresh
 import com.cz.sample.widget.RadioLayout
 import cz.refreshlayout.library.RefreshMode
 
@@ -32,10 +33,9 @@ class GridPullToRefreshActivity : ToolBarActivity() {
         setContentView(R.layout.activity_grid_recycler_view)
         setTitle(intent.getStringExtra("title"))
 
-
         recyclerView.layoutManager = GridLayoutManager(this, 3)
         val adapter=SimpleAdapter(this, R.layout.grid_text_item, Data.createItems(this, 10))
-        recyclerView.setAdapter(adapter)
+        recyclerView.adapter=adapter
         recyclerView.onItemClick { v, position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
 
         refreshModeLayout.setOnCheckedListener(object :RadioLayout.OnCheckedListener{
@@ -95,12 +95,12 @@ class GridPullToRefreshActivity : ToolBarActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        val adapter=recyclerView as SimpleAdapter<String>
+        val adapter=recyclerView.adapter as SimpleAdapter<String>
         if (id == R.id.action_add) {
-            adapter.addItem(getString(R.string.header), 0)
+            adapter.addItemNotify("Add Item:${adapter.itemCount}", 0)
             return true
         } else if (id == R.id.action_remove) {
-            adapter.remove(0)
+            adapter.removeNotify(0)
             return true
         }
 

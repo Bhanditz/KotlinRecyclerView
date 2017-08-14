@@ -16,7 +16,11 @@ import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
 import com.cz.sample.widget.RadioLayout
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
-import com.cz.sample.*
+import com.cz.recyclerlibrary.onFootRetry
+import com.cz.recyclerlibrary.onFooterRefresh
+import com.cz.recyclerlibrary.onItemClick
+import com.cz.recyclerlibrary.onRefresh
+import com.cz.sample.R
 
 import cz.refreshlayout.library.RefreshMode
 import cz.volunteerunion.ui.ToolBarActivity
@@ -49,7 +53,7 @@ class PullToRefreshActivity : ToolBarActivity() {
 
         //初始设置2个,考虑其不满一屏加载状态
         val adapter = SimpleAdapter(this, Data.createItems(this, 2))
-        recyclerView.setAdapter(adapter)
+        recyclerView.adapter=adapter
         recyclerView.onItemClick { v, position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
         //下拉加载
         recyclerView.onRefresh {

@@ -33,7 +33,7 @@ class Sticky5SampleActivity : ToolBarActivity() {
             lastItem = item[0].toString()
         }
         refreshStickyRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        refreshStickyRecyclerView.setAdapter(GridStickyItem2Adapter(this, items))
+        refreshStickyRecyclerView.adapter=GridStickyItem2Adapter(this, items)
 
     }
 }

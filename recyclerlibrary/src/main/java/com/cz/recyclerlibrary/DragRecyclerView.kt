@@ -48,7 +48,7 @@ class DragRecyclerView @JvmOverloads constructor(context: Context, attrs: Attrib
 
      * @param adapter
      */
-    override fun setAdapter(adapter: RecyclerView.Adapter<*>) {
+    override fun setAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>) {
         if (adapter is BaseViewAdapter<*>) {
             dragAdapter = DragAdapter(adapter)
             super.setAdapter(dragAdapter)

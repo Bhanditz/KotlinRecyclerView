@@ -32,28 +32,28 @@ class HeaderAdapterActivity : ToolBarActivity() {
         setContentView(R.layout.activity_header)
         setTitle(intent.getStringExtra("title"))
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.itemAnimator=SlideInLeftAnimator()
+        recyclerView.itemAnimator?.addDuration=300
         val adapter = SimpleAdapter(this, Data.createItems(this, 10))
-        recyclerView.setAdapter(adapter)
+        recyclerView.adapter=adapter
         recyclerView.addHeaderView(getHeaderView())
         recyclerView.addFooterView(getFooterView())
-        findViewById(R.id.buttonAddHeader).onClick {  recyclerView.addHeaderView(getHeaderView()) }
-        findViewById(R.id.buttonRemoveHeader).onClick {
+        buttonAddHeader.onClick {  recyclerView.addHeaderView(getHeaderView()) }
+        buttonRemoveHeader.onClick {
             if(0==recyclerView.headerViewCount){
                 toast("当前没有更多列表头!")
             } else {
                 recyclerView.removeHeaderView(0)
             }
         }
-        findViewById(R.id.buttonAddFooter).onClick { recyclerView.addFooterView(getFooterView()) }
-        findViewById(R.id.buttonRemoveFooter).onClick {
+        buttonAddFooter.onClick { recyclerView.addFooterView(getFooterView()) }
+        buttonRemoveFooter.onClick {
             if(0==recyclerView.footerViewCount){
-                toast("当前没有更多列表头!")
+                toast("当前没有更多列表尾!")
             } else {
                 recyclerView.removeFooterView(0)
             }
         }
-        findViewById(R.id.buttonAddItem).onClick {  adapter.addItemsNotify(Data.createItems(this, 2), 0) }
+        buttonAddItem.onClick {  adapter.addItemsNotify(Data.createItems(this, 2), 0) }
     }
 
     /**

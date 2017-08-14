@@ -12,10 +12,10 @@ import com.cz.sample.R
 import com.cz.sample.adapter.SimpleAdapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
-import com.cz.sample.onItemClick
 import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
 import com.cz.recyclerlibrary.observe.DynamicAdapterDataObserve
+import com.cz.recyclerlibrary.onItemClick
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_full_adapter.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -43,21 +43,21 @@ class DynamicAdapterActivity : ToolBarActivity() {
         simpleAdapter.registerAdapterDataObserver(DynamicAdapterDataObserve(adapter))
         recyclerView.adapter = adapter
         val random = Random()
-        findViewById(R.id.buttonAdd).onClick {
+        buttonAdd.onClick {
             val itemCount = adapter.itemCount
             simpleAdapter.addItemNotify("new:" + adapter.itemCount, random.nextInt(if (0 == itemCount) 1 else itemCount))
         }
-        findViewById(R.id.buttonRemove).onClick {
+        buttonRemove.onClick {
             if (0 != adapter.itemCount) {
-                simpleAdapter.removeNotifyItem(0, 8)
+                simpleAdapter.removeItemNotify(0, 8)
             }
         }
-        findViewById(R.id.buttonGlobalRemove).onClick {
+        buttonGlobalRemove.onClick {
             simpleAdapter.remove(0, 8)
             adapter.itemRangeGlobalRemoved(0, 8)
         }
-        findViewById(R.id.buttonRandomAdd).onClick { addView(adapter,viewItems,random.nextInt(adapter.itemCount)) }
-        findViewById(R.id.buttonRandomRemove).onClick {
+        buttonRandomAdd.onClick { addView(adapter,viewItems,random.nextInt(adapter.itemCount)) }
+        buttonRandomRemove.onClick {
             if (!viewItems.isEmpty()) {
                 adapter.removeDynamicView(viewItems.pollFirst())
             }

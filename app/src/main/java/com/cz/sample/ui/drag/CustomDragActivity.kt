@@ -13,8 +13,8 @@ import com.cz.sample.annotation.ToolBar
 import com.cz.sample.model.Channel
 import com.cz.sample.util.JsonParser
 import com.cz.recyclerlibrary.anim.FadeInDownAnimator
-import com.cz.sample.onDragItemEnable
-import com.cz.sample.onItemClick
+import com.cz.recyclerlibrary.onDragItemEnable
+import com.cz.recyclerlibrary.onItemClick
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_costom_drag.*
 import org.jetbrains.anko.find

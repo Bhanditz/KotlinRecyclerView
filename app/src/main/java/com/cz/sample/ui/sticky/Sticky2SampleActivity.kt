@@ -39,7 +39,7 @@ class Sticky2SampleActivity : ToolBarActivity() {
             }
             lastItem = word
         }
-        refreshStickyRecyclerView.setAdapter(LinearSticky2ItemAdapter(this, items))
+        refreshStickyRecyclerView.adapter=LinearSticky2ItemAdapter(this, items)
     }
 
     private fun getStickyItems(item: String, n: Int): Array<String> {

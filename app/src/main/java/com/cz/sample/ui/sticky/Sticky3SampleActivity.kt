@@ -3,11 +3,11 @@ package com.cz.sample.ui.sticky
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
+import com.cz.recyclerlibrary.onItemClick
 
 import com.cz.sample.R
 import com.cz.sample.adapter.LinearSticky1ItemAdapter
 import com.cz.sample.annotation.ToolBar
-import com.cz.sample.onItemClick
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_sticky3.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -37,7 +37,7 @@ class Sticky3SampleActivity : ToolBarActivity() {
         }
         refreshStickyRecyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = LinearSticky1ItemAdapter(this, items)
-        refreshStickyRecyclerView.setAdapter(adapter)
+        refreshStickyRecyclerView.adapter=adapter
         refreshStickyRecyclerView.onItemClick { _, position -> Toast.makeText(this, "position:" + position, Toast.LENGTH_SHORT).show() }
 
         val random = Random()

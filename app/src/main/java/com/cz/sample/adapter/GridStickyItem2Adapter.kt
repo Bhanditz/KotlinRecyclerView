@@ -8,7 +8,6 @@ import android.widget.TextView
 import com.cz.sample.R
 import com.cz.sample.model.Sticky2Item
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
-import com.cz.recyclerlibrary.adapter.CacheViewHolder
 import com.cz.recyclerlibrary.adapter.GridStickyAdapter
 import com.cz.recyclerlibrary.callback.Condition
 import com.cz.recyclerlibrary.strategy.GroupingStrategy
@@ -26,7 +25,7 @@ class GridStickyItem2Adapter(context: Context, items: List<Sticky2Item>) : GridS
     private val groupingStrategy = GroupingStrategy.of(this).reduce(Condition { it.title })
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         val itemViewType = getItemViewType(position)
         if (ITEM_STICKY == itemViewType) {
             val textView = holder.itemView.find<TextView>(R.id.tv_sticky_view)
@@ -38,18 +37,18 @@ class GridStickyItem2Adapter(context: Context, items: List<Sticky2Item>) : GridS
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        val holder: CacheViewHolder
+        val holder: BaseViewHolder
         if (ITEM_STICKY == viewType) {
-            holder = CacheViewHolder(inflateView(parent, R.layout.sticky_top_item))
+            holder = BaseViewHolder(inflateView(parent, R.layout.sticky_top_item))
         } else {
-            holder = CacheViewHolder(inflateView(parent, R.layout.grid_image_item))
+            holder = BaseViewHolder(inflateView(parent, R.layout.grid_image_item))
         }
         return holder
     }
 
 
     override fun initStickyView(view: View, position: Int) {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         val stickyView = view.findViewById(R.id.tv_sticky_view) as TextView
         stickyView.text = item.item
     }
@@ -57,7 +56,7 @@ class GridStickyItem2Adapter(context: Context, items: List<Sticky2Item>) : GridS
     override fun getGroupingStrategy(): GroupingStrategy<Sticky2Item> =groupingStrategy
 
     override fun getItemViewType(position: Int): Int {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         return if (item.title) ITEM_STICKY else ITEM_NORMAL
     }
 

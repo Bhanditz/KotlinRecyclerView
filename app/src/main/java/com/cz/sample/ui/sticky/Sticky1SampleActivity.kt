@@ -27,7 +27,7 @@ class Sticky1SampleActivity : ToolBarActivity() {
         setTitle(intent.getStringExtra("title"))
         refreshStickyRecyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = LinearSticky1ItemAdapter(this, Arrays.asList(*Data.ITEMS))
-        refreshStickyRecyclerView.setAdapter(adapter)
+        refreshStickyRecyclerView.adapter=adapter
 
         var swap=false
         buttonWrap.onClick {

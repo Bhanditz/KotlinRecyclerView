@@ -10,7 +10,6 @@ import android.widget.TextView
 import com.cz.sample.R
 import com.cz.recyclerlibrary.adapter.BaseViewAdapter
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
-import com.cz.recyclerlibrary.adapter.CacheViewHolder
 
 import java.util.Arrays
 
@@ -34,7 +33,7 @@ class SimpleAdapter<E>(context: Context, @param:LayoutRes private val layout: In
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         Log.e(TAG, "onCreateViewHolder")
-        return CacheViewHolder(inflateView(parent, layout))
+        return BaseViewHolder(inflateView(parent, layout))
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {

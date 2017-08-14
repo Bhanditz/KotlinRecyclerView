@@ -35,12 +35,12 @@ class ExpandAdapterActivity : ToolBarActivity() {
         val random = Random()
 
         val viewItems = LinkedList<View>()
-        findViewById(R.id.buttonAdd).onClick {
+        buttonAdd.onClick {
             val itemView = getFullItemView(adapter)
             viewItems.offerLast(itemView)
             adapter.addDynamicView(itemView, random.nextInt(adapter.itemCount))
         }
-        findViewById(R.id.buttonRemove).onClick { adapter.removeDynamicView(viewItems.pollFirst()) }
+        buttonRemove.onClick { adapter.removeDynamicView(viewItems.pollFirst()) }
     }
 
     /**

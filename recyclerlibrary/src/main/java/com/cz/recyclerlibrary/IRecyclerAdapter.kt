@@ -7,7 +7,7 @@ package com.cz.recyclerlibrary
 interface IRecyclerAdapter<out E> {
     fun getItems(): List<E>
 
-    fun getNonNullItem(position: Int):E
+    fun getNullableItem(position: Int):E?
 
-    fun getItem(position: Int): E?
+    fun getItem(position: Int): E
 }

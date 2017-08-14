@@ -83,36 +83,31 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
         this.stickyView = view
     }
 
-    val itemCount: Int
-        get() {
-            val adapter = getAdapter()
-            return adapter.itemCount
-        }
-
     override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
         super.onLayout(changed, l, t, r, b)
         stickyView?.let { it.layout(l, 0, r, it.measuredHeight) }
     }
 
-    override fun setAdapter(adapter: RecyclerView.Adapter<*>) {
-        super.setAdapter(adapter)
-        if (adapter !is StickyCallback<*>) {
-            throw IllegalArgumentException("RecyclerView.Adapter must be implements StickyCallback!")
-        } else if (null != stickyView) {
-            removeView(stickyView)
-            addView(stickyView)
-            val targetView = refreshView
-            targetView.removeOnScrollListener(listener)
-            listener = StickyScrollListener(adapter)
-            targetView.addOnScrollListener(listener)
-            if (null == observer) {
-                observer = AdapterDataObserver(adapter)
-            } else {
-                adapter.unregisterAdapterDataObserver(observer)
+    override var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>? = null
+        set(adapter) {
+            super.adapter=adapter
+            if (adapter !is StickyCallback<*>) {
+                throw IllegalArgumentException("RecyclerView.Adapter must be implements StickyCallback!")
+            } else if (null != stickyView) {
+                removeView(stickyView)
+                addView(stickyView)
+                val targetView = refreshView
+                targetView.removeOnScrollListener(listener)
+                listener = StickyScrollListener(adapter)
+                targetView.addOnScrollListener(listener)
+                if (null == observer) {
+                    observer = AdapterDataObserver(adapter)
+                } else {
+                    adapter.unregisterAdapterDataObserver(observer)
+                }
+                adapter.registerAdapterDataObserver(observer)
             }
-            adapter.registerAdapterDataObserver(observer)
         }
-    }
 
     override fun generateLayoutParams(attrs: AttributeSet): ViewGroup.LayoutParams {
         return PullToRefreshStickyRecyclerView.LayoutParams(context, attrs)

@@ -189,7 +189,6 @@ class GroupingStrategy<T> {
     }
 
     companion object {
-
         fun <T> of(adapter: BaseViewAdapter<T>): GroupingStrategy<T> {
             return GroupingStrategy(adapter)
         }

@@ -57,14 +57,11 @@ object Data {
         return items
     }
 
-    @JvmOverloads fun createExpandItems(`object`: Any, count: Int, childCount: Int = 10): List<ExpandAdapter.Entry<String, List<String>>> {
+    @JvmOverloads fun createExpandItems(count: Int, childCount: Int = 10): MutableList<ExpandAdapter.Entry<String, List<String>>> {
         val items = ArrayList<ExpandAdapter.Entry<String, List<String>>>()
         for (i in 0..count - 1) {
-            val childItems = ArrayList<String>()
-            for (k in 0..childCount - 1) {
-                childItems.add("Group:$i Child:$k")
-            }
-            items.add(ExpandAdapter.Entry("Group:" + i, childItems))
+            val childItems = (0..childCount - 1).map { "Group:$i Child:$it" }
+            items.add(ExpandAdapter.Entry("Group:" + i, childItems,true))
         }
         return items
     }

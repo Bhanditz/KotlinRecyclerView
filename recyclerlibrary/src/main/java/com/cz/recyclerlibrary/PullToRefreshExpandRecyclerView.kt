@@ -23,22 +23,24 @@ class PullToRefreshExpandRecyclerView : PullToRefreshRecyclerView {
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle)
 
-    override fun setAdapter(adapter: RecyclerView.Adapter<*>) {
-        if (adapter !is ExpandAdapter<*, *>) {
-            throw IllegalArgumentException("Adapter must extend ExpandAdapter!")
-        } else {
-            super.setAdapter(adapter)
-            expandAdapter = adapter
-            expandAdapter?.setHeaderViewCount(headerViewCount)
-            expandAdapter?.setOnExpandItemClickListener(object :OnExpandItemClickListener{
-                override fun onItemClick(v: View, groupPosition: Int, childPosition: Int) {
-                    expandItemClickListener?.onItemClick(v, groupPosition, childPosition)
-                }
-            })
+    override var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>?
+        get()=super.adapter
+        set(adapter) {
+            if (adapter !is ExpandAdapter<*, *>) {
+                throw IllegalArgumentException("Adapter must extend ExpandAdapter!")
+            } else {
+                super.adapter=adapter
+                expandAdapter = adapter
+                expandAdapter?.setHeaderViewCount(headerViewCount)
+                expandAdapter?.setOnExpandItemClickListener(object :OnExpandItemClickListener{
+                    override fun onItemClick(v: View, groupPosition: Int, childPosition: Int) {
+                        expandItemClickListener?.onItemClick(v, groupPosition, childPosition)
+                    }
+                })
+            }
         }
-    }
 
-    override fun addHeaderView(view: View) {
+    override fun addHeaderView(view: View?) {
         super.addHeaderView(view)
         expandAdapter?.setHeaderViewCount(headerViewCount)
     }

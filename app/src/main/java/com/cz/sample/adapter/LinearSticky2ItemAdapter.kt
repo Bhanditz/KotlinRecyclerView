@@ -41,7 +41,7 @@ class LinearSticky2ItemAdapter(context: Context, items: List<Sticky1Item>) : Bas
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         val itemViewType = getItemViewType(position)
         if (ITEM_STICKY == itemViewType) {
             val flowLayout = holder.itemView.find<FlowLayout>(R.id.fl_sticky_layout)
@@ -60,7 +60,7 @@ class LinearSticky2ItemAdapter(context: Context, items: List<Sticky1Item>) : Bas
 
     override fun initStickyView(view: View, position: Int) {
         val groupStartIndex = groupingStrategy.getGroupStartIndex(position)
-        val item = getNonNullItem(groupStartIndex)
+        val item = getItem(groupStartIndex)
         val flowLayout = view.findViewById(R.id.fl_sticky_layout) as FlowLayout
         flowLayout.layoutTransition = null
         if (!item.headerItems.isEmpty()) {
@@ -84,7 +84,7 @@ class LinearSticky2ItemAdapter(context: Context, items: List<Sticky1Item>) : Bas
     }
 
     override fun getItemViewType(position: Int): Int {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         var viewType = ITEM_NORMAL
         if (!item.headerItems.isEmpty()) {
             viewType = ITEM_STICKY

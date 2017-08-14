@@ -27,6 +27,7 @@
     </declare-styleable>
 
     <attr name="footerStyle" format="reference"/>
+    <attr name="pullToRefreshRecyclerView" format="reference"/>
 
     <declare-styleable name="FrameFooterView">
         <attr name="footer_footerHeight" format="dimension"/>

@@ -1,5 +1,6 @@
 package com.cz.recyclerlibrary.adapter.drag
 
+import android.support.v7.widget.RecyclerView
 import com.cz.recyclerlibrary.adapter.BaseViewAdapter
 
 /**
@@ -7,7 +8,7 @@ import com.cz.recyclerlibrary.adapter.BaseViewAdapter
 
  * @param
  */
-class DragAdapter(adapter: BaseViewAdapter<*>) : DynamicAdapter(adapter) {
+class DragAdapter(adapter:  RecyclerView.Adapter<RecyclerView.ViewHolder>) : DynamicAdapter(adapter) {
 
     /**
      * 互换元素

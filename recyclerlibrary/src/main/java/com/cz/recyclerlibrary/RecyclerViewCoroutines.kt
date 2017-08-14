@@ -1,12 +1,10 @@
-package com.cz.sample
+package com.cz.recyclerlibrary
 
+import android.util.Log
 import android.view.View
-import com.cz.recyclerlibrary.DragRecyclerView
-import com.cz.recyclerlibrary.PullToRefreshExpandRecyclerView
-import com.cz.recyclerlibrary.PullToRefreshRecyclerView
 import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
 import com.cz.recyclerlibrary.callback.*
-import cz.refreshlayout.library.BasePullToRefreshLayout
+import cz.refreshlayout.library.PullToRefreshLayout
 import java.util.ArrayList
 
 /**
@@ -14,7 +12,7 @@ import java.util.ArrayList
  * 辅助简化所有操作
  */
 fun PullToRefreshRecyclerView.onRefresh(listener:()->Unit){
-    setOnRefreshListener(object : BasePullToRefreshLayout.OnPullToRefreshListener {
+    setOnRefreshListener(object : PullToRefreshLayout.OnPullToRefreshListener {
         override fun onRefresh() {
             listener()
         }
@@ -130,3 +128,10 @@ fun DynamicAdapter.onItemClick(listener:(View, Int)->Unit){
     })
 }
 
+
+val DEBUG=true
+inline fun<reified T> T.debugLog(message:String){
+    if(DEBUG){
+        Log.e("RecyclerView",message)
+    }
+}

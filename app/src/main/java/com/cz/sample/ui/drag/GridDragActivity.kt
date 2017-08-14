@@ -8,7 +8,7 @@ import com.cz.sample.adapter.SimpleAdapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
-import com.cz.sample.onDragItemEnable
+import com.cz.recyclerlibrary.onDragItemEnable
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_drag.*
 

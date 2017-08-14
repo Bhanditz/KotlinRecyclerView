@@ -48,7 +48,7 @@ class TreeAdapterViewActivity : ToolBarActivity() {
                 observeOn(AndroidSchedulers.mainThread()).
                 subscribe({
                     progressDialog.dismiss()
-                    recyclerView.setAdapter(FileAdapter(this, it))
+                    recyclerView.adapter=FileAdapter(this, it)
                 }) { throwable -> throwable.printStackTrace() }
     }
 
@@ -113,7 +113,7 @@ class TreeAdapterViewActivity : ToolBarActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        val adapter=recyclerView.getAdapter() as TreeAdapter<File>
+        val adapter=recyclerView.adapter as TreeAdapter<File>
         if (id == R.id.action_add) {
             val file = File("abc")
             adapter.insertNode(file)

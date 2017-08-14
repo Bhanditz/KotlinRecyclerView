@@ -15,9 +15,9 @@ import com.cz.sample.adapter.FriendAdapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
-import com.cz.sample.onExpandItemClick
-import com.cz.sample.onFooterRefresh
-import com.cz.sample.onRefresh
+import com.cz.recyclerlibrary.onExpandItemClick
+import com.cz.recyclerlibrary.onFooterRefresh
+import com.cz.recyclerlibrary.onRefresh
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_expand_recycler_view.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -67,7 +67,7 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
             }
             times++
         }
-        recyclerView.setAdapter(FriendAdapter(this, Data.createExpandItems(10, 10), true))
+        recyclerView.adapter=FriendAdapter(this, Data.createExpandItems(10, 10), true)
     }
 
     /**
@@ -102,11 +102,11 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val id = item.itemId
-        val adapter=recyclerView.getAdapter() as FriendAdapter
         if (id == R.id.action_add) {
             addGroupItem(true)
             return true
         } else if (id == R.id.action_remove) {
+            val adapter=recyclerView.adapter as FriendAdapter
             adapter.removeGroup(0)
             return true
         }
@@ -115,7 +115,7 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
 
     private fun addGroupItem(top: Boolean) {
         val random = Random()
-        val adapter=recyclerView.getAdapter() as FriendAdapter
+        val adapter=recyclerView.adapter as FriendAdapter
         adapter.addGroupItems(getString(R.string.add_group) + adapter.groupCount,
                 Data.createItems(this, 2),
                 if (top) 0 else adapter.groupCount, 0 == random.nextInt(2))

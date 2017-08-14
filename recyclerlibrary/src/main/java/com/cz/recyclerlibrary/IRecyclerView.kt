@@ -11,14 +11,14 @@ import com.cz.recyclerlibrary.callback.OnItemClickListener
 interface IRecyclerView {
 
     /**
-     * set a RecyclerView.Adapter,when adapter is null throw a NullPointerException
-     * @param adapter
+     * set a RecyclerView.Adapter
      */
-    fun setAdapter(adapter: RecyclerView.Adapter<*>)
+    var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>?
+
+    var itemCount:Int
 
     /**
      * set a LayoutManager
-     * @param layoutManager
      */
     var layoutManager: RecyclerView.LayoutManager?
 
@@ -36,7 +36,6 @@ interface IRecyclerView {
 
     /**
      * set a RecyclerView.ItemAnimator
-     * @param itemAnimator
      */
     var itemAnimator: RecyclerView.ItemAnimator?
 
@@ -44,13 +43,13 @@ interface IRecyclerView {
      * add a new header view,when view is null throws a NullPointerException
      * @param view
      */
-    fun addHeaderView(view: View)
+    fun addHeaderView(view: View?)
 
     /**
      * remove a exist view,when view is null throws a NullPointerException
      * @param view
      */
-    fun removeHeaderView(view: View)
+    fun removeHeaderView(view: View?)
 
     /**
      * remove header view by index,when index < 0 or < getHeaderViewCount() throw an IndexOutOfBoundsException

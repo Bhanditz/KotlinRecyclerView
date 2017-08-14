@@ -27,7 +27,7 @@ class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseView
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         val stickyView = holder.itemView.find<TextView>(R.id.tv_sticky_view)
         val textView = holder.itemView.find<TextView>(R.id.tv_view)
         val isStickyPosition = groupingStrategy.isGroupIndex(position)
@@ -39,7 +39,7 @@ class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseView
     }
 
     override fun initStickyView(view: View, position: Int) {
-        val item = getNonNullItem(position)
+        val item = getItem(position)
         val textView = view as TextView
         if (!TextUtils.isEmpty(item)) {
             textView.text = item[0].toString()

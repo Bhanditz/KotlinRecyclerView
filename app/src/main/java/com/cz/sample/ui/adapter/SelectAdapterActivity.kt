@@ -13,7 +13,11 @@ import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
 import com.cz.sample.widget.RadioLayout
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
-import com.cz.sample.*
+import com.cz.recyclerlibrary.onItemClick
+import com.cz.recyclerlibrary.onMultiSelect
+import com.cz.recyclerlibrary.onRectangleSelect
+import com.cz.recyclerlibrary.onSingleSelect
+import com.cz.sample.R
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_select.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -35,7 +39,7 @@ class SelectAdapterActivity : ToolBarActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
 
-        recyclerView.setAdapter(SimpleSelectAdapter(this, Data.createItems(this, 100)))
+        recyclerView.adapter=SimpleSelectAdapter(this, Data.createItems(this, 100))
         recyclerView.addHeaderView(getHeaderView())
         recyclerView.addFooterView(getFooterView())
         choiceLayout.setOnCheckedListener(object : RadioLayout.OnCheckedListener {
