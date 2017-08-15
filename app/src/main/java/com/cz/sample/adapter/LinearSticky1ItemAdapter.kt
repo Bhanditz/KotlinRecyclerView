@@ -19,7 +19,7 @@ import org.jetbrains.anko.find
  */
 
 class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseViewAdapter<String>(context, items), StickyCallback<String> {
-    private val groupingStrategy= GroupingStrategy.of(this).reduce(BinaryCondition { t1, t2 -> t1[0] != t2[0] })
+    private val groupingStrategy= GroupingStrategy.of(this).reduce{ t1, t2 -> t1[0] != t2[0] }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {

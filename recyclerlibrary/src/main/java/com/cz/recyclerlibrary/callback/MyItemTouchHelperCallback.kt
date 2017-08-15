@@ -37,7 +37,7 @@ class MyItemTouchHelperCallback(private val callbackItemTouch: CallbackItemTouch
         if (null != adapter) {
             val index = adapter.findPosition(position)
             //动态添加的并启用的,可以拖动.或者自身条目本身启用可以拖动的.
-            if (RecyclerView.NO_POSITION != index && dynamicViewDragEnable || null != dragListener && !dragListener.itemEnable(position - adapter.getStartIndex(position))) {
+            if (RecyclerView.NO_POSITION != index && dynamicViewDragEnable || null != dragListener && !dragListener.itemEnable(position - adapter.getStartPosition(position))) {
                 flag = ItemTouchHelper.Callback.makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.DOWN)
             }
         }
@@ -71,7 +71,7 @@ class MyItemTouchHelperCallback(private val callbackItemTouch: CallbackItemTouch
             val index = adapter.findPosition(targetPosition)
             if (RecyclerView.NO_POSITION != index) {
                 itemEnable = dynamicViewDragEnable
-            } else if (null != dragListener && dragListener.itemEnable(targetPosition - adapter.getStartIndex(position))) {
+            } else if (null != dragListener && dragListener.itemEnable(targetPosition - adapter.getStartPosition(position))) {
                 itemEnable = true
             }
         } else {

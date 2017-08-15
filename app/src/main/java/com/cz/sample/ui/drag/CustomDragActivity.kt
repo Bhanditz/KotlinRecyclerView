@@ -60,7 +60,7 @@ class CustomDragActivity : ToolBarActivity() {
             adapter.setDragStatus(editMode)
             editView.setText(if (editMode) R.string.complete else R.string.channel_sort_delete)
         }
-        recyclerView.onItemClick { _, position ->
+        recyclerView.onItemClick { _, _,position ->
             val itemPosition = recyclerView.getItemPosition(position)//获得当前条目的位置
             val count = items.count { it.use }
             val item = adapter.getItem(itemPosition)

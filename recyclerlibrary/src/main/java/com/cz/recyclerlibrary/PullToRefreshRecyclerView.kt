@@ -42,7 +42,7 @@ import cz.refreshlayout.library.RefreshMode
  * 待优化/注意事件:
  * 1:当使用addDynamicView功能时,设置OnItemClickListener事件返回的position为插入的顺移的位置,
  * 比如1,9插入两个元素,当点击子元素为10位置元素时,将返回12,这时候如果想获取子条目位置,可以使用#getItemPosition方法.
- * 具体原因为,1 9 位置各插入一个条目,此时,点击第10个位置条目,真实子Adapter条目位置为8,取得8,但很难根据8还原为10.还原方式为while(0->8) !isDynamicItem()++ 效率很低.
+ * 具体原因为,1 9 位置各插入一个条目,此时,点击第10个位置条目,真实子Adapter条目位置为8,取得8,但很难根据8还原为10.还原方式为while(0->8) !isDynamicPosition()++ 效率很低.
  * 故此.只传回子类,也使用原始Position,使用时,调用DragRecyclerView的getItemPosition方法获取具体子条目位置
 
  * 2:addDynamicView此方法,有一个问题,暂时未找到原因:如果谁清楚,请帮助解决一下,所以不用notifyItemInserted改用notifyDataSetChanged,性能差一点,但不会报错.
@@ -235,7 +235,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
 
     override fun removeHeaderView(view: View?) {
         checkNullObjectRef(view)
-        wrapperAdapter.removeDynamicView(view)
+        wrapperAdapter.removeHeaderView(view)
         itemDecoration.setHeaderCount(headerViewCount)
     }
 
@@ -264,21 +264,9 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
 
-    fun addDynamicView(view: View?, position: Int) {
-        if (null != view) {
-            wrapperAdapter.addDynamicView(view, position)
-        }
-    }
+    fun addDynamicView(view: View?, position: Int) =wrapperAdapter.addDynamicView(view, position)
 
-    fun removeDynamicView(view: View?) {
-        if (null != view) {
-            wrapperAdapter.removeDynamicView(view)
-        }
-    }
-
-    fun itemRangeGlobalRemoved(positionStart: Int, itemCount: Int) {
-        wrapperAdapter.itemRangeGlobalRemoved(positionStart, itemCount)
-    }
+    fun removeDynamicView(view: View?) =wrapperAdapter.removeDynamicView(view)
 
     override fun addOnScrollListener(listener: RecyclerView.OnScrollListener) {
         this.refreshView.addOnScrollListener(listener)
@@ -350,16 +338,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * *
      * @return
      */
-    fun findAdapterView(@IdRes id: Int): View? {
-        var findView: View? = findViewById(id)
-        if (null == findView) {
-            findView = wrapperAdapter.findHeaderFooterView(id)
-        }
-        if (null == findView) {
-            findView = wrapperAdapter.findDynamicView(id)
-        }
-        return findView
-    }
+    fun findAdapterView(@IdRes id: Int): View? =findViewById(id)?:wrapperAdapter.findDynamicView(id)
 
     /**
      * check object is a null,when object is null reference throw NullPointerException
@@ -390,9 +369,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * *
      * @return
      */
-    fun getItemPosition(position: Int): Int {
-        return position - wrapperAdapter.getStartIndex(position)
-    }
+    fun getItemPosition(position: Int): Int =position - wrapperAdapter.getStartPosition(position)
 
     /**
      * on recyclerView scroll state changed

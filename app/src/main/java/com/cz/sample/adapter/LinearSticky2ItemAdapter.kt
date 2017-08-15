@@ -28,7 +28,7 @@ class LinearSticky2ItemAdapter(context: Context, items: List<Sticky1Item>) : Bas
         internal val ITEM_STICKY = 0
         internal val ITEM_NORMAL = 1
     }
-    private val groupingStrategy = GroupingStrategy.of(this).reduce(Condition { !it.headerItems.isEmpty() })
+    private val groupingStrategy = GroupingStrategy.of(this).reduce { item-> !item.headerItems.isEmpty() }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         val holder: BaseViewHolder

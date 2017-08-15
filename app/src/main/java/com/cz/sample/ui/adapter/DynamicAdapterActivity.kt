@@ -12,10 +12,9 @@ import com.cz.sample.R
 import com.cz.sample.adapter.SimpleAdapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
-import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
+import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
 import com.cz.recyclerlibrary.observe.DynamicAdapterDataObserve
-import com.cz.recyclerlibrary.onItemClick
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_full_adapter.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -37,24 +36,24 @@ class DynamicAdapterActivity : ToolBarActivity() {
         val viewItems = LinkedList<View>()
         recyclerView.itemAnimator = SlideInLeftAnimator()
         recyclerView.layoutManager = GridLayoutManager(this, 3)
-        val simpleAdapter=SimpleAdapter(this, Data.createItems(this, 100))
+        val simpleAdapter=SimpleAdapter(this, Data.createItems(this, 40))
         val adapter = DynamicAdapter(simpleAdapter)
-        adapter.onItemClick { _, position -> Toast.makeText(this, "position:" + position, Toast.LENGTH_SHORT).show() }
+        val random = Random()
+        //添加30个动态条目
+        for(i in 0..10){
+            addView(adapter,viewItems,random.nextInt(adapter.itemCount))
+        }
+        adapter.onItemClick { _, _,position -> Toast.makeText(this, "position:" + position, Toast.LENGTH_SHORT).show() }
         simpleAdapter.registerAdapterDataObserver(DynamicAdapterDataObserve(adapter))
         recyclerView.adapter = adapter
-        val random = Random()
         buttonAdd.onClick {
             val itemCount = adapter.itemCount
             simpleAdapter.addItemNotify("new:" + adapter.itemCount, random.nextInt(if (0 == itemCount) 1 else itemCount))
         }
         buttonRemove.onClick {
             if (0 != adapter.itemCount) {
-                simpleAdapter.removeItemNotify(0, 8)
+                simpleAdapter.removeItemNotify(0, Math.min(8,simpleAdapter.itemCount))
             }
-        }
-        buttonGlobalRemove.onClick {
-            simpleAdapter.remove(0, 8)
-            adapter.itemRangeGlobalRemoved(0, 8)
         }
         buttonRandomAdd.onClick { addView(adapter,viewItems,random.nextInt(adapter.itemCount)) }
         buttonRandomRemove.onClick {
@@ -64,7 +63,7 @@ class DynamicAdapterActivity : ToolBarActivity() {
         }
     }
 
-    private fun addView(adapter:DynamicAdapter,viewItems:LinkedList<View>,position: Int) {
+    private fun addView(adapter: DynamicAdapter, viewItems:LinkedList<View>, position: Int) {
         val view = getFullItemView(adapter)
         viewItems.add(view)
         adapter.addDynamicView(view, position)
@@ -73,7 +72,7 @@ class DynamicAdapterActivity : ToolBarActivity() {
     /**
      * 获得一个铺满的控件
      */
-    private fun getFullItemView(adapter:DynamicAdapter): View{
+    private fun getFullItemView(adapter: DynamicAdapter): View{
         val color = Data.randomColor
         val darkColor = Data.getDarkColor(color)
         val header = LayoutInflater.from(this).inflate(R.layout.recyclerview_header1, findViewById(android.R.id.content) as ViewGroup, false)

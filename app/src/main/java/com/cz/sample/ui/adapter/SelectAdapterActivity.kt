@@ -47,7 +47,7 @@ class SelectAdapterActivity : ToolBarActivity() {
                 recyclerView.setSelectMode(position)
             }
         })
-        recyclerView.onItemClick {_, position -> Toast.makeText(applicationContext, "Click:" + position, Toast.LENGTH_SHORT).show() }
+        recyclerView.onItemClick {_, _,position -> Toast.makeText(applicationContext, "Click:" + position, Toast.LENGTH_SHORT).show() }
         recyclerView.onSingleSelect { _, newPosition, _ ->
             Toast.makeText(applicationContext, "SingleSelect:" + newPosition, Toast.LENGTH_SHORT).show()
         }

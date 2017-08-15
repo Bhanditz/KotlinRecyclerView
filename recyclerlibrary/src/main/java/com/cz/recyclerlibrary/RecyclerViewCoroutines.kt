@@ -2,7 +2,7 @@ package com.cz.recyclerlibrary
 
 import android.util.Log
 import android.view.View
-import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
+import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
 import com.cz.recyclerlibrary.callback.*
 import cz.refreshlayout.library.PullToRefreshLayout
 import java.util.ArrayList
@@ -33,12 +33,8 @@ fun PullToRefreshRecyclerView.onFooterRefresh(listener:()->Unit){
 /**
  * 列表点击事件
  */
-fun PullToRefreshRecyclerView.onItemClick(listener:(View, Int)->Unit){
-    setOnItemClickListener(object:OnItemClickListener{
-        override fun onItemClick(v: View, position: Int) {
-            listener(v,position)
-        }
-    })
+fun PullToRefreshRecyclerView.onItemClick(listener:(View, Int,Int)->Unit){
+    setOnItemClickListener(OnItemClickListener { v, position, adapterPosition -> listener(v,position,adapterPosition) })
 }
 
 /**
@@ -98,12 +94,8 @@ fun PullToRefreshExpandRecyclerView.onExpandItemClick(listener:(View, Int, Int)-
 /**
  * 拖动列表点击
  */
-fun DragRecyclerView.onItemClick(listener:(View, Int)->Unit){
-    setOnItemClickListener(object:OnItemClickListener{
-        override fun onItemClick(v: View, position: Int) {
-            listener(v,position)
-        }
-    })
+fun DragRecyclerView.onItemClick(listener:(View, Int,Int)->Unit){
+    setOnItemClickListener(OnItemClickListener { v, position, adapterPosition -> listener(v,position,adapterPosition) })
 }
 
 /**
@@ -120,12 +112,8 @@ fun DragRecyclerView.onDragItemEnable(listener:(Int)->Boolean){
 /**
  * 拖动适配器点击
  */
-fun DynamicAdapter.onItemClick(listener:(View, Int)->Unit){
-    setOnItemClickListener(object:OnItemClickListener{
-        override fun onItemClick(v: View, position: Int) {
-            listener(v,position)
-        }
-    })
+fun DynamicAdapter.onItemClick(listener:(View, Int,Int)->Unit){
+    setOnItemClickListener(OnItemClickListener { v, position, adapterPosition -> listener(v,position,adapterPosition) })
 }
 
 

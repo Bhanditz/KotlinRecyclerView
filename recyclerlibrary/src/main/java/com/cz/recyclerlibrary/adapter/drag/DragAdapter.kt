@@ -2,6 +2,7 @@ package com.cz.recyclerlibrary.adapter.drag
 
 import android.support.v7.widget.RecyclerView
 import com.cz.recyclerlibrary.adapter.BaseViewAdapter
+import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
 
 /**
  * 可替换元素位置的动态添加数据适配器对象
@@ -34,7 +35,6 @@ class DragAdapter(adapter:  RecyclerView.Adapter<RecyclerView.ViewHolder>) : Dyn
 
     /**
      * 转换条目
-
      * @param oldIndex
      * *
      * @param newIndex
@@ -47,60 +47,19 @@ class DragAdapter(adapter:  RecyclerView.Adapter<RecyclerView.ViewHolder>) : Dyn
         val endDynamic = -1 != position2
         //四种置换方式
         if (startDynamic && endDynamic) {
-            dysDy(oldIndex, newIndex)
+            dynamicHelper[position1].position=newIndex
+            dynamicHelper[position2].position=oldIndex
+            dynamicHelper.dynamicItems.sortBy { it.position }
         } else if (startDynamic) {
-            dysItem(oldIndex, newIndex, position1)
+            dynamicHelper[position1].position=newIndex
+            dynamicHelper.dynamicItems.sortBy { it.position }
         } else if (endDynamic) {
-            itemsDy(oldIndex, newIndex)
+            dynamicHelper[position2].position=oldIndex
+            dynamicHelper.dynamicItems.sortBy { it.position }
         } else if(adapter is BaseViewAdapter<*>){
-            adapter.swapItem(oldIndex - getStartIndex(oldIndex), newIndex - getStartIndex(newIndex))
+            adapter.swapItem(oldIndex - getStartPosition(oldIndex), newIndex - getStartPosition(newIndex))
         }
     }
 
-    private fun itemsDy(oldIndex: Int, newIndex: Int) {
-        val position = findPosition(newIndex)
-        val newViewType = fullItemTypes.get(newIndex)
-        val index = fullItemTypes.indexOfKey(newIndex)
-        fullItemTypes.removeAt(index)
-        fullItemTypes.put(oldIndex, newViewType)
-        itemPositions[position] = oldIndex//重置角标位置
-    }
-
-    /**
-     * 动态条目置换普通条目
-
-     * @param oldPosition
-     * *
-     * @param newPosition
-     * *
-     * @param position1
-     */
-    private fun dysItem(oldPosition: Int, newPosition: Int, position1: Int) {
-        //直接更换插入对象到指定位置,装饰对象不用改动
-        val newViewType = fullItemTypes.get(oldPosition)
-        val index = fullItemTypes.indexOfKey(oldPosition)
-        fullItemTypes.removeAt(index)
-        fullItemTypes.put(newPosition, newViewType)
-        itemPositions[position1] = newPosition//重置角标位置
-    }
-
-    /**
-     * 动态条目置换动态条目
-
-     * @param oldPosition
-     * *
-     * @param newPosition
-     */
-    private fun dysDy(oldPosition: Int, newPosition: Int) {
-        val oldViewType = fullItemTypes.get(oldPosition)
-        val newViewType = fullItemTypes.get(newPosition)
-        fullItemTypes.put(oldPosition, newViewType)
-        fullItemTypes.put(newPosition, oldViewType)
-        //替换view
-        val oldView = fullViews.get(oldViewType)
-        val newView = fullViews.get(newViewType)
-        fullViews.put(oldViewType, newView)
-        fullViews.put(newViewType, oldView)
-    }
 
 }

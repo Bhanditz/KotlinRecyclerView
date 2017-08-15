@@ -36,7 +36,7 @@ class GridPullToRefreshActivity : ToolBarActivity() {
         recyclerView.layoutManager = GridLayoutManager(this, 3)
         val adapter=SimpleAdapter(this, R.layout.grid_text_item, Data.createItems(this, 10))
         recyclerView.adapter=adapter
-        recyclerView.onItemClick { v, position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
+        recyclerView.onItemClick { v,_, position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
 
         refreshModeLayout.setOnCheckedListener(object :RadioLayout.OnCheckedListener{
             override fun onChecked(v: View, position: Int, isChecked: Boolean) {

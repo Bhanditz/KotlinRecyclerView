@@ -41,7 +41,7 @@ class PullToRefreshActivity : ToolBarActivity() {
         recyclerView.itemAnimator = SlideInLeftAnimator()
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        recyclerView.onItemClick { _, position ->
+        recyclerView.onItemClick { _, _,position ->
             Toast.makeText(applicationContext, "Click:" + position, Toast.LENGTH_SHORT).show()
         }
         recyclerView.addHeaderView(getHeaderView())
@@ -54,7 +54,7 @@ class PullToRefreshActivity : ToolBarActivity() {
         //初始设置2个,考虑其不满一屏加载状态
         val adapter = SimpleAdapter(this, Data.createItems(this, 2))
         recyclerView.adapter=adapter
-        recyclerView.onItemClick { v, position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
+        recyclerView.onItemClick { v, _,position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
         //下拉加载
         recyclerView.onRefresh {
             recyclerView.postDelayed({

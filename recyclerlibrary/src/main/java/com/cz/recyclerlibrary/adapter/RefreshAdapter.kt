@@ -1,13 +1,10 @@
 package com.cz.recyclerlibrary.adapter
 
-import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
 
-import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
-
-import java.util.ArrayList
+import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
+import com.cz.recyclerlibrary.debugLog
 
 /**
  * Created by cz on 16/1/23.
@@ -18,20 +15,46 @@ import java.util.ArrayList
 open class RefreshAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>?) : DynamicAdapter(adapter) {
     private var refreshFooterView: View? = null
 
-    fun addRefreshView(view: View) {
+    internal fun addRefreshView(view: View) {
         val insertIndex: Int
         if (null == refreshFooterView) {
-            insertIndex = footersCount
+            insertIndex = footerViewCount
         } else {
-            insertIndex = footersCount - 1
+            insertIndex = footerViewCount - 1
         }
-        addFooterView(view, insertIndex)
+        refreshFooterView=view
+        debugLog("addRefreshView:$view")
+        super.addFooterView(view, insertIndex)
     }
 
-    fun removeRefreshView(view:View) =super.removeFooterView(view)
+    internal fun removeRefreshView(view:View){
+        if(refreshFooterView==view){
+            refreshFooterView=null
+        }
+        super.removeFooterView(view)
+    }
+
+    override fun addFooterView(view: View) {
+        if(null==refreshFooterView){
+            super.addFooterView(view)
+        } else {
+            super.addFooterView(view,footerViewCount-1)
+        }
+    }
+
+    override fun addFooterView(view: View, index: Int) {
+        debugLog("addFooterView:$view")
+        if(null==refreshFooterView){
+            //如果没有添加尾,直接添加
+            super.addFooterView(view, index)
+        } else if(index==footerViewCount){
+            //如果己添加刷新尾,自动添加到刷新尾后面
+            super.addFooterView(view, index-1)
+        }
+    }
 
     /**
-     * 移除指定的HeaderView对象
+     * 移除指定的FooterView对象,不能移除refreshFooterView
      * @param view
      */
     override fun removeFooterView(view: View?) {
@@ -51,13 +74,4 @@ open class RefreshAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    /**
-     * 移除指定位置的header view
-     * @param position
-     */
-    override fun removeHeaderView(position: Int) {
-        if (0 in 0..itemPositions.size) {
-            removeDynamicView(itemPositions[position])
-        }
-    }
 }

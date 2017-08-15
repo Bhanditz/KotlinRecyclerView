@@ -2,7 +2,7 @@ package com.cz.recyclerlibrary.observe
 
 import android.support.v7.widget.RecyclerView
 
-import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
+import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
 
 /**
  * RecyclerView数据变化观察者对象
@@ -15,18 +15,18 @@ class DynamicAdapterDataObserve(private val adapter: DynamicAdapter) : RecyclerV
     }
 
     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-        adapter.itemRangeInsert(adapter.getStartIndex(positionStart) + positionStart, itemCount)
+        adapter.itemRangeInsert(adapter.getStartPosition(positionStart) + positionStart, itemCount)
     }
     override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
-        adapter.notifyItemRangeChanged(adapter.getStartIndex(positionStart) + positionStart, itemCount)
+        adapter.notifyItemRangeChanged(adapter.getStartPosition(positionStart) + positionStart, itemCount)
     }
     override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
-        adapter.notifyItemRangeChanged(adapter.getStartIndex(positionStart) + positionStart, itemCount, payload)
+        adapter.notifyItemRangeChanged(adapter.getStartPosition(positionStart) + positionStart, itemCount, payload)
     }
     override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-        adapter.itemRangeRemoved(adapter.getStartIndex(positionStart) + positionStart, itemCount)
+        adapter.itemRangeRemoved(positionStart, itemCount)
     }
     override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-        adapter.notifyItemMoved(adapter.getStartIndex(fromPosition) + fromPosition, adapter.getStartIndex(toPosition) + toPosition)
+        adapter.notifyItemMoved(adapter.getStartPosition(fromPosition) + fromPosition, adapter.getStartPosition(toPosition) + toPosition)
     }
 }

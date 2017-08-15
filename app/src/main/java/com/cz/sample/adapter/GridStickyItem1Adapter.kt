@@ -22,7 +22,7 @@ class GridStickyItem1Adapter(context: Context, items: List<Sticky2Item>) : GridS
         internal val ITEM_STICKY = 0
         internal val ITEM_NORMAL = 1
     }
-    internal val groupingStrategy= GroupingStrategy.of(this).reduce(Condition{ it.title})
+    internal val groupingStrategy= GroupingStrategy.of(this).reduce{ item-> item.title}
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {
         val item = getItem(position)

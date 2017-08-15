@@ -38,7 +38,7 @@ class Sticky3SampleActivity : ToolBarActivity() {
         refreshStickyRecyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = LinearSticky1ItemAdapter(this, items)
         refreshStickyRecyclerView.adapter=adapter
-        refreshStickyRecyclerView.onItemClick { _, position -> Toast.makeText(this, "position:" + position, Toast.LENGTH_SHORT).show() }
+        refreshStickyRecyclerView.onItemClick { _,_, position -> Toast.makeText(this, "position:" + position, Toast.LENGTH_SHORT).show() }
 
         val random = Random()
         buttonRemove.onClick{ adapter.removeNotify(random.nextInt(adapter.itemCount)) }

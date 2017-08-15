@@ -11,7 +11,7 @@ import com.cz.sample.R
 import com.cz.sample.adapter.SimpleAdapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
-import com.cz.recyclerlibrary.adapter.drag.DynamicAdapter
+import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
 import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_full_adapter.*
@@ -46,7 +46,7 @@ class ExpandAdapterActivity : ToolBarActivity() {
     /**
      * 获得一个铺满的控件
      */
-    private fun getFullItemView(adapter:DynamicAdapter): View{
+    private fun getFullItemView(adapter: DynamicAdapter): View{
         val color = Data.randomColor
         val darkColor = Data.getDarkColor(color)
         val header = LayoutInflater.from(this).inflate(R.layout.recyclerview_header1, findViewById(android.R.id.content) as ViewGroup, false)

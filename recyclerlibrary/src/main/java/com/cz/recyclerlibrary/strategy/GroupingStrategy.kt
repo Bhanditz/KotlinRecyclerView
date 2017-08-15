@@ -73,11 +73,15 @@ class GroupingStrategy<T> {
         return this
     }
 
+    fun reduce(binaryCondition: (T,T)->Boolean): GroupingStrategy<T> = reduce(BinaryCondition<T>(binaryCondition))
+
     fun reduce(condition: Condition<T>): GroupingStrategy<T> {
         this.condition = condition
         refreshIndexItems()
         return this
     }
+
+    fun reduce(condition: (T)->Boolean): GroupingStrategy<T> =reduce(Condition(condition))
 
     fun <R> map(func: Function<R,T>): List<R> {
         return indexItems

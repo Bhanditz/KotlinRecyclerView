@@ -30,12 +30,6 @@
             android:textSize="9dp"
             android:text="@string/item_remove" />
 
-        <Button
-            android:id="@+id/buttonGlobalRemove"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="9dp"
-            android:text="@string/item_global_remove" />
 
         <Button
             android:id="@+id/buttonRandomAdd"

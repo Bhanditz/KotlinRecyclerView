@@ -40,7 +40,7 @@ class DragRecyclerView @JvmOverloads constructor(context: Context, attrs: Attrib
      * @return
      */
     fun getItemPosition(position: Int): Int {
-        return position - dragAdapter.getStartIndex(position)
+        return position - dragAdapter.getStartPosition(position)
     }
 
     /**
