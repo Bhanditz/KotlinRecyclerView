@@ -22,7 +22,7 @@ import java.util.LinkedList
  */
 abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode<E>) : RecyclerView.Adapter<BaseViewHolder>() {
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
-    protected val items = ArrayList<E>()
+    protected val originalItems = ArrayList<E>()
     protected val nodeItems= ArrayList<TreeNode<E>>()//树的列表展示节点
     private var listener: OnNodeItemClickListener<E>? = null
     private var headerCount: Int = 0//头控件数
@@ -81,19 +81,19 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
             val items = getItems(node)
             val addNodes = getNodeItems(node)
             node.expand = !expand//更新展开状态
-            if (!addNodes!!.isEmpty()) {
+            if (!addNodes.isEmpty()) {
                 val size = addNodes.size
                 onNodeExpand(node, holder, !expand)
                 if (expand) {
-                    this@TreeAdapter.items.removeAll(items)
+                    originalItems.removeAll(items)
                     nodeItems.removeAll(addNodes)
                     //关闭动作
                     notifyItemRangeRemoved(itemPosition + 1, size)
                 } else {
-                    this@TreeAdapter.items.addAll(itemPosition + 1, items)
+                    originalItems.addAll(itemPosition + 1, items)
                     nodeItems.addAll(itemPosition + 1, addNodes)
                     //展开动作
-                    notifyItemRangeInserted(itemPosition + 1, size)
+                    notifyItemRangeInserted(itemPosition+1, size)
                 }
             } else if (null != listener) {
                 listener?.onNodeItemClick(node, v, itemPosition)
@@ -131,7 +131,7 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
      */
     fun getItem(position: Int): E =nodeItems[position].e
 
-    fun getItems(): List<E> =items
+    fun getItems(): List<E> =originalItems
 
     override fun getItemCount(): Int =nodeItems.size
 
@@ -216,7 +216,7 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
      * *
      * @return
      */
-    fun indexOfItem(e: E): Int =items.indexOf(e)
+    fun indexOfItem(e: E): Int =originalItems.indexOf(e)
 
     /**
      * 设置指定条目取值
@@ -226,7 +226,7 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
      * @param e
      */
     operator fun set(index: Int, e: E) {
-        items[index] = e
+        originalItems[index] = e
         nodeItems[index].e = e
         notifyItemChanged(index)
     }
@@ -237,7 +237,7 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
      * @param position
      */
     private fun remove(position: Int) {
-        items.removeAt(position)
+        originalItems.removeAt(position)
         val node = nodeItems.removeAt(position)
         notifyItemRemoved(position)
         //移除根节点内节点指向
@@ -268,7 +268,7 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
         }
         val itemCount = itemCount
         this.nodeItems.addAll(nodeItems)
-        this.items.addAll(getItems(nodeItems))
+        this.originalItems.addAll(getItems(nodeItems))
         notifyItemRangeInserted(itemCount, nodeItems.size)
     }
 
@@ -287,11 +287,11 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
     }
 
     fun refreshItems() {
-        this.items.clear()
+        this.originalItems.clear()
         this.nodeItems.clear()
         val nodes = getNodeItems(this.rootNode)
         if (null != nodes) {
-            this.items.addAll(getItems(nodes))
+            this.originalItems.addAll(getItems(nodes))
             this.nodeItems.addAll(nodes)
         }
     }

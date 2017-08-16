@@ -35,7 +35,7 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
     private var itemViewCount: Int = 0
     private var longItemListener: OnItemLongClickListener? = null
     private var itemClickListener: OnItemClickListener? = null
-    protected val dynamicHelper: DynamicHelper = DynamicHelper(this)
+    val dynamicHelper: DynamicHelper = DynamicHelper(this)
     var adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>?=null
         set(value) {
             field = value
@@ -43,7 +43,9 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
         }
         get() = field
 
-    init { this.adapter= adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>? }
+    init {
+        this.adapter= adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>?
+    }
     /**
      * 获得添加头个数
      * @return
@@ -65,38 +67,36 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
     val dynamicItemCount: Int
         get() = dynamicHelper.dynamicItemCount
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
-        val manager = recyclerView!!.layoutManager
-        if (manager is GridLayoutManager) {
-            val gridLayoutManager = manager
-            gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+        val layoutManager = recyclerView.layoutManager
+        if (layoutManager is GridLayoutManager) {
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
-                    val adapter=adapter
                     var spanCount = 1
-                    if (null != adapter && adapter is GridSpanCallback) {
-                        spanCount = adapter.getSpanSize(gridLayoutManager, position - headerViewCount)
+                    val adapter=adapter
+                    val isWrapperPosition = dynamicHelper.isWrapperPosition(position)
+                    if (!isWrapperPosition&&null != adapter && adapter is GridSpanCallback) {
+                        spanCount = adapter.getSpanSize(layoutManager, getItemPosition(position))
                     }
-                    return if (dynamicHelper.isWrapperPosition(position) || isFullItem(position)) gridLayoutManager.spanCount else spanCount
+                    //检测条件为如果为顶/底,或者dynamic position(去掉header个数的角标位),或者子类复写isFullPosition返回true的条目,占满一列
+                    return if (isWrapperPosition|| isFullPosition(position)) layoutManager.spanCount else spanCount
                 }
             }
         }
     }
 
-
     /**
-     * 由子类实现,条目是否铺满
+     * 由子类实现,决定条目是否铺满
      * @see .onViewAttachedToWindow .onAttachedToRecyclerView
-
      * @param position
-     * *
      * @return
      */
-    protected open fun isFullItem(position: Int): Boolean =false
+    protected open fun isFullPosition(position: Int): Boolean =false
 
-    open fun addHeaderView(view: View?)= dynamicHelper.addHeaderView(view)
+    open fun addHeaderView(view: View?)=dynamicHelper.addHeaderView(view)
 
-    open fun addHeaderView(view: View?,index:Int=0)= dynamicHelper.addHeaderView(view,index)
+    open fun addHeaderView(view: View?,index:Int=0)=dynamicHelper.addHeaderView(view,index)
 
     open fun addFooterView(view: View)= dynamicHelper.addFooterView(view)
 
@@ -122,7 +122,7 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
 
     fun itemRangeRemoved(positionStart: Int, itemCount: Int)= dynamicHelper.itemRangeRemoved(positionStart,itemCount)
 
-    fun addDynamicView(view: View?, position: Int)= dynamicHelper.addDynamicView(view,position)
+    fun addDynamicView(view: View?, position: Int)=dynamicHelper.addDynamicView(view,position+headerViewCount)
 
     fun removeDynamicView(view: View?)= dynamicHelper.removeDynamicView(view)
 
@@ -148,9 +148,10 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
         if (null != adapter&& !dynamicHelper.isWrapperPosition(position)) {
             holder.itemView.setOnClickListener { v ->
                 val itemPosition = holder.adapterPosition
-                if (onItemClick(v, itemPosition) && null != itemClickListener) {
-                    val startPosition = dynamicHelper.getStartPosition(itemPosition)
-                    itemClickListener?.onItemClick(v, itemPosition,itemPosition - headerViewCount - startPosition)
+                val startPosition = dynamicHelper.getStartPosition(itemPosition)
+                val realPosition=itemPosition - headerViewCount - startPosition
+                if (onItemClick(v, itemPosition,realPosition) && null != itemClickListener) {
+                    itemClickListener?.onItemClick(v, itemPosition,realPosition)
                 }
             }
             //被包装的正常角标为:略去顶头位置,略去当前位置前面动态条目个数
@@ -181,7 +182,17 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
     }
 
     override fun getItemId(position: Int): Long =position.toLong()
-
+    /**
+     * 获得被包装子条目位置
+     * @param position
+     * *
+     * @return
+     */
+    fun getItemPosition(position: Int): Int =position - headerViewCount-getStartPosition(position)
+    /**
+     * 获得原始Adapter的真实位置
+     */
+    fun getAdapterPosition(position: Int): Int =position + headerViewCount+getStartPosition(position)
 
     /**
      * 子类点击使用
@@ -189,7 +200,7 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
      * *
      * @param position
      */
-    protected open fun onItemClick(v: View, position: Int): Boolean {
+    protected open fun onItemClick(v: View, position: Int,realPosition:Int): Boolean {
         return true
     }
 

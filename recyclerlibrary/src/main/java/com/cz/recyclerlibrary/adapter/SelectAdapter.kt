@@ -128,44 +128,41 @@ open class SelectAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>?
     }
 
 
-    override fun onItemClick(v: View, position: Int): Boolean {
-        super.onItemClick(v, position)
-        val headersCount = headerViewCount
+    override fun onItemClick(v: View, position: Int,realPosition:Int): Boolean {
+        super.onItemClick(v, position,realPosition)
         when (mode) {
             MULTI_SELECT -> {
                 var lastSize = multiSelectItems.size
-                if (multiSelectItems.contains(position)) {
+                if (multiSelectItems.contains(realPosition)) {
                     lastSize--
-                    multiSelectItems.remove(Integer.valueOf(position))
-                    notifyItemChanged(position + headersCount)
+                    multiSelectItems.remove(Integer.valueOf(realPosition))
+                    notifyItemChanged(position)
                 } else if (multiSelectItems.size < selectMaxCount) {
-                    multiSelectItems.add(Integer.valueOf(position))
-                    notifyItemChanged(position + headersCount)
+                    multiSelectItems.add(Integer.valueOf(realPosition))
+                    notifyItemChanged(position )
                 }
                 multiSelectListener?.onMultiSelect(v, multiSelectItems, lastSize, selectMaxCount)
             }
             RECTANGLE_SELECT -> if (INVALID_POSITION != start && INVALID_POSITION != end) {
-                val s = start
-                val e = end
+                notifyItemRangeChanged(Math.min(getAdapterPosition(start), getAdapterPosition(end)), Math.max(getAdapterPosition(start), getAdapterPosition(end)))
                 end = INVALID_POSITION
                 start = end//重置
-                notifyItemRangeChanged(Math.min(s + headersCount, e + headersCount), Math.max(s + headersCount, e + headersCount))
             } else if (INVALID_POSITION == start) {
-                start = position
-                notifyItemChanged(start + headersCount)
+                start = realPosition
+                notifyItemChanged(position)
             } else if (INVALID_POSITION == end) {
-                end = position
+                end = realPosition
                 rectangleSelectListener?.onRectangleSelect(start, end)
-                notifyItemRangeChanged(Math.min(start + headersCount, end + headersCount), Math.max(start + headersCount, end + headersCount))
+                notifyItemRangeChanged(Math.min(getAdapterPosition(start), getAdapterPosition(end)), Math.max(getAdapterPosition(start), getAdapterPosition(end)))
             }
             SINGLE_SELECT -> {
                 val last = selectPosition
-                selectPosition = position
-                singleSelectListener?.onSingleSelect(v, position, last)
+                selectPosition = realPosition
+                singleSelectListener?.onSingleSelect(v, realPosition, last)
                 if (0 <= selectPosition && INVALID_POSITION != last) {
-                    notifyItemChanged(last + headersCount)//通知上一个取消
+                    notifyItemChanged(getAdapterPosition(last))//通知上一个取消
                 }
-                notifyItemChanged(position + headersCount)//本次选中
+                notifyItemChanged(position)//本次选中
             }
         }
         return CLICK == mode

@@ -224,6 +224,9 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     override var footerViewCount: Int=0
         get() = wrapperAdapter.footerViewCount
 
+    val dynamicItemCount: Int
+        get() = wrapperAdapter.dynamicItemCount
+
     override var itemCount:Int=0
         get() = wrapperAdapter?.adapter?.itemCount?:0
 
@@ -267,6 +270,8 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     fun addDynamicView(view: View?, position: Int) =wrapperAdapter.addDynamicView(view, position)
 
     fun removeDynamicView(view: View?) =wrapperAdapter.removeDynamicView(view)
+
+    fun removeDynamicView(index:Int) =wrapperAdapter.removeDynamicView(index)
 
     override fun addOnScrollListener(listener: RecyclerView.OnScrollListener) {
         this.refreshView.addOnScrollListener(listener)
@@ -363,13 +368,17 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
     /**
-     * 获得子条目的位置
-
+     * 获得被包装子条目位置
      * @param position
      * *
      * @return
      */
-    fun getItemPosition(position: Int): Int =position - wrapperAdapter.getStartPosition(position)
+    fun getItemPosition(position: Int): Int =wrapperAdapter.getItemPosition(position)
+
+    /**
+     * 获得原始Adapter的真实位置
+     */
+    fun getAdapterPosition(position: Int): Int =wrapperAdapter.getAdapterPosition(position)
 
     /**
      * on recyclerView scroll state changed

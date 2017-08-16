@@ -2,13 +2,76 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
-    <android.support.v7.widget.RecyclerView
+    <com.cz.recyclerlibrary.PullToRefreshRecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-         />
+        auto:pl_refreshMode="none">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:gravity="center"
+            android:text="Header I am from Xml1!"
+            auto:pv_adapterView="header"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="Header I am from Xml2!"
+            auto:pv_adapterView="header"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:gravity="center"
+            android:text="Header I am from Xml3!"
+            auto:pv_adapterView="header"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:gravity="center"
+            android:text="Footer I am from Xml1!"
+            auto:pv_adapterView="footer"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:padding="12dp"
+            android:gravity="center"
+            android:text="Footer I am from Xml2!"
+            auto:pv_adapterView="footer"/>
+
+        <TextView
+            android:id="@+id/tv_last"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/blue"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:text="Footer I am from Xml3!"
+            auto:pv_adapterView="footer"/>
+    </com.cz.recyclerlibrary.PullToRefreshRecyclerView>
 
     <LinearLayout
         android:layout_width="wrap_content"

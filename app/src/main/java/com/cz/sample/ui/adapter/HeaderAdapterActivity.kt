@@ -65,7 +65,7 @@ class HeaderAdapterActivity : ToolBarActivity() {
         val headerView = header as TextView
         headerView.setTextColor(textColor)
         headerView.text = "HeaderView:" + recyclerView.headerViewCount
-        headerView.onClick { recyclerView.addHeaderView(headerView) }
+        headerView.onClick { recyclerView.addHeaderView(getHeaderView()) }
         return headerView
     }
 

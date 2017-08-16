@@ -15,18 +15,24 @@ class DynamicAdapterDataObserve(private val adapter: DynamicAdapter) : RecyclerV
     }
 
     override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-        adapter.itemRangeInsert(adapter.getStartPosition(positionStart) + positionStart, itemCount)
+        adapter.itemRangeInsert(positionStart, itemCount)
     }
     override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
-        adapter.notifyItemRangeChanged(adapter.getStartPosition(positionStart) + positionStart, itemCount)
+        adapter.notifyItemRangeChanged(getAdapterPosition(positionStart), itemCount)
     }
     override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
-        adapter.notifyItemRangeChanged(adapter.getStartPosition(positionStart) + positionStart, itemCount, payload)
+        adapter.notifyItemRangeChanged(getAdapterPosition(positionStart), itemCount, payload)
     }
     override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
         adapter.itemRangeRemoved(positionStart, itemCount)
     }
     override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-        adapter.notifyItemMoved(adapter.getStartPosition(fromPosition) + fromPosition, adapter.getStartPosition(toPosition) + toPosition)
+        val realPosition = getAdapterPosition(fromPosition)
+        adapter.notifyItemMoved(realPosition+fromPosition, realPosition + toPosition)
     }
+
+    /**
+     * 被包装条目真实角标为:包装的头个数,以及动态条目个数+当前位置
+     */
+    private fun getAdapterPosition(position: Int)=adapter.headerViewCount+adapter.getStartPosition(position) + position
 }

@@ -184,18 +184,25 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
         get() =dynamicItems.map { it.position }.toIntArray()
     /**
      * 条目范围插入
-     * @param positionStart
-     * *
+     * @param positionStart 此处传入的为被包装的position数据,所以需要动态加入头,与起始
      * @param itemCount
      */
     fun itemRangeInsert(positionStart: Int, itemCount: Int) {
-        //重置所有移除范围内的动态条信息
+        debugLog("itemRangeInsert:${dynamicItems.map { it.position }}")
+        //这里获取从0到插件元素范围内,元素总数,因为没人知道,动态条目在此范围内,到抵插入了多少个,到positionStart
+        val positionStart=getAdapterPositionStart(positionStart)
+        debugLog("itemRangeInsert:$positionStart acrossItemCount:$positionStart itemCount:$itemCount")
         forEach {
-            if (positionStart <= it.position) {
+            //重置所有移除范围内的动态条信息
+            if (positionStart < it.position) {
                 it.position += itemCount//范围外条目,整体后退
             }
         }
-        adapter.notifyItemRangeInserted(positionStart, itemCount)
+        debugLog("itemRangeInsert:${dynamicItems.map { it.position }}")
+        //如果当前插入位置为一个动态条目位置,向前+1
+        if(isDynamicPosition(positionStart))
+            adapter.notifyItemRangeInserted(positionStart+1, itemCount)
+        else adapter.notifyItemRangeInserted(positionStart, itemCount)
     }
 
     /**
@@ -205,34 +212,58 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
      * @param itemCount
      */
     fun itemRangeRemoved(positionStart: Int, itemCount: Int) {
-        var positionStart = positionStart+headerViewCount
+        //1:计算移除总范围,以一个不断增加的数值,排除非动态条目的总个数条目
+        val positionStart=getAdapterPositionStart(positionStart)
         //复原原数据列大小,因为外围传入到这里时,数据已经移除了,所以添加回去
         val adapterCount=adapter.itemCount+itemCount
-        //1:计算移除总范围,以一个不断增加的数值,排除非动态条目的总个数条目
-        var removeCount=0
-        var removeItemCount=0
-        while(removeItemCount<itemCount){
-            //计算上限不能超过数据集总数
-            if(positionStart+removeCount>=adapterCount){
-                break
-            } else if(!isDynamicPosition(positionStart+removeCount)){
-                //添加移除条目个数,移除条目非动态条目<itemCount,则一直循环,直到找到移除范围为止
-                removeItemCount++
-            }
-            removeCount++
-        }
+        var acrossItemCount = getAcrossItemCount(positionStart,itemCount, adapterCount)
         //可移除数据范围
-        val removeRange=positionStart..positionStart+removeCount-1
+        val removeRange=positionStart..positionStart+acrossItemCount-1
         //2:移除范围内条目
         dynamicItems.removeAll { it.position in removeRange }
         //3:前条目往前移
         forEach {
             if(it.position > removeRange.last){
-                it.position-=removeCount
+                it.position-=acrossItemCount
             }
         }
         //移除所有范围内条目
-        adapter.notifyItemRangeRemoved(positionStart, removeCount)
+        adapter.notifyItemRangeRemoved(positionStart, acrossItemCount)
+    }
+
+    /**
+     * 获得一个一个子Adapter 指定Position的经过所有条目个数
+     */
+    private fun getAdapterPositionStart(itemCount: Int): Int {
+        var totalCount = 0
+        var adapterCount = 0
+        while (adapterCount < itemCount) {
+            if (!isDynamicPosition(totalCount)) {
+                //添加移除条目个数,移除条目非动态条目<itemCount,则一直循环,直到到达指定位置为止,效率不高
+                adapterCount++
+            }
+            totalCount++
+        }
+        return totalCount
+    }
+
+    /**
+     * 获得一个实现item个数的
+     */
+    private fun getAcrossItemCount(positionStart: Int,itemCount: Int,  adapterCount: Int): Int {
+        var totalCount = 0
+        var acrossCount = 0
+        while (acrossCount < itemCount) {
+            //计算上限不能超过数据集总数
+            if (positionStart + totalCount >= adapterCount) {
+                break
+            } else if (!isDynamicPosition(positionStart + totalCount)) {
+                //添加移除条目个数,移除条目非动态条目<itemCount,则一直循环,直到找到移除范围为止
+                acrossCount++
+            }
+            totalCount++
+        }
+        return totalCount
     }
 
     /**
@@ -252,6 +283,7 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
         val viewType = DynamicHelper.TYPE_END + endTotalCount++
         dynamicItems.add(DynamicHelper.DynamicView(view,viewType,position))
         dynamicItems.sortBy { it.position }
+        debugLog("addDynamicView:${dynamicItems.map { it.position }} $dynamicItemCount")
         adapter.notifyItemInserted(position)
     }
 
@@ -306,7 +338,7 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
         while (start <= end) {
             val middle = (start + end) / 2
             if (position == positions[middle]) {
-                result = middle + 1
+                result = middle
                 break
             } else if (position < positions[middle]) {
                 end = middle - 1
@@ -316,14 +348,6 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
         }
         if (-1 == result) {
             result = start
-        } else {
-            start = result - 1
-            end = positions.size - 1
-            //当position为0时,插入条目为0,1 这时候应该取得2
-            while (start < end && positions[start] + 1 == positions[start + 1]) {
-                start++
-                result++
-            }
         }
         return result
     }
