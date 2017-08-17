@@ -3,10 +3,9 @@
     <!-- Base application theme. -->
     <style name="PullToRefreshRecyclerView"/>
     <style name="FrameFooterView" >
-        <item name="footer_footerHeight">60dp</item>
         <item name="footer_clickTextHint">@string/click_load_more</item>
         <item name="footer_textSize">14sp</item>
-        <item name="footer_textColor">@color/dark_gray</item>
+        <item name="footer_textColor">@android:color/darker_gray</item>
         <item name="footer_errorHint">@string/load_error</item>
         <item name="footer_retryItemSelector" >@drawable/btn_retry_selector</item>
         <item name="footer_complete">@string/load_complete</item>

@@ -129,7 +129,7 @@ abstract class ExpandAdapter<K, E> @JvmOverloads constructor(context: Context,
      */
     private fun expandGroup(position: Int, groupPosition: Int, expand: Boolean) {
         val childItems = getGroupItems(groupPosition)//关闭
-        val expandCount = childItems?.size
+        val expandCount = childItems.size
         //更新各节点起始位置,更新各节点个数
         if (expand) {
             notifyItemRangeRemoved(position + 1, expandCount)

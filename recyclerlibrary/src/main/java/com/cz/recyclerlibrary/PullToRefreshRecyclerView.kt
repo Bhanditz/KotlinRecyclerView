@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 
 import com.cz.recyclerlibrary.adapter.SelectAdapter
+import com.cz.recyclerlibrary.callback.DividerInterceptCallback
 import com.cz.recyclerlibrary.callback.OnItemClickListener
 import com.cz.recyclerlibrary.divide.SimpleItemDecoration
 import com.cz.recyclerlibrary.footer.RefreshFrameFooter
@@ -267,11 +268,11 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
 
-    fun addDynamicView(view: View?, position: Int) =wrapperAdapter.addDynamicView(view, position)
+    open fun addDynamicView(view: View?, position: Int) =wrapperAdapter.addDynamicView(view, position)
 
-    fun removeDynamicView(view: View?) =wrapperAdapter.removeDynamicView(view)
+    open fun removeDynamicView(view: View?) =wrapperAdapter.removeDynamicView(view)
 
-    fun removeDynamicView(index:Int) =wrapperAdapter.removeDynamicView(index)
+    open fun removeDynamicView(index:Int) =wrapperAdapter.removeDynamicView(index)
 
     override fun addOnScrollListener(listener: RecyclerView.OnScrollListener) {
         this.refreshView.addOnScrollListener(listener)
@@ -301,6 +302,11 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
             wrapperAdapter.adapter?.unregisterAdapterDataObserver(dataObserve)
             adapter.registerAdapterDataObserver(dataObserve)
             wrapperAdapter.adapter=adapter as RecyclerView.Adapter<RecyclerView.ViewHolder>?
+            //设置默认分隔线拦截器
+            if(adapter is DividerInterceptCallback){
+                itemDecoration.setDividerInterceptor(adapter)
+            }
+            //设置数据适配器
             if(null==refreshView.adapter){
                 refreshView.adapter=this.wrapperAdapter
             } else {
@@ -312,7 +318,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
         get() = this.wrapperAdapter
 
 
-    fun setRefreshFooterState(@RefreshFrameFooter.RefreshState state: Int) {
+    open fun setRefreshFooterState(@RefreshFrameFooter.RefreshState state: Int) {
         refreshFooter.setRefreshState(state)
     }
 
@@ -343,7 +349,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * *
      * @return
      */
-    fun findAdapterView(@IdRes id: Int): View? =findViewById(id)?:wrapperAdapter.findDynamicView(id)
+    open fun findAdapterView(@IdRes id: Int): View? =findViewById(id)?:wrapperAdapter.findDynamicView(id)
 
     /**
      * check object is a null,when object is null reference throw NullPointerException

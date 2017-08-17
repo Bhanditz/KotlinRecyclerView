@@ -205,9 +205,15 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
         }
     }
 
-    fun removeNode(position: Int) {
-        removeNode(nodeItems[position])
-    }
+    /**
+     * 移除当前展示任一位置节点
+     */
+    fun removeNode(position: Int) =removeNode(nodeItems[position])
+
+    /**
+     * 移除指定根节点
+     */
+    fun removeRootNode(position: Int) =removeNode(rootNode.child[position])
 
     /**
      * 获取条目在节点位置

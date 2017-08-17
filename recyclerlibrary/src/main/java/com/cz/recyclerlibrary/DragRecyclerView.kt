@@ -3,6 +3,7 @@ package com.cz.recyclerlibrary
 import android.content.Context
 import android.support.annotation.LayoutRes
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.SimpleItemAnimator
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.util.AttributeSet
 import android.view.LayoutInflater
@@ -30,6 +31,11 @@ class DragRecyclerView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     init {
         helperCallback.setLongPressDrawEnable(true)
+        //尝试禁用默认动画
+        val animator=itemAnimator
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
     }
 
     /**
@@ -89,7 +95,7 @@ class DragRecyclerView @JvmOverloads constructor(context: Context, attrs: Attrib
         dragAdapter.swap(oldPosition, newPosition)
         dragAdapter.notifyItemMoved(oldPosition, newPosition)
         //动态结束后,刷新条目
-        postDelayed({ dragAdapter.notifyItemChanged(newPosition) }, itemAnimator.moveDuration)
+        postDelayed({ dragAdapter.notifyItemChanged(newPosition) }, itemAnimator?.moveDuration?:0)
     }
 
     override fun onItemMove(oldPosition: Int, newPosition: Int) {

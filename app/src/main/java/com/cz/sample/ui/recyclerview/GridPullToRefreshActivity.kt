@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.cz.recyclerlibrary.anim.SlideInLeftAnimator
 import com.cz.recyclerlibrary.onFooterRefresh
 import com.cz.recyclerlibrary.onItemClick
 import com.cz.recyclerlibrary.onRefresh
@@ -70,12 +69,11 @@ class GridPullToRefreshActivity : ToolBarActivity() {
         }
 
         recyclerView.addHeaderView(getHeaderView())
-        recyclerView.addFooterView(getHeaderView())
-        recyclerView.addFooterView(getHeaderView())
-        recyclerView.addFooterView(getHeaderView())
+        recyclerView.addFooterView(getDynamicView("FooterView"))
+        recyclerView.addFooterView(getDynamicView("FooterView"))
+        recyclerView.addFooterView(getDynamicView("FooterView"))
 
     }
-
     /**
      * 获得一个顶部控件
      */
@@ -86,6 +84,17 @@ class GridPullToRefreshActivity : ToolBarActivity() {
         headerView.setTextColor(textColor)
         headerView.text = "HeaderView:" + recyclerView.headerViewCount
         headerView.onClick { recyclerView.addHeaderView(getHeaderView()) }
+        return headerView
+    }
+    /**
+     * 获得一个顶部控件
+     */
+    private fun getDynamicView(text:String): View{
+        val textColor = Data.randomColor
+        val header = LayoutInflater.from(this).inflate(R.layout.recyclerview_header1, findViewById(android.R.id.content) as ViewGroup, false)
+        val headerView = header as TextView
+        headerView.setTextColor(textColor)
+        headerView.text = "$text:" + recyclerView.headerViewCount
         return headerView
     }
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -103,7 +112,6 @@ class GridPullToRefreshActivity : ToolBarActivity() {
             adapter.removeNotify(0)
             return true
         }
-
         return super.onOptionsItemSelected(item)
     }
 

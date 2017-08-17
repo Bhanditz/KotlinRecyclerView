@@ -119,7 +119,8 @@ class TreeAdapterViewActivity : ToolBarActivity() {
             adapter.insertNode(file)
             return true
         } else if (id == R.id.action_remove) {
-            adapter.removeNode(1)
+            //adapter.removeNode(1) 移除当前列表展示位置节点,不分子父关系移除
+            adapter.removeRootNode(1)//移除指定位置根节点
             return true
         }
         return super.onOptionsItemSelected(item)

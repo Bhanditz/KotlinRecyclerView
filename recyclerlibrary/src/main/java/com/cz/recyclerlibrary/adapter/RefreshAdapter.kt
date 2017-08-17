@@ -16,15 +16,10 @@ open class RefreshAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>
     private var refreshFooterView: View? = null
 
     internal fun addRefreshView(view: View) {
-        val insertIndex: Int
         if (null == refreshFooterView) {
-            insertIndex = footerViewCount
-        } else {
-            insertIndex = footerViewCount - 1
+            refreshFooterView=view
+            super.addFooterView(view, footerViewCount)
         }
-        refreshFooterView=view
-        debugLog("addRefreshView:$view")
-        super.addFooterView(view, insertIndex)
     }
 
     internal fun removeRefreshView(view:View){

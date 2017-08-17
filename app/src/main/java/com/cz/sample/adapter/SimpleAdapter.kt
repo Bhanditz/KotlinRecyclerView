@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.cz.sample.R
 import com.cz.recyclerlibrary.adapter.BaseViewAdapter
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
+import com.cz.recyclerlibrary.callback.DividerInterceptCallback
 
 import java.util.Arrays
 
@@ -17,6 +18,7 @@ import java.util.Arrays
  * Created by cz on 16/1/23.
  */
 class SimpleAdapter<E>(context: Context, @param:LayoutRes private val layout: Int, items: List<E>) : BaseViewAdapter<E>(context, items) {
+
     companion object {
         private val TAG = "SimpleAdapter"
         fun createFromResource(context: Context, @ArrayRes res: Int): SimpleAdapter<*> {

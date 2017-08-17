@@ -21,6 +21,7 @@ import com.cz.recyclerlibrary.onRefresh
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_expand_recycler_view.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.toast
 
 import java.util.Random
 
@@ -42,12 +43,6 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
             Snackbar.make(v, getString(R.string.click_group_position, groupPosition, childPosition), Snackbar.LENGTH_LONG).show()
         }
 
-        recyclerView.addHeaderView(getHeaderView())
-        recyclerView.addHeaderView(getHeaderView())
-
-        recyclerView.addFooterView(getFooterView())
-        recyclerView.addFooterView(getFooterView())
-
         var times=0
         recyclerView.onRefresh {
             times = 0
@@ -68,6 +63,12 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
             times++
         }
         recyclerView.adapter=FriendAdapter(this, Data.createExpandItems(10, 10), true)
+
+        recyclerView.addHeaderView(getHeaderView())
+        recyclerView.addHeaderView(getHeaderView())
+
+        recyclerView.addFooterView(getDynamicView("FooterView"))
+        recyclerView.addFooterView(getDynamicView("FooterView"))
     }
 
     /**
@@ -86,12 +87,12 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
     /**
      * 获得一个顶部控件
      */
-    private fun getFooterView(): View{
+    private fun getDynamicView(text:String): View{
         val textColor = Data.randomColor
         val footer = LayoutInflater.from(this).inflate(R.layout.recyclerview_header1, findViewById(android.R.id.content) as ViewGroup, false)
         val footerView = footer as TextView
         footerView.setTextColor(textColor)
-        footerView.text = "HeaderView:" + recyclerView.headerViewCount
+        footerView.text = "$text:" + recyclerView.headerViewCount
         return footerView
     }
 
@@ -107,7 +108,11 @@ class PullToRefreshExpandActivity : ToolBarActivity() {
             return true
         } else if (id == R.id.action_remove) {
             val adapter=recyclerView.adapter as FriendAdapter
-            adapter.removeGroup(0)
+            if(0<adapter.itemCount){
+                adapter.removeGroup(0)
+            } else {
+                toast("没有更多条目了~")
+            }
             return true
         }
         return super.onOptionsItemSelected(item)

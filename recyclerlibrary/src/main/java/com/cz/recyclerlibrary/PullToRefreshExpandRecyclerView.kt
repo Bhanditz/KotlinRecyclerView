@@ -45,6 +45,7 @@ class PullToRefreshExpandRecyclerView : PullToRefreshRecyclerView {
         expandAdapter?.setHeaderViewCount(headerViewCount)
     }
 
+    override fun addDynamicView(view: View?, position: Int) =throw UnsupportedOperationException("Required method addDynamicView can't used")
 
     fun setOnExpandItemClickListener(listener: OnExpandItemClickListener) {
         this.expandItemClickListener = listener

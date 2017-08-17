@@ -66,8 +66,7 @@ class DynamicAdapterActivity : ToolBarActivity() {
         }
         buttonRandomAdd.onClick {
             val itemCount = simpleAdapter.itemCount
-//            addView(adapter,if(0==itemCount) 0 else random.nextInt(itemCount))
-            addView(13)
+            addView(if(0==itemCount) 0 else random.nextInt(itemCount))
         }
         buttonRandomRemove.onClick {
             val dynamicItemCount = recyclerView.dynamicItemCount

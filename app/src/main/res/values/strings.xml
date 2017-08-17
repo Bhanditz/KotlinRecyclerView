@@ -41,4 +41,5 @@
     <string name="add_dynamic_item">自动添加10个随机的动态条目?</string>
     <string name="no_any_dynamic_item">没有更多动态插入条目了~</string>
     <string name="add_random_item">是否批入插入测试数据?</string>
+    <string name="fork_my_github">如果您对项目感兴趣,可以关注我的Github</string>
 </resources>

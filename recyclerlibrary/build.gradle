@@ -96,6 +96,6 @@ bintray {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:recyclerview-v7:25.3.0'
-    compile 'cz.refreshlayout.library:refreshlayout:1.1.7'
+    compile 'cz.refreshlayout.library:refreshlayout:1.1.8'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

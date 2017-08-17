@@ -10,16 +10,32 @@
         android:layout_height="match_parent"
         auto:pv_divideVerticalPadding="@dimen/activity_margin"
         auto:pv_listDivideHeight="0.8dp"
-        auto:pv_listDivide="@color/divide"
-        auto:pv_dissatisfiedScreenLoad="false"/>
+        auto:pv_listDivide="@color/divide" />
 
 
-    <com.cz.sample.widget.RadioLayout
-        android:id="@+id/refreshModeLayout"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="right|bottom"
         android:layout_marginBottom="40dp"
-        auto:rl_items="@array/refreshMode"/>
+        android:layout_marginRight="12dp"
+        android:orientation="vertical">
+
+        <com.cz.sample.widget.RadioLayout
+            android:id="@+id/refreshHeaderLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            auto:rl_items="@array/refreshHeader"/>
+
+        <com.cz.sample.widget.RadioLayout
+            android:id="@+id/refreshModeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="right"
+            auto:rl_items="@array/refreshMode"/>
+    </LinearLayout>
+
 </FrameLayout>

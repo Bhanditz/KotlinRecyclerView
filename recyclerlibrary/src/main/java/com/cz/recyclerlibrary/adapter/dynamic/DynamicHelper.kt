@@ -4,6 +4,7 @@ import android.support.annotation.IdRes
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.cz.recyclerlibrary.debugLog
+import java.util.*
 
 /**
  * Created by cz on 2017/8/15.
@@ -190,19 +191,19 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
     fun itemRangeInsert(positionStart: Int, itemCount: Int) {
         debugLog("itemRangeInsert:${dynamicItems.map { it.position }}")
         //这里获取从0到插件元素范围内,元素总数,因为没人知道,动态条目在此范围内,到抵插入了多少个,到positionStart
-        val positionStart=getAdapterPositionStart(positionStart)
-        debugLog("itemRangeInsert:$positionStart acrossItemCount:$positionStart itemCount:$itemCount")
+        val position= headerViewCount+getAdapterPosition(positionStart)
+        debugLog("itemRangeInsert:$positionStart acrossItemCount:$position itemCount:$itemCount")
         forEach {
             //重置所有移除范围内的动态条信息
-            if (positionStart < it.position) {
+            if (position < it.position) {
                 it.position += itemCount//范围外条目,整体后退
             }
         }
         debugLog("itemRangeInsert:${dynamicItems.map { it.position }}")
         //如果当前插入位置为一个动态条目位置,向前+1
-        if(isDynamicPosition(positionStart))
-            adapter.notifyItemRangeInserted(positionStart+1, itemCount)
-        else adapter.notifyItemRangeInserted(positionStart, itemCount)
+        if(isDynamicPosition(position))
+            adapter.notifyItemRangeInserted(position+1, itemCount)
+        else adapter.notifyItemRangeInserted(position, itemCount)
     }
 
     /**
@@ -213,12 +214,15 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
      */
     fun itemRangeRemoved(positionStart: Int, itemCount: Int) {
         //1:计算移除总范围,以一个不断增加的数值,排除非动态条目的总个数条目
-        val positionStart=getAdapterPositionStart(positionStart)
+        val positionStart= headerViewCount+getAdapterPosition(positionStart)
         //复原原数据列大小,因为外围传入到这里时,数据已经移除了,所以添加回去
-        val adapterCount=adapter.itemCount+itemCount
-        var acrossItemCount = getAcrossItemCount(positionStart,itemCount, adapterCount)
+        val adapterCount=adapter.itemCount+itemCount-footerViewCount
+        //获取可移除范围尾,并与操作前数据列比较,否则可能会过界
+        var positionEnd = Math.min(adapterCount, getAdapterPosition(positionStart+itemCount))
+        val acrossItemCount=positionEnd-positionStart
         //可移除数据范围
-        val removeRange=positionStart..positionStart+acrossItemCount-1
+        val removeRange=positionStart..positionEnd-1
+
         //2:移除范围内条目
         dynamicItems.removeAll { it.position in removeRange }
         //3:前条目往前移
@@ -234,37 +238,21 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
     /**
      * 获得一个一个子Adapter 指定Position的经过所有条目个数
      */
-    private fun getAdapterPositionStart(itemCount: Int): Int {
-        var totalCount = 0
-        var adapterCount = 0
-        while (adapterCount < itemCount) {
+    private fun getAdapterPosition(position: Int): Int {
+        var itemCount = 0
+        var totalCount = position
+        val startPosition = getStartPosition(position)
+        while(itemCount<startPosition){
+            //越界跳出
             if (!isDynamicPosition(totalCount)) {
-                //添加移除条目个数,移除条目非动态条目<itemCount,则一直循环,直到到达指定位置为止,效率不高
-                adapterCount++
+                //添加移除条目个数,移除条目非动态条目<position,则一直循环,直到到达指定位置为止,效率不高
+                itemCount++
             }
             totalCount++
         }
         return totalCount
     }
 
-    /**
-     * 获得一个实现item个数的
-     */
-    private fun getAcrossItemCount(positionStart: Int,itemCount: Int,  adapterCount: Int): Int {
-        var totalCount = 0
-        var acrossCount = 0
-        while (acrossCount < itemCount) {
-            //计算上限不能超过数据集总数
-            if (positionStart + totalCount >= adapterCount) {
-                break
-            } else if (!isDynamicPosition(positionStart + totalCount)) {
-                //添加移除条目个数,移除条目非动态条目<itemCount,则一直循环,直到找到移除范围为止
-                acrossCount++
-            }
-            totalCount++
-        }
-        return totalCount
-    }
 
     /**
      * 添加一个自定义view到指定位置
@@ -279,7 +267,6 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
             }
         }
         //计算dynamic position时,不包含header count
-        var position=position-headerViewCount
         val viewType = DynamicHelper.TYPE_END + endTotalCount++
         dynamicItems.add(DynamicHelper.DynamicView(view,viewType,position))
         dynamicItems.sortBy { it.position }
@@ -320,7 +307,7 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
             //移除当前条目
             dynamicItems-=dynamicView
             //通知删除当前位置
-            adapter.notifyItemRemoved(dynamicView.position+headerViewCount)
+            adapter.notifyItemRemoved(dynamicView.position)
         }
     }
 
@@ -352,14 +339,15 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
         return result
     }
 
-    fun findPosition(position: Int): Int =findPosition(itemPositions, position)
+    /**
+     * 查找内置映射元素位置,此处不能使用Arrays.binarySearch
+     */
+    fun findPosition(position: Int): Int = findPosition(itemPositions,position)
 
     /**
      * 查找当前是否有返回值
      * @param array
-     * *
      * @param position
-     * *
      * @return
      */
     fun findPosition(array: IntArray, position: Int): Int {

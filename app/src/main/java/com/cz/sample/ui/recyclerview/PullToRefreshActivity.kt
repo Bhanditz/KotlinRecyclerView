@@ -23,6 +23,10 @@ import com.cz.recyclerlibrary.onRefresh
 import com.cz.sample.R
 
 import cz.refreshlayout.library.RefreshMode
+import cz.refreshlayout.library.header.MaterialDesignHeader
+import cz.refreshlayout.library.header.WalletHeader
+import cz.refreshlayout.library.strategy.FollowStrategy
+import cz.refreshlayout.library.strategy.FrontStrategy
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_linear_recycler_view.*
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -38,7 +42,6 @@ class PullToRefreshActivity : ToolBarActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_linear_recycler_view)
         setTitle(intent.getStringExtra("title"))
-        recyclerView.itemAnimator = SlideInLeftAnimator()
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         recyclerView.onItemClick { _, _,position ->
@@ -47,8 +50,8 @@ class PullToRefreshActivity : ToolBarActivity() {
         recyclerView.addHeaderView(getHeaderView())
         recyclerView.addHeaderView(getHeaderView())
 
-        recyclerView.addFooterView(getHeaderView())
-        recyclerView.addFooterView(getHeaderView())
+        recyclerView.addFooterView(getFooterView())
+        recyclerView.addFooterView(getFooterView())
 
 
         //初始设置2个,考虑其不满一屏加载状态
@@ -82,6 +85,25 @@ class PullToRefreshActivity : ToolBarActivity() {
             }
             times++
         }
+
+        //更新刷新头,以及模式
+        refreshHeaderLayout.setOnCheckedListener(object : RadioLayout.OnCheckedListener{
+            override fun onChecked(v: View, position: Int, isChecked: Boolean) {
+                when (position) {
+                    0 -> {
+                        //设置刷新头为MaterialDesign样式,刷新策略为前置
+                        recyclerView.setRefreshHeader(MaterialDesignHeader(v.context))
+                        recyclerView.setHeaderStrategy(FrontStrategy(recyclerView))
+                    }
+                    1 -> {
+                        //设置刷新头为钱包样式,刷新策略为刷新头追随
+                        recyclerView.setRefreshHeader(WalletHeader(v.context))
+                        recyclerView.setHeaderStrategy(FollowStrategy(recyclerView))
+                    }
+                }
+            }
+        })
+        //更换刷新模式
         refreshModeLayout.setOnCheckedListener(object : RadioLayout.OnCheckedListener{
             override fun onChecked(v: View, position: Int, isChecked: Boolean) {
                 recyclerView.setRefreshMode(when (position) {
@@ -105,6 +127,15 @@ class PullToRefreshActivity : ToolBarActivity() {
         headerView.setTextColor(textColor)
         headerView.text = "HeaderView:" + recyclerView.headerViewCount
         headerView.onClick { recyclerView.addHeaderView(getHeaderView()) }
+        return headerView
+    }
+
+    private fun getFooterView(): View{
+        val textColor = Data.randomColor
+        val header = LayoutInflater.from(this).inflate(R.layout.recyclerview_header1, findViewById(android.R.id.content) as ViewGroup, false)
+        val headerView = header as TextView
+        headerView.setTextColor(textColor)
+        headerView.text = "FooterView:" + recyclerView.headerViewCount
         return headerView
     }
 

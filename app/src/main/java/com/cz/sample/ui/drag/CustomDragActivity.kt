@@ -3,6 +3,7 @@ package com.cz.sample.ui.drag
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.SimpleItemAnimator
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -48,9 +49,10 @@ class CustomDragActivity : ToolBarActivity() {
     }
 
     private fun initAdapter(items:List<Channel>){
-        recyclerView.itemAnimator = FadeInDownAnimator()
         recyclerView.layoutManager = GridLayoutManager(this, 3)
+        recyclerView.itemAnimator = FadeInDownAnimator()
         val adapter = ChannelAdapter(this, items)
+        adapter.setHasStableIds(true)
         recyclerView.adapter = adapter
         val view = View.inflate(this, R.layout.recyclerview_header3, null)
         val editView = view.find<TextView>(R.id.tv_edit)
@@ -60,7 +62,7 @@ class CustomDragActivity : ToolBarActivity() {
             adapter.setDragStatus(editMode)
             editView.setText(if (editMode) R.string.complete else R.string.channel_sort_delete)
         }
-        recyclerView.onItemClick { _, _,position ->
+        recyclerView.onItemClick { _, position,_ ->
             val itemPosition = recyclerView.getItemPosition(position)//获得当前条目的位置
             val count = items.count { it.use }
             val item = adapter.getItem(itemPosition)
@@ -80,7 +82,7 @@ class CustomDragActivity : ToolBarActivity() {
         recyclerView.addDynamicView(R.layout.recyclerview_header4, items.count { it.use } + 1)
         recyclerView.onDragItemEnable { position->
             val item=adapter.getItem(position)
-            editMode && item?.use?:false
+            editMode && item.use
         }
 
     }

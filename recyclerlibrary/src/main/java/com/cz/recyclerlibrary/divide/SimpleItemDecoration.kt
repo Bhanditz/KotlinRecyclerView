@@ -8,6 +8,7 @@ import android.support.annotation.IntDef
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.cz.recyclerlibrary.callback.DividerInterceptCallback
 
 /**
  * Created by cz on 16/1/22.
@@ -20,13 +21,15 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
         const val GRID = 2
     }
 
+    //分隔线绘制拦截器
+    private var dividerInterceptor: DividerInterceptCallback?=null
     private var strokeWidth: Int = 0
     private var horizontalPadding: Int = 0
     private var verticalPadding: Int = 0
     private var headerCount: Int = 0
     private var footerCount: Int = 0
-    private var showHeader: Boolean = false
-    private var showFooter: Boolean = false
+    private var showHeaderDivider: Boolean = false
+    private var showFooterDivider: Boolean = false
     private var drawable: Drawable? = null
     private var divideMode: Int = 0
 
@@ -46,11 +49,11 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
     }
 
     fun showHeaderDecoration(showHeader: Boolean) {
-        this.showHeader = showHeader
+        this.showHeaderDivider = showHeader
     }
 
     fun showFooterDecoration(showFooter: Boolean) {
-        this.showFooter = showFooter
+        this.showFooterDivider = showFooter
     }
 
     fun setColorDrawable(color: Int) {
@@ -60,6 +63,10 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
 
     fun setDrawable(drawable: Drawable?) {
         this.drawable = drawable
+    }
+
+    fun setDividerInterceptor(interceptor:DividerInterceptCallback){
+        this.dividerInterceptor=interceptor
     }
 
     /**
@@ -97,18 +104,18 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
         val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
 
-        val itemCount = state.itemCount
+        val itemCount = state.itemCount-1
         val childCount = parent.childCount
+        //最后一个条目不画线
         for (i in 0..childCount - 1) {
             val child = parent.getChildAt(i)
             val itemPosition = parent.getChildAdapterPosition(child)
-            if (needDraw(itemCount, itemPosition)) {
-                val params = child
-                        .layoutParams as RecyclerView.LayoutParams
+            if (interceptDivider(itemCount, itemPosition)) {
+                val params = child.layoutParams as RecyclerView.LayoutParams
                 val top = child.bottom + params.bottomMargin
                 val bottom = top + strokeWidth
-                drawable!!.setBounds(left + verticalPadding, top, right - verticalPadding, bottom)
-                drawable!!.draw(c)
+                drawable?.setBounds(left + verticalPadding, top, right - verticalPadding, bottom)
+                drawable?.draw(c)
             }
         }
     }
@@ -117,18 +124,18 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
         val top = parent.paddingTop
         val bottom = parent.height - parent.paddingBottom
 
-        val childCount = parent.childCount
+        val childCount = parent.childCount-1
         val itemCount = state.itemCount
         for (i in 0..childCount - 1) {
             val child = parent.getChildAt(i)
             val itemPosition = parent.getChildAdapterPosition(child)
-            if (needDraw(itemCount, itemPosition)) {
+            if (interceptDivider(itemCount, itemPosition)) {
                 val params = child
                         .layoutParams as RecyclerView.LayoutParams
                 val left = child.right + params.rightMargin
                 val right = left + strokeWidth
-                drawable!!.setBounds(left, top + horizontalPadding, right, bottom - horizontalPadding)
-                drawable!!.draw(c)
+                drawable?.setBounds(left, top + horizontalPadding, right, bottom - horizontalPadding)
+                drawable?.draw(c)
             }
         }
     }
@@ -142,21 +149,21 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
             val child = parent.getChildAt(i)
             val layoutParams = child.layoutParams as RecyclerView.LayoutParams
             val itemPosition = layoutParams.viewLayoutPosition
-            if (needDraw(itemCount, itemPosition)) {
+            if (interceptDivider(itemCount, itemPosition)) {
                 //绘左侧
                 var left = child.left - layoutParams.leftMargin - strokeWidth
                 var right = child.left - layoutParams.leftMargin
                 var top = child.top + layoutParams.topMargin - strokeWidth
                 var bottom = child.bottom + layoutParams.bottomMargin + strokeWidth
-                drawable!!.setBounds(left, top, right, bottom)
-                drawable!!.draw(c)
+                drawable?.setBounds(left, top, right, bottom)
+                drawable?.draw(c)
                 //绘右侧
                 left = child.right + layoutParams.rightMargin
                 right = child.right + layoutParams.rightMargin + strokeWidth
                 top = child.top + layoutParams.topMargin - strokeWidth
                 bottom = child.bottom + layoutParams.bottomMargin + strokeWidth
-                drawable!!.setBounds(left, top, right, bottom)
-                drawable!!.draw(c)
+                drawable?.setBounds(left, top, right, bottom)
+                drawable?.draw(c)
             }
         }
     }
@@ -169,21 +176,21 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
             val child = parent.getChildAt(i)
             val layoutParams = child.layoutParams as RecyclerView.LayoutParams
             val itemPosition = layoutParams.viewLayoutPosition
-            if (needDraw(itemCount, itemPosition)) {
+            if (interceptDivider(itemCount, itemPosition)) {
                 //绘上边
                 var left = child.left
                 var right = child.right
                 var top = child.top - layoutParams.topMargin - strokeWidth
                 var bottom = child.top - layoutParams.topMargin
-                drawable!!.setBounds(left, top, right, bottom)
-                drawable!!.draw(c)
+                drawable?.setBounds(left, top, right, bottom)
+                drawable?.draw(c)
                 //绘下边
                 left = child.left
                 right = child.right
                 top = child.bottom + layoutParams.bottomMargin
                 bottom = child.bottom + layoutParams.bottomMargin + strokeWidth
-                drawable!!.setBounds(left, top, right, bottom)
-                drawable!!.draw(c)
+                drawable?.setBounds(left, top, right, bottom)
+                drawable?.draw(c)
             }
         }
     }
@@ -193,9 +200,9 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
         super.getItemOffsets(outRect, view, parent, state)
         val strokeWidth = this.strokeWidth
         val layoutParams = view.layoutParams as RecyclerView.LayoutParams
-        val itemCount = state!!.itemCount
+        val itemCount = state?.itemCount?:0
         val itemPosition = layoutParams.viewLayoutPosition
-        if (!needDraw(itemCount, itemPosition)) {
+        if (!interceptDivider(itemCount, itemPosition)) {
             outRect.set(0, 0, 0, 0)
         } else {
             when (divideMode) {
@@ -220,20 +227,22 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
     }
 
     /**
-     * 是否需要绘制
-
+     * 是否拦截绘制分隔线
      * @param itemCount
      * *
      * @param itemPosition
      * *
      * @return
      */
-    private fun needDraw(itemCount: Int, itemPosition: Int): Boolean {
+    private fun interceptDivider(itemCount: Int, itemPosition: Int): Boolean {
         var result = null != drawable
         if (headerCount > itemPosition) {
-            result = showHeader
+            result = showHeaderDivider
         } else if (footerCount >= itemCount - itemPosition) {
-            result = showFooter
+            result = showFooterDivider
+        } else if((dividerInterceptor?.intercept(itemPosition-headerCount))?:false){
+            //如果需要拦截置为false
+            result = false
         }
         return result
     }
