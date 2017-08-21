@@ -2,10 +2,10 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "1.2.3"
+version = "1.2.4"
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.2"
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 25
@@ -15,9 +15,6 @@ android {
     lintOptions {
         abortOnError false
     }
-    aaptOptions {
-        additionalParameters "--no-version-vectors"
-    }
     buildTypes {
         release {
             minifyEnabled false
@@ -25,20 +22,19 @@ android {
         }
     }
 }
-
-def siteUrl = 'https://github.com/momodae/KotlinRecyclerView'
-def gitUrl = 'https://github.com/momodae/KotlinRecyclerView.git'
-group = "com.cz.recyclerlibrary"
+def siteUrl = 'https://github.com/momodae/KotlinPulltoRefreshLayout'
+def gitUrl = 'https://github.com/momodae/KotlinPulltoRefreshLayout.git'
+group = "cz.refreshlayout.library"
 install {
     repositories.mavenInstaller {
         pom {
             project {
                 packaging 'aar'
                 // Add your description here
-                name 'Android Kotlin RecyclerView Library'
+                name 'Android kotlin refresh library'
                 url siteUrl
                 // Set your license
-                    licenses {
+                licenses {
                     license {
                         name 'The Apache Software License, Version 2.0'
                         url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
@@ -64,6 +60,15 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
 }
+
+task makeJar(type: Copy) {
+    delete 'build/libs/http.jar'
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'http.jar')
+}
+
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
@@ -86,7 +91,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "maven"
-        name = "KotlinRecyclerViewLibrary"  //发布到Bintray上的项目名字
+        name = "KotlinPullToRefreshLayout"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
@@ -95,10 +100,8 @@ bintray {
 }
 
 
-
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:recyclerview-v7:25.3.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:25.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'cz.refreshlayout.library:refreshlayout:1.2.5'
 }

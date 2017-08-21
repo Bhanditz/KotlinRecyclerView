@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PullToRefreshLayout">
+        <attr name="pl_resistance" format="float"/>
+        <attr name="pl_maxOffsetScroll" format="dimension"/>
+        <!--最短刷新时间,为解决多数刷新过快,看不到刷新效果问题-->
+        <attr name="pl_minRefreshDuration" format="integer"/>
+        <attr name="pl_headerType">
+            <enum name="wallet" value="0x00"/>
+            <enum name="material" value="0x01"/>
+        </attr>
+        <attr name="pl_headerStrategy">
+            <enum name="front" value="0x02"/>
+            <enum name="follow" value="0x00"/>
+            <enum name="overlap" value="0x01"/>
+            <enum name="scroll" value="0x03"/>
+        </attr>
+        <attr name="pl_refreshMode">
+            <enum name="both" value="0x00"/>
+            <enum name="start" value="0x01"/>
+            <enum name="end" value="0x02"/>
+            <enum name="none" value="0x03"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="WalletView">
+        <attr name="wv_radius" format="dimension"/>
+        <attr name="wv_strokeWidth" format="dimension"/>
+        <attr name="wv_maxStrokeWidth" format="dimension"/>
+        <attr name="wv_color" format="color"/>
+        <attr name="wv_innerStrokeWidth" format="dimension"/>
+        <attr name="wv_innerPadding" format="dimension"/>
+        <attr name="wv_innerColor" format="color"/>
+        <attr name="wv_interval" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="HeaderAttribute">
+        <attr name="walletView" format="reference"/>
+        <attr name="pullToRefreshLayout" format="reference"/>
+    </declare-styleable>
+
+
+
+</resources>

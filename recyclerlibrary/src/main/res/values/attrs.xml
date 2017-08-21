@@ -4,6 +4,7 @@
     <declare-styleable name="PullToRefreshRecyclerView">
         <attr name="pv_listDivide" format="reference" />
         <attr name="pv_listDivideHeight" format="dimension" />
+        <attr name="pv_hasItemAnimator" format="boolean" />
         <attr name="pv_divideHorizontalPadding" format="dimension" />
         <attr name="pv_divideVerticalPadding" format="dimension" />
         <attr name="pv_dissatisfiedScreenLoad" format="boolean"/>

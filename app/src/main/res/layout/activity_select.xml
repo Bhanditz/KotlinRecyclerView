@@ -12,6 +12,7 @@
         auto:pv_choiceMaxCount="5">
 
     <TextView
+        android:id="@+id/headerLabel1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/blue"

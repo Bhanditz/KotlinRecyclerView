@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         auto:pv_divideVerticalPadding="@dimen/activity_margin"
+        auto:pl_minRefreshDuration="2000"
         auto:pv_listDivideHeight="0.8dp"
         auto:pv_listDivide="@color/divide" />
 
@@ -27,6 +28,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="right"
+            android:visibility="gone"
             auto:rl_items="@array/refreshHeader"/>
 
         <com.cz.sample.widget.RadioLayout

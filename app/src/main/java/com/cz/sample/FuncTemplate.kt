@@ -11,6 +11,7 @@ import com.cz.sample.ui.recyclerview.GridPullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshExpandActivity
 import com.cz.sample.ui.sticky.*
+import cz.kotlinwidget.ui.NewViewPagerListActivity
 
 /**
  * Created by Administrator on 2017/6/8.
@@ -54,9 +55,16 @@ class FuncTemplate {
                     item {
                         pid = 1
                         title = "ExpandRecyclerView"
-                        desc = "ViewPager嵌套NewViewPager,解决事件冲突"
+                        desc = "演示ExpandRecyclerView展示效果"
                         clazz = PullToRefreshExpandActivity::class.java
                     }
+                    item {
+                        pid = 1
+                        title = "PagerRecyclerView"
+                        desc = "演示RecyclerView添加ViewPager头效果"
+                        clazz = NewViewPagerListActivity::class.java
+                    }
+
                 }
                 item {
                     id = 2

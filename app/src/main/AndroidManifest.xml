@@ -35,7 +35,7 @@
         <activity android:name="com.cz.sample.ui.sticky.Sticky3SampleActivity"/>
         <activity android:name="com.cz.sample.ui.sticky.Sticky4SampleActivity"/>
         <activity android:name="com.cz.sample.ui.sticky.Sticky5SampleActivity"/>
-
+        <activity android:name="cz.kotlinwidget.ui.NewViewPagerListActivity"/>
     </application>
 
 </manifest>

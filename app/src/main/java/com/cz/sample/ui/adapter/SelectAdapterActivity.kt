@@ -38,7 +38,6 @@ class SelectAdapterActivity : ToolBarActivity() {
         recyclerView.itemAnimator = SlideInLeftAnimator()
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-
         recyclerView.adapter=SimpleSelectAdapter(this, Data.createItems(this, 100))
         recyclerView.addHeaderView(getHeaderView())
         recyclerView.addFooterView(getFooterView())
@@ -61,7 +60,7 @@ class SelectAdapterActivity : ToolBarActivity() {
         recyclerView.onRectangleSelect { start, end ->
             Toast.makeText(applicationContext, "Start:$start End:$end", Toast.LENGTH_SHORT).show()
         }
-        recyclerView.findAdapterView(R.id.tv_last)?.onClick { Toast.makeText(this@SelectAdapterActivity, "List Item", Toast.LENGTH_SHORT).show() }
+        recyclerView.findAdapterView<View>(R.id.tv_last)?.onClick { Toast.makeText(this@SelectAdapterActivity, "List Item", Toast.LENGTH_SHORT).show() }
     }
 
     /**

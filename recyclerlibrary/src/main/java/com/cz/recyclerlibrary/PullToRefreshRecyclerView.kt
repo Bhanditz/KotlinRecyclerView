@@ -4,11 +4,7 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.annotation.IdRes
 import android.support.annotation.IntDef
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.OrientationHelper
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.*
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -93,10 +89,20 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
         setListDivideHeight(a.getDimension(R.styleable.PullToRefreshRecyclerView_pv_listDivideHeight, 0f))
         setDivideHorizontalPadding(a.getDimension(R.styleable.PullToRefreshRecyclerView_pv_divideHorizontalPadding, 0f))
         setDivideVerticalPadding(a.getDimension(R.styleable.PullToRefreshRecyclerView_pv_divideVerticalPadding, 0f))
+        setHasItemAnimator(a.getBoolean(R.styleable.PullToRefreshRecyclerView_pv_hasItemAnimator,true))
         setDissatisfiedScreenLoad(a.getBoolean(R.styleable.PullToRefreshRecyclerView_pv_dissatisfiedScreenLoad,true))
         setSelectModeInner(a.getInt(R.styleable.PullToRefreshRecyclerView_pv_choiceMode, CLICK))
         setSelectMaxCount(a.getInteger(R.styleable.PullToRefreshRecyclerView_pv_choiceMaxCount, SelectAdapter.MAX_COUNT))
         a.recycle()
+    }
+
+    /**
+     * 设定是否拥有itemAnimator动画,因为hasTableId后,全局替换元素,会导致崩溃,所以单独提供此方法设定
+     */
+    private fun setHasItemAnimator(hasItemAnimator: Boolean) {
+        if(!hasItemAnimator){
+            itemAnimator=null
+        }
     }
 
     override fun onFinishInflate() {
@@ -188,6 +194,10 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
 
     override fun getTargetRefreshView(): View? {
         val recyclerView = RecyclerView(context)
+        val itemAnimator=recyclerView.itemAnimator
+        if(null!=itemAnimator&&itemAnimator is SimpleItemAnimator){
+            itemAnimator.supportsChangeAnimations = false
+        }
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -349,7 +359,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * *
      * @return
      */
-    open fun findAdapterView(@IdRes id: Int): View? =findViewById(id)?:wrapperAdapter.findDynamicView(id)
+    open fun<V:View> findAdapterView(@IdRes id: Int): V =(findViewById(id)?:wrapperAdapter.findDynamicView(id)) as V
 
     /**
      * check object is a null,when object is null reference throw NullPointerException
@@ -458,6 +468,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
         if (END_REFRESHING == refreshState) {
             refreshState = END_NORMAL
             this.refreshView.requestLayout()
+            this.refreshView.invalidateItemDecorations()
         }
     }
 

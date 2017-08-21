@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.cz.recyclerlibrary.PullToRefreshRecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            auto:pl_refreshMode="start"
+            auto:pl_minRefreshDuration="2000">
+
+            <cz.widget.viewpager.NewViewPager
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                auto:np_cycle="true"
+                auto:np_minCirculateCount="2"
+                android:background="@color/colorAccent"/>
+        </com.cz.recyclerlibrary.PullToRefreshRecyclerView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:gravity="right"
+            android:layout_margin="8dp">
+
+            <Button
+                android:id="@+id/addItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AddItem"/>
+
+            <Button
+                android:id="@+id/removeItem"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RemoveItem"/>
+
+
+        </LinearLayout>
+
+    </FrameLayout>
+</LinearLayout>

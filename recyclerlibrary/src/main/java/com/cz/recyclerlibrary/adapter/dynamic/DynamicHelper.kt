@@ -142,10 +142,16 @@ class DynamicHelper(val adapter:RecyclerView.Adapter<RecyclerView.ViewHolder>){
     fun findDynamicView(@IdRes id: Int): View?{
         var findView: View? = headerItems.find { it.view.id==id }?.view
         if (null == findView) {
-            findView = footerItems.find { it.view.id==id }?.view
+            footerItems.find {
+                findView=it.view.findViewById(id)
+                null!=findView
+            }
         }
         if (null == findView) {
-            findView = dynamicItems.find { it.view.id==id }?.view
+            dynamicItems.find {
+                findView=it.view.findViewById(id)
+                null!=findView
+            }
         }
         return findView
     }

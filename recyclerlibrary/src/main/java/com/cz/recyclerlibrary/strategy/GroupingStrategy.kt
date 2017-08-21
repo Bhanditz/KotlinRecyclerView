@@ -35,7 +35,6 @@ class GroupingStrategy<T> {
      */
     private fun registerAdapterDataObserver(adapter: BaseViewAdapter<T>) {
         //同步整个列表数据变化
-        adapter.setHasStableIds(true)
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)

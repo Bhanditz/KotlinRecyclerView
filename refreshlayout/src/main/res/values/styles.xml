@@ -1,0 +1,19 @@
+<resources>
+    <style name="WalletView">
+        <item name="wv_radius">16dp</item>
+        <item name="wv_strokeWidth">1.2dp</item>
+        <item name="wv_maxStrokeWidth">10dp</item>
+        <item name="wv_color">?android:colorAccent</item>
+        <item name="wv_innerStrokeWidth">1.2dp</item>
+        <item name="wv_innerPadding">8dp</item>
+        <item name="wv_innerColor">?android:colorAccent</item>
+        <item name="wv_interval">2dp</item>
+    </style>
+    <style name="PullToRefreshLayout">
+        <item name="pl_resistance">1</item>
+        <item name="pl_maxOffsetScroll">100dp</item>
+        <item name="pl_headerType">wallet</item>
+        <item name="pl_headerStrategy">follow</item>
+        <item name="pl_refreshMode">both</item>
+    </style>
+</resources>

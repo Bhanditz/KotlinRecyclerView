@@ -60,10 +60,9 @@ class PullToRefreshActivity : ToolBarActivity() {
         recyclerView.onItemClick { v, _,position -> Snackbar.make(v, getString(R.string.click_position, position), Snackbar.LENGTH_LONG).show() }
         //下拉加载
         recyclerView.onRefresh {
-            recyclerView.postDelayed({
+            recyclerView.onRefreshComplete {
                 adapter.addItemsNotify(Data.createItems(this, 2), 0)
-                recyclerView.onRefreshComplete()
-            }, 1000)
+            }
         }
         //上拉刷新
         var times=0
