@@ -8,6 +8,7 @@ import android.view.ViewGroup
 
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
 import com.cz.recyclerlibrary.callback.OnNodeItemClickListener
+import com.cz.recyclerlibrary.callback.OnNodeItemLongClickListener
 
 import java.util.ArrayList
 import java.util.LinkedList
@@ -24,6 +25,8 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
     protected val originalItems = ArrayList<E>()
     protected val nodeItems= ArrayList<TreeNode<E>>()//树的列表展示节点
+    private var callback:((TreeAdapter.TreeNode<E>)->Unit)?=null//延持装载监听
+    private var longItemClickListener: OnNodeItemLongClickListener<E>? = null
     private var listener: OnNodeItemClickListener<E>? = null
     private var headerCount: Int = 0//头控件数
 
@@ -76,11 +79,19 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
         holder.itemView.setOnClickListener { v ->
             val itemPosition = holder.adapterPosition - headerCount
             val node = getNode(itemPosition)
+            //准备展示,请求延持加载
+            val callback=callback
+            if(null!=callback&&!node.expand&&!node.load){
+                callback.invoke(node)
+                node.load=true
+            }
+            //置为true,取得当前展开后的节点
             val expand = node.expand
-            node.expand = true//置为true,取得当前展开后的节点
+            node.expand = true
             val items = getItems(node)
             val addNodes = getNodeItems(node)
             node.expand = !expand//更新展开状态
+
             if (!addNodes.isEmpty()) {
                 val size = addNodes.size
                 onNodeExpand(node, holder, !expand)
@@ -152,6 +163,22 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
                 action(node,v,position)
             }
         }
+    }
+
+    open fun setOnNodeItemLongClickListener(listener: OnNodeItemLongClickListener<E>) {
+        this.longItemClickListener = listener
+    }
+
+    open fun onNodeItemLongClick(action:(TreeAdapter.TreeNode<E>?, View?,Int)->Boolean){
+        setOnNodeItemLongClickListener(object :OnNodeItemLongClickListener<E>{
+            override fun onNodeLongItemClick(node: TreeNode<E>, v: View, position: Int): Boolean {
+                return action(node,v,position)
+            }
+        })
+    }
+
+    open fun setOnNodeLoadCallback(callback:(TreeAdapter.TreeNode<E>)->Unit){
+        this.callback=callback
     }
 
     /**
@@ -312,6 +339,7 @@ abstract class TreeAdapter<E>(context: Context, protected val rootNode: TreeNode
     ) {
         var child= ArrayList<TreeNode<E>>()//子节点
         var level: Int = 0//当前节点级 0 1 2
+        var load=false
 
         constructor(e: E) : this(false, null, e)
 

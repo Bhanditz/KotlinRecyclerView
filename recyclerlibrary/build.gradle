@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
-version = "1.2.3"
+version = "1.2.5"
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
@@ -100,5 +100,5 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:recyclerview-v7:25.3.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile 'cz.refreshlayout.library:refreshlayout:1.2.5'
+    compile 'cz.refreshlayout.library:refreshlayout:1.2.6'
 }

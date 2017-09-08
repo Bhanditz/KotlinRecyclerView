@@ -61,25 +61,25 @@ class OverlapStrategy(layout: PullToRefreshLayout) : BaseStrategy(layout) {
 
     override fun onRefreshPreFling(target: View, velocityX: Float, velocityY: Float,refreshHeight:Int): Boolean {
         //这里以模式进行约束,因为,Front模式列表位置一直固定
-        if(target.top>0&&!layout.isRefreshing()){
-            if(0>velocityY||refreshHeight<=target.top){
-                debugLog("startScroll>: velocityY:$velocityY top:${target.top}")
-                setRefreshing()
-                offsetHeaderTopAndBottom(target,target.top-refreshHeight)
-            } else {
-                offsetHeaderTopAndBottom(target, target.top) { layout.setRefreshState(RefreshState.NONE) }
-                debugLog("startScroll<: velocityY:$velocityY top:${target.top}")
-            }
-        }
-        if(layout.isRefreshing()){
-            //处在刷新状态,松手回到刷新处
-            debugLog("startScroll: velocityY:$velocityY top:${target.top}")
-            if(refreshHeight<=target.top){
-                offsetHeaderTopAndBottom(target,target.top-refreshHeight)
-            } else {
-                offsetHeaderTopAndBottom(target,target.top)
-            }
-        }
+//        if(target.top>0&&!layout.isRefreshing()){
+//            if(0>velocityY||refreshHeight<=target.top){
+//                debugLog("startScroll>: velocityY:$velocityY top:${target.top}")
+//                setRefreshing()
+//                offsetHeaderTopAndBottom(target,target.top-refreshHeight)
+//            } else {
+//                offsetHeaderTopAndBottom(target, target.top) { layout.setRefreshState(RefreshState.NONE) }
+//                debugLog("startScroll<: velocityY:$velocityY top:${target.top}")
+//            }
+//        }
+//        if(layout.isRefreshing()){
+//            //处在刷新状态,松手回到刷新处
+//            debugLog("startScroll: velocityY:$velocityY top:${target.top}")
+//            if(refreshHeight<=target.top){
+//                offsetHeaderTopAndBottom(target,target.top-refreshHeight)
+//            } else {
+//                offsetHeaderTopAndBottom(target,target.top)
+//            }
+//        }
         //让列表在非刷新模式下一直可以滚动
         return false
     }

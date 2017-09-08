@@ -118,7 +118,7 @@ fun DynamicAdapter.onItemClick(listener:(View, Int,Int)->Unit){
 
 
 val DEBUG=true
-inline fun<reified T> T.debugLog(message:String){
+internal inline fun<reified T> T.debugLog(message:String){
     if(DEBUG){
         Log.e("RecyclerView",message)
     }

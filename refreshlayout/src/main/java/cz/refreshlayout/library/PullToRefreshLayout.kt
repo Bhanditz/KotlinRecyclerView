@@ -301,7 +301,7 @@ open class PullToRefreshLayout(context: Context, attrs: AttributeSet?, defStyleA
             this.refreshHeader.onRefreshComplete {
                 this.strategy.onRefreshComplete(action)
             }
-        } else {
+        } else if(isRefreshState(RefreshState.REFRESHING_DRAGGING)){
             //当前为拖动状态,执行事件,并标记为刷新己完成
             debugLog("callRefreshComplete drag:${refreshItem.refreshState}")
             action?.invoke()
@@ -370,7 +370,7 @@ open class PullToRefreshLayout(context: Context, attrs: AttributeSet?, defStyleA
                 if(isRefreshing()){
                     //设定为刷新但用户又重新拖动状态
                     setRefreshState(RefreshState.REFRESHING_DRAGGING)
-                } else if(isRefreshState(RefreshState.NONE)){
+                } else {
                     //设定为开始拖动
                     setRefreshState(RefreshState.START_PULL)
                 }

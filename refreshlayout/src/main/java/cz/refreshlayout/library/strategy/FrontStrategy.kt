@@ -53,19 +53,19 @@ class FrontStrategy(layout: PullToRefreshLayout) : BaseStrategy(layout) {
 
 
     override fun onRefreshPreFling(target: View, velocityX: Float, velocityY: Float,refreshHeight:Int): Boolean {
-        val headerView = layout.getRefreshHeaderView()
-        debugLog("onRefreshPreFling: top:${target.top} ${headerView.bottom}")
-        //这里以模式进行约束,因为,Front模式列表位置一直固定
-        if(headerView.bottom>target.top&& !layout.isRefreshing()){
-            if(0>velocityY||refreshHeight<headerView.bottom){
-                debugLog("startScroll>: velocityY:$velocityY top:${headerView.bottom} ${headerView.height}")
-                setRefreshing()
-                offsetHeaderTopAndBottom(headerView,headerView.bottom-refreshHeight)
-            } else {
-                offsetHeaderTopAndBottom(headerView,headerView.bottom){ layout.setRefreshState(RefreshState.NONE) }
-                debugLog("startScroll<: velocityY:$velocityY top:${headerView.bottom} ${headerView.height}")
-            }
-        }
+//        val headerView = layout.getRefreshHeaderView()
+//        debugLog("onRefreshPreFling: top:${target.top} ${headerView.bottom}")
+//        //这里以模式进行约束,因为,Front模式列表位置一直固定
+//        if(headerView.bottom>target.top&& !layout.isRefreshing()){
+//            if(0>velocityY||refreshHeight<headerView.bottom){
+//                debugLog("startScroll>: velocityY:$velocityY top:${headerView.bottom} ${headerView.height}")
+//                setRefreshing()
+//                offsetHeaderTopAndBottom(headerView,headerView.bottom-refreshHeight)
+//            } else {
+//                offsetHeaderTopAndBottom(headerView,headerView.bottom){ layout.setRefreshState(RefreshState.NONE) }
+//                debugLog("startScroll<: velocityY:$velocityY top:${headerView.bottom} ${headerView.height}")
+//            }
+//        }
         //让列表在非刷新模式下一直可以滚动
         return false
     }

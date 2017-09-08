@@ -359,7 +359,8 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * *
      * @return
      */
-    open fun<V:View> findAdapterView(@IdRes id: Int): V =(findViewById(id)?:wrapperAdapter.findDynamicView(id)) as V
+    open fun<V:View> findAdapterView(@IdRes id: Int): V? =(findViewById(id)?:wrapperAdapter.findDynamicView(id)) as? V
+
 
     /**
      * check object is a null,when object is null reference throw NullPointerException
