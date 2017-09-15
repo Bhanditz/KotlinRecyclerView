@@ -36,6 +36,11 @@
         <activity android:name="com.cz.sample.ui.sticky.Sticky4SampleActivity"/>
         <activity android:name="com.cz.sample.ui.sticky.Sticky5SampleActivity"/>
         <activity android:name="cz.kotlinwidget.ui.NewViewPagerListActivity"/>
+
+        <activity android:name=".ui.layoutmanager.ui.SampleLinearLayoutManagerActivity"/>
+        <activity android:name=".ui.layoutmanager.ui.WheelDateActivity"/>
+        <activity android:name=".ui.layoutmanager.ui.GalleryActivity"/>
+        <activity android:name=".ui.layoutmanager.ui.TableActivity"/>
     </application>
 
 </manifest>

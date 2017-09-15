@@ -30,8 +30,8 @@ class NewPagerListFragment :Fragment(){
         recyclerView.adapter=adapter
         val viewPager = recyclerView.findAdapterView<NewViewPager>(R.id.viewPager)
         val itemAdapter = ImageItemAdapter(context, listOf("Item1", "Item2", "Item3"))
-        viewPager.setAdapter(itemAdapter)
-        viewPager.startAutoScroll()
+        viewPager?.setAdapter(itemAdapter)
+        viewPager?.startAutoScroll()
         addItem.onClick {
             itemAdapter.items.add("Item${itemAdapter.count+1}")
             itemAdapter.notifyDataSetChanged()

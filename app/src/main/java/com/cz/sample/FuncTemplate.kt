@@ -7,6 +7,10 @@ import com.cz.sample.ui.drag.CustomDragActivity
 import com.cz.sample.ui.drag.DynamicDragActivity
 import com.cz.sample.ui.drag.GridDragActivity
 import com.cz.sample.ui.drag.LinearDragActivity
+import com.cz.sample.ui.layoutmanager.ui.GalleryActivity
+import com.cz.sample.ui.layoutmanager.ui.SampleLinearLayoutManagerActivity
+import com.cz.sample.ui.layoutmanager.ui.TableActivity
+import com.cz.sample.ui.layoutmanager.ui.WheelDateActivity
 import com.cz.sample.ui.recyclerview.GridPullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshExpandActivity
@@ -164,6 +168,36 @@ class FuncTemplate {
                         title = "Sample"
                         desc = "演示资讯的联动拖动排版"
                         clazz = CustomDragActivity::class.java
+                    }
+                }
+
+                item {
+                    id = 5
+                    title = "自定义LayoutManager扩展功能"
+                    desc = "自定义Wheel/Gallery/TableView"
+                    item {
+                        pid = 5
+                        title = "LinearLayoutManager"
+                        desc = "演示最核心的自定义LinearLayoutManager"
+                        clazz = SampleLinearLayoutManagerActivity::class.java
+                    }
+                    item {
+                        pid = 5
+                        title = "Wheel"
+                        desc = "演示日期展示"
+                        clazz = WheelDateActivity::class.java
+                    }
+                    item {
+                        pid = 5
+                        title = "Gallery"
+                        desc = "演示Gallery图片展示"
+                        clazz = GalleryActivity::class.java
+                    }
+                    item {
+                        pid = 5
+                        title = "Table"
+                        desc = "演示表格数据"
+                        clazz = TableActivity::class.java
                     }
                 }
 

@@ -42,6 +42,27 @@
         <attr name="footer_load" format="string"/>
     </declare-styleable>
 
+    <declare-styleable name="WheelView">
+        <attr name="wv_divideDrawable" format="reference"/>
+        <attr name="wv_drawablePadding" format="dimension"/>
+        <attr name="wv_drawableSize" format="dimension"/>
+        <attr name="wv_wheelCount" format="integer"/>
+        <attr name="wv_minScrollOffset" format="float"/>
+        <attr name="wv_wheelEnable" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="GalleryView">
+        <attr name="gv_minScrollOffset" format="float"/>
+        <attr name="gv_gravity" format="enum">
+            <enum name="start" value="0x00"/>
+            <enum name="center" value="0x01"/>
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="TableView">
+        <attr name="tv_columnCount" format="integer"/>
+    </declare-styleable>
+
 
 
 </resources>

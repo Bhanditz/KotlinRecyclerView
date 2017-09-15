@@ -3,6 +3,7 @@ package com.cz.sample.adapter
 import android.content.Context
 import android.support.annotation.ArrayRes
 import android.support.annotation.LayoutRes
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.TextView
@@ -45,6 +46,16 @@ class SimpleAdapter<E>(context: Context, @param:LayoutRes private val layout: In
         if (null != item) {
             textView.text = item.toString()
         }
+    }
+
+    override fun onViewRecycled(holder: BaseViewHolder) {
+        Log.e(TAG, "onViewRecycled:" + holder.adapterPosition)
+        super.onViewRecycled(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: BaseViewHolder) {
+        Log.e(TAG, "onViewDetachedFromWindow:" + holder.adapterPosition)
+        super.onViewDetachedFromWindow(holder)
     }
 
 }

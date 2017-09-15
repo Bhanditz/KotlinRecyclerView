@@ -101,14 +101,14 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
 
 
     fun drawLinearVertical(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        val left = parent.paddingLeft
-        val right = parent.width - parent.paddingRight
 
         val itemCount = state.itemCount-1
         val childCount = parent.childCount
         //最后一个条目不画线
         for (i in 0..childCount - 1) {
             val child = parent.getChildAt(i)
+            val left = 0
+            val right = child.width
             val itemPosition = parent.getChildAdapterPosition(child)
             if (interceptDivider(itemCount, itemPosition)) {
                 val params = child.layoutParams as RecyclerView.LayoutParams
@@ -121,17 +121,15 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
     }
 
     fun drawLinearHorizontal(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        val top = parent.paddingTop
-        val bottom = parent.height - parent.paddingBottom
-
         val childCount = parent.childCount-1
         val itemCount = state.itemCount
         for (i in 0..childCount - 1) {
             val child = parent.getChildAt(i)
+            val top = 0
+            val bottom = child.height
             val itemPosition = parent.getChildAdapterPosition(child)
             if (interceptDivider(itemCount, itemPosition)) {
-                val params = child
-                        .layoutParams as RecyclerView.LayoutParams
+                val params = child.layoutParams as RecyclerView.LayoutParams
                 val left = child.right + params.rightMargin
                 val right = left + strokeWidth
                 drawable?.setBounds(left, top + horizontalPadding, right, bottom - horizontalPadding)

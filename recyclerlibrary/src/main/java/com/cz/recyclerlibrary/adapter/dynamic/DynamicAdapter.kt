@@ -225,4 +225,28 @@ open class DynamicAdapter(adapter: RecyclerView.Adapter<out RecyclerView.ViewHol
     }
 
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+        super.onViewRecycled(holder)
+        adapter?.onViewRecycled(holder)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        adapter?.onDetachedFromRecyclerView(recyclerView)
+    }
+
+    override fun onFailedToRecycleView(holder: RecyclerView.ViewHolder?): Boolean {
+        return adapter?.onFailedToRecycleView(holder)?:super.onFailedToRecycleView(holder)
+    }
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder?) {
+        super.onViewAttachedToWindow(holder)
+        adapter?.onViewAttachedToWindow(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder?) {
+        super.onViewDetachedFromWindow(holder)
+        adapter?.onViewDetachedFromWindow(holder)
+    }
+
 }

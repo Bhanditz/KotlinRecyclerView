@@ -14,7 +14,7 @@
             <enum name="front" value="0x02"/>
             <enum name="follow" value="0x00"/>
             <enum name="overlap" value="0x01"/>
-            <enum name="scroll" value="0x03"/>
+            <enum name="layoutOffset" value="0x03"/>
         </attr>
         <attr name="pl_refreshMode">
             <enum name="both" value="0x00"/>
