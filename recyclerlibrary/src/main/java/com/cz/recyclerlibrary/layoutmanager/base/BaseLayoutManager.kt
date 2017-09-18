@@ -115,7 +115,7 @@ abstract class BaseLayoutManager : RecyclerView.LayoutManager {
         if (0 > layoutState.available) {
             layoutState.scrollOffset += layoutState.available
         }
-        debugLog("scrollOffset:" + layoutState.scrollOffset + " available:" + layoutState.available)
+        debugLog("scrollingOffset:" + layoutState.scrollOffset + " available:" + layoutState.available)
         recycleByLayoutState(recycler, layoutState)
         var space = layoutState.available
         //获取当前可填充空间大小
@@ -226,7 +226,7 @@ abstract class BaseLayoutManager : RecyclerView.LayoutManager {
         }
         layoutState.available = absDistance - scrollOffset
         layoutState.scrollOffset = scrollOffset
-        debugLog("offset:" + layoutState.offset + " available:" + layoutState.available + " scrollOffset:" + scrollOffset + " position:" + layoutState.currentPosition + " layoutDirection:" + layoutDirection)
+        debugLog("offset:" + layoutState.offset + " available:" + layoutState.available + " scrollingOffset:" + scrollOffset + " position:" + layoutState.currentPosition + " layoutDirection:" + layoutDirection)
     }
 
     private fun recycleByLayoutState(recycler: RecyclerView.Recycler, layoutState: BaseLayoutManager.LayoutState) {
