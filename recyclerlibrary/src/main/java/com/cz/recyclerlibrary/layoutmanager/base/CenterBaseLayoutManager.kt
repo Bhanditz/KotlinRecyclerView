@@ -26,6 +26,22 @@ open class CenterBaseLayoutManager : BaseLayoutManager {
         this.minScrollOffset = minScrollOffset
     }
 
+    override fun onScrollStateChanged(state: Int) {
+        super.onScrollStateChanged(state)
+        //因快速滑动过程结束后,控件的属性变化并不统一,这里强制统一
+        if (0 < itemCount && RecyclerView.SCROLL_STATE_IDLE == state) {
+            (0..childCount - 1).map { getChildAt(it) }.forEach(this::viewScrollOffset)
+        }
+    }
+
+
+    override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        val fill = super.fill(recycler, state)
+        //取中心点,作滑动动作设定
+        (0..childCount - 1).map { getChildAt(it) }.forEach(this::viewScrollOffset)
+        return fill
+    }
+
     /**
      * 当控件滑动位置发生偏移,使用此方法需要用户Adapter实现[ViewScrollOffsetCallback]
      * 在此方法中,可完成具体控件的动画控制
@@ -49,21 +65,6 @@ open class CenterBaseLayoutManager : BaseLayoutManager {
         }
     }
 
-    override fun onScrollStateChanged(state: Int) {
-        super.onScrollStateChanged(state)
-        //因快速滑动过程结束后,控件的属性变化并不统一,这里强制统一
-        if (0 < itemCount && RecyclerView.SCROLL_STATE_IDLE == state) {
-            (0..childCount - 1).map { getChildAt(it) }.forEach(this::viewScrollOffset)
-        }
-    }
-
-
-    override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        val fill = super.fill(recycler, state)
-        //取中心点,作滑动动作设定
-        (0..childCount - 1).map { getChildAt(it) }.forEach(this::viewScrollOffset)
-        return fill
-    }
 
     override fun scrollBy(distance: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
         return scrollToCenter(distance, recycler, state)

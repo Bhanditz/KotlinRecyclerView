@@ -17,7 +17,9 @@ import com.cz.recyclerlibrary.R
  */
 
 class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyle: Int = 0) : RecyclerView(context, attrs, defStyle) {
-
+    companion object {
+        private val DEBUG = true
+    }
     private var divideDrawable: Drawable? = null
     private var drawableSize: Int = 0
     private var drawablePadding: Int = 0
@@ -35,7 +37,7 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         setDrawableSize(a.getDimension(R.styleable.WheelView_wv_drawableSize, 0f).toInt())
         setDrawablePadding(a.getDimension(R.styleable.WheelView_wv_drawablePadding, 0f).toInt())
         a.recycle()
-        super.setLayoutManager(WheelLayoutManager(context, attrs, 0, 0))
+//        super.setLayoutManager(WheelLayoutManager(context, attrs, 0, 0))
     }
 
     fun setDivideDrawable(drawable: Drawable) {
@@ -53,13 +55,12 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         invalidate()
     }
 
-    /**
-
-     * @param layout
-     */
-    @Deprecated("nothing to do\n      ")
-    override fun setLayoutManager(layout: RecyclerView.LayoutManager) {
-    }
+//    /**
+//     * @param layout
+//     */
+//    @Deprecated("nothing to do\n      ")
+//    override fun setLayoutManager(layout: RecyclerView.LayoutManager) {
+//    }
 
     /**
      * @param decor
@@ -71,16 +72,16 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
-        if (RecyclerView.SCROLL_STATE_IDLE == state) {
-            //重置divideDrawable位置,避免快速滑动计算失误
-            val layoutManager = layoutManager as WheelLayoutManager
-            val currentItemPosition = layoutManager.findCurrentItemPosition()
-            val currentView = layoutManager.findViewByPosition(currentItemPosition)
-            if (null != currentView) {
-                currentViewHeight = currentView.measuredHeight
-                invalidate()
-            }
-        }
+//        if (RecyclerView.SCROLL_STATE_IDLE == state) {
+//            //重置divideDrawable位置,避免快速滑动计算失误
+//            val layoutManager = layoutManager as WheelLayoutManager
+//            val currentItemPosition = layoutManager.findCurrentItemPosition()
+//            val currentView = layoutManager.findViewByPosition(currentItemPosition)
+//            if (null != currentView) {
+//                currentViewHeight = currentView.measuredHeight
+//                invalidate()
+//            }
+//        }
     }
 
     val selectPosition: Int
@@ -88,17 +89,17 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     override fun onScrolled(dx: Int, dy: Int) {
         super.onScrolled(dx, dy)
-        val layoutManager = layoutManager as WheelLayoutManager
-        val newCurrentItemPosition = layoutManager.findCurrentItemPosition()
-        //首次进入时currentItemHeight需要初始化,故以-1为入口让其进入
-        if (-1 == currentItemPosition || currentItemPosition != newCurrentItemPosition) {
-            //item changed
-            if (-1 == currentItemPosition) currentItemPosition = 0
-            startWheelDivideChangedAnimator(layoutManager, newCurrentItemPosition, currentItemPosition)
-            currentItemPosition = newCurrentItemPosition
-            val findView=layoutManager.findViewByPosition(currentItemPosition)
-            listener?.onSelectPositionChanged(findView, newCurrentItemPosition)
-        }
+//        val layoutManager = layoutManager as WheelLayoutManager
+//        val newCurrentItemPosition = layoutManager.findCurrentItemPosition()
+//        //首次进入时currentItemHeight需要初始化,故以-1为入口让其进入
+//        if (-1 == currentItemPosition || currentItemPosition != newCurrentItemPosition) {
+//            //item changed
+//            if (-1 == currentItemPosition) currentItemPosition = 0
+//            startWheelDivideChangedAnimator(layoutManager, newCurrentItemPosition, currentItemPosition)
+//            currentItemPosition = newCurrentItemPosition
+//            val findView=layoutManager.findViewByPosition(currentItemPosition)
+//            listener?.onSelectPositionChanged(findView, newCurrentItemPosition)
+//        }
     }
 
     private fun startWheelDivideChangedAnimator(layoutManager: WheelLayoutManager, current: Int, last: Int) {
@@ -150,10 +151,5 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
 
     interface OnSelectPositionChangedListener {
         fun onSelectPositionChanged(view: View?, position: Int)
-    }
-
-    companion object {
-        private val TAG = "WheelView"
-        private val DEBUG = false
     }
 }

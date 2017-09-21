@@ -7,10 +7,7 @@ import com.cz.sample.ui.drag.CustomDragActivity
 import com.cz.sample.ui.drag.DynamicDragActivity
 import com.cz.sample.ui.drag.GridDragActivity
 import com.cz.sample.ui.drag.LinearDragActivity
-import com.cz.sample.ui.layoutmanager.ui.GalleryActivity
-import com.cz.sample.ui.layoutmanager.ui.SampleLinearLayoutManagerActivity
-import com.cz.sample.ui.layoutmanager.ui.TableActivity
-import com.cz.sample.ui.layoutmanager.ui.WheelDateActivity
+import com.cz.sample.ui.layoutmanager.ui.*
 import com.cz.sample.ui.recyclerview.GridPullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshExpandActivity
@@ -177,11 +174,17 @@ class FuncTemplate {
                     desc = "自定义Wheel/Gallery/TableView"
                     item {
                         pid = 5
-                        title = "LinearLayoutManager"
-                        desc = "演示最核心的自定义LinearLayoutManager"
-                        clazz = SampleLinearLayoutManagerActivity::class.java
+                        title = "VerticalLayout"
+                        desc = "演示纵向的居中LayoutManager"
+                        clazz = VerticalLayoutActivity::class.java
                     }
                     item {
+                        pid = 5
+                        title = "HorizontalLayout"
+                        desc = "演示横向的居中LayoutManager"
+                        clazz = HorizontalLayoutActivity::class.java
+                    }
+                    /*item {
                         pid = 5
                         title = "Wheel"
                         desc = "演示日期展示"
@@ -198,7 +201,7 @@ class FuncTemplate {
                         title = "Table"
                         desc = "演示表格数据"
                         clazz = TableActivity::class.java
-                    }
+                    }*/
                 }
 
             }

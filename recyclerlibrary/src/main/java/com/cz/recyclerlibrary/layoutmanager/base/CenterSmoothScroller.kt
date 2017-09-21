@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
+import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
 /**
  * [RecyclerView.SmoothScroller] implementation which uses a [LinearInterpolator] until
@@ -22,19 +23,30 @@ import android.view.animation.LinearInterpolator
 open class CenterSmoothScroller(context: Context) : LinearSmoothScroller(context) {
 
     override fun onTargetFound(targetView: View, state: RecyclerView.State?, action: RecyclerView.SmoothScroller.Action) {
-        val layoutManager = layoutManager
-        val dx = calculateDxToMakeVisible(targetView, horizontalSnapPreference)
+        val layoutManager = layoutManager as CenterLinearLayoutManager
+        var dx = calculateDxToMakeVisible(targetView, horizontalSnapPreference)
         var dy = calculateDyToMakeVisible(targetView, verticalSnapPreference)
         val distance = Math.sqrt((dx * dx + dy * dy).toDouble()).toInt()
-        val time = calculateTimeForDeceleration(distance) * 2
-        val offsetY = (layoutManager!!.height - targetView.measuredHeight) / 2
+        val time = calculateTimeForDeceleration(distance) * 10
+        val offsetX = (layoutManager.width - targetView.measuredWidth) / 2
+        val offsetY = (layoutManager.height - targetView.measuredHeight) / 2
         if (null != mTargetVector) {
-            if (-1f == mTargetVector.y) {
-                //向上
-                dy += offsetY
-            } else if (1f == mTargetVector.y) {
-                //向下
-                dy -= offsetY
+            if(layoutManager.orientation==BaseLinearLayoutManager.VERTICAL){
+                if (-1f == mTargetVector.y) {
+                    //向上
+                    dy += offsetY
+                } else if (1f == mTargetVector.y) {
+                    //向下
+                    dy -= offsetY
+                }
+            } else {
+                if (-1f == mTargetVector.x) {
+                    //向上
+                    dx += offsetX
+                } else if (1f == mTargetVector.x) {
+                    //向下
+                    dx -= offsetX
+                }
             }
         }
         if (time > 0) {

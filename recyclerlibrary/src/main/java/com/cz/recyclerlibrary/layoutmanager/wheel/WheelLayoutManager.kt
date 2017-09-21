@@ -66,20 +66,20 @@ class WheelLayoutManager : CenterBaseLayoutManager {
      * 当装载入 RecyclerView时,设置固定布局(即布局大小,由 LayoutManager 的 onMeasure 控件),以及添加滚动完居中监听
      * @param view
      */
-    override fun onAttachedToWindow(view: RecyclerView?) {
+    override fun onAttachedToWindow(view: RecyclerView) {
         super.onAttachedToWindow(view)
         //设置不自动RecyclerView 不自由排版,且固定尺寸
         isAutoMeasureEnabled = false
-        view!!.setHasFixedSize(true)
+        view.setHasFixedSize(true)
         view.addOnScrollListener(CenterScrollListener(this))
     }
 
-    override fun onMeasure(recycler: RecyclerView.Recycler?, state: RecyclerView.State?, widthSpec: Int, heightSpec: Int) {
+    override fun onMeasure(recycler: RecyclerView.Recycler, state: RecyclerView.State, widthSpec: Int, heightSpec: Int) {
         super.onMeasure(recycler, state, widthSpec, heightSpec)
         val measuredWidth = View.MeasureSpec.getSize(widthSpec)
         var measuredHeight = View.MeasureSpec.getSize(heightSpec)
-        if (0 < itemCount && 0 < state!!.itemCount) {
-            val firstView = recycler!!.getViewForPosition(0)
+        if (0 < itemCount && 0 < state.itemCount) {
+            val firstView = recycler.getViewForPosition(0)
             if (null != firstView) {
                 measureChildWithMargins(firstView, 0, 0)
                 measuredHeight = firstView.measuredHeight * wheelCount

@@ -1,7 +1,9 @@
 package com.cz.sample.ui.layoutmanager
 
+import android.content.Context
 import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
+import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import com.cz.recyclerlibrary.debugLog
@@ -12,69 +14,73 @@ import com.cz.recyclerlibrary.layoutmanager.base.BaseLayoutManager
  * 一个LinearLayoutManager最精简核心实现
  * 无findFirstVisiblePosition
  */
-open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
+open class BaseLinearLayoutManager : RecyclerView.LayoutManager {
     companion object {
         val DIRECTION_START = -1
         val DIRECTION_END = 1
 
-        val HORIZONTAL = OrientationHelper.HORIZONTAL
-        val VERTICAL = OrientationHelper.VERTICAL
+        const val HORIZONTAL = OrientationHelper.HORIZONTAL
+        const val VERTICAL = OrientationHelper.VERTICAL
     }
     protected lateinit var orientationHelper: OrientationHelper
-    private val layoutState=LayoutState()
+    protected val layoutState=LayoutState()
     /**
      * 当前排版方向
      * @see {@link .HORIZONTAL} or {@link .VERTICAL}
      */
-    private var orientation: Int = BaseLayoutManager.VERTICAL
+    var orientation: Int = BaseLayoutManager.VERTICAL
+        get() = field
+        set(value) {
+            if (field != BaseLayoutManager.HORIZONTAL && field != BaseLayoutManager.VERTICAL) {
+                throw IllegalArgumentException("invalid orientation:" + field)
+            }
+            field = value
+            if (OrientationHelper.HORIZONTAL == field) {
+                orientationHelper = OrientationHelper.createHorizontalHelper(this)
+            } else if (OrientationHelper.VERTICAL == field) {
+                orientationHelper = OrientationHelper.createVerticalHelper(this)
+            }
+        }
 
     @JvmOverloads constructor(orientation: Int = BaseLayoutManager.VERTICAL) {
-        setOrientation(orientation)
+        this.orientation=orientation
     }
+
 
     override fun generateDefaultLayoutParams() =RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
-    /**
-     * 设置方向
-     * @param orientation
-     */
-    open fun setOrientation(orientation: Int) {
-        if (orientation != BaseLayoutManager.HORIZONTAL && orientation != BaseLayoutManager.VERTICAL) {
-            throw IllegalArgumentException("invalid orientation:" + orientation)
-        }
-        this.orientation = orientation
-        if (OrientationHelper.HORIZONTAL == orientation) {
-            orientationHelper = OrientationHelper.createHorizontalHelper(this)
-        } else if (OrientationHelper.VERTICAL == orientation) {
-            orientationHelper = OrientationHelper.createVerticalHelper(this)
-        }
-    }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        super.onLayoutChildren(recycler, state)
-        if(0==itemCount||state.isPreLayout){
+        debugLog("onLayoutChildren")
+        if(0==itemCount){
             //将当前所有的RecyclerView的ChildView进行回收
             detachAndScrapAttachedViews(recycler)
-        } else if(state.didStructureChange()){
+        } else if(!state.isPreLayout){
             detachAndScrapAttachedViews(recycler)
             //当前有效空间
             updateLayoutStateToFillEnd(0,0)
             //填充控件
-            fill(recycler,state)
+            fill(recycler,state,true)
         }
     }
 
-    private fun updateLayoutStateToFillEnd(itemPosition: Int, offset: Int) {
+    /**
+     * 以底部方向更新布局状态
+     */
+    protected open fun updateLayoutStateToFillEnd(itemPosition: Int, offset: Int) {
         layoutState.layoutOffset = offset
-        layoutState.available = height - paddingBottom - offset
+        layoutState.available = orientationHelper.totalSpace
         layoutState.position = itemPosition
         layoutState.itemDirection = DIRECTION_END
     }
 
     /**
      * 填充控件
+     * @param recycler 条目回收管理对象
+     * @param state 当前操作状态
+     * @param layoutChildren 标记是否为布局排版
      */
-    private fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State):Int {
+    protected open fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State,layoutChildren:Boolean):Int {
         //当前可填充空间
         val start=layoutState.available
         //为避免回收时,scrollingOffset异常
@@ -86,7 +92,11 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
         var remainingSpace=layoutState.available
         while(0<remainingSpace&&hasMore(state)){
             //循环排版子控件,直到塞满为止
-            val consumed=layoutChildView(recycler,state)
+            val view=nextView(recycler,state)
+            //测量并添加控件
+            addAdapterView(view,recycler,state)
+            //添加一个新的控件
+            val consumed=layoutChildView(view,recycler,state)
             layoutState.layoutOffset +=consumed*layoutState.itemDirection
             layoutState.available-=consumed
             remainingSpace-=consumed
@@ -111,7 +121,8 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
         return scrollBy(dy,recycler,state)
     }
 
-    private fun scrollBy(dy:Int, recycler:RecyclerView.Recycler,state: RecyclerView.State):Int {
+
+    protected open fun scrollBy(dy:Int, recycler:RecyclerView.Recycler,state: RecyclerView.State):Int {
         if (childCount == 0 || dy == 0) {
             return 0
         }
@@ -120,9 +131,9 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
         //动态更新布局状态
         updateLayoutState(layoutDirection,absDy)
         //填充当前布局
-        var consumed=layoutState.scrollingOffset +fill(recycler,state)
-        //做边界处理,
-        val scrolled = if (absDy > consumed) layoutDirection * consumed else dy
+        var consumed=layoutState.scrollingOffset +fill(recycler,state,false)
+        //做边界处理,absDy > consumed时,consumed可能为0,也可以为滚过新条目值,此时做滚动越界约束
+        val scrolled = if (absDy > consumed) scrollOver(layoutDirection,consumed,dy) else dy
         if(orientation == HORIZONTAL){
             offsetChildrenHorizontal(-scrolled)//横向滚动
         } else {
@@ -132,9 +143,14 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
     }
 
     /**
+     * 滚动越界处理,此方法也可以提供子类复写,用于做循环滚动/滚动越界控制
+     */
+    protected open fun scrollOver(layoutDirection:Int,consumed:Int,dy: Int):Int=layoutDirection * consumed
+
+    /**
      * 根据滚动偏移量,更新布局状态值
      */
-    private fun updateLayoutState(layoutDirection:Int,requiredSpace: Int) {
+    protected fun updateLayoutState(layoutDirection:Int,requiredSpace: Int) {
         val scrollingOffset: Int
         if(layoutDirection== DIRECTION_END){
             val view=getChildAt(childCount-1)
@@ -158,21 +174,22 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
         debugLog("offset:" + layoutState.scrollingOffset + " currentPosition = " + layoutState.position + " available:" + layoutState.available+" requiredSpace:$requiredSpace"+" scrollingOffset:$scrollingOffset")
     }
 
-
-
+    /**
+     * 添加一个方向控件,并返回
+     */
+    protected open fun addAdapterView(view:View,recycler: RecyclerView.Recycler, state: RecyclerView.State){
+        //根据 layoutDirection 添加控件前或者后
+        if (DIRECTION_END == layoutState.itemDirection) {
+            addView(view)
+        } else if (DIRECTION_START == layoutState.itemDirection) {
+            addView(view, 0)
+        }
+    }
 
     /**
      * 填充子控件
      */
-    protected open fun layoutChildView(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        val view=nextView(recycler,state)
-        if (layoutState.itemDirection == DIRECTION_END) {
-            addView(view)
-        } else {
-            addView(view, 0)
-        }
-        //测量控件
-        measureChildWithMargins(view,0,0)
+    protected open fun layoutChildView(view:View,recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
         /* orientationHelper.getDecoratedMeasurement(view)会获取当前方向控件计算尺寸
             如horizontal 取width作为计算长度+ insets:分隔线空间+控件margin值 为总计算高度 */
         val consumed = orientationHelper.getDecoratedMeasurement(view)
@@ -202,6 +219,7 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
             }
         }
         layoutDecorated(view, left, top, right, bottom)
+        debugLog("layoutChildView:left:$left top:$top right:$right bottom:$bottom")
         //返回控件高度/宽
         return consumed
     }
@@ -209,7 +227,7 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
     /**
      * 根据滑动状态,回收控件
      */
-    private fun recycleByLayoutState(recycler: RecyclerView.Recycler) {
+    protected fun recycleByLayoutState(recycler: RecyclerView.Recycler) {
         if(layoutState.itemDirection== DIRECTION_START){
             //回收底部控件
             recycleViewsFromEnd(recycler, layoutState.scrollingOffset)
@@ -265,15 +283,76 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
         }
     }
 
-    protected fun nextView(recycler: RecyclerView.Recycler, state: RecyclerView.State): View {
+    fun findCurrentItemPosition(): Int {
+        val child = findOneVisibleChild(0, childCount)
+        return if (child == null) RecyclerView.NO_POSITION else getPosition(child)
+    }
+
+    internal fun findOneVisibleChild(fromIndex: Int, toIndex: Int): View? {
+        val next = if (toIndex > fromIndex) 1 else -1
+        val partiallyVisible: View? = null
+        val centerY = orientationHelper.end / 2
+        var i = fromIndex
+        while (i != toIndex) {
+            val child = getChildAt(i)
+            val childStart = orientationHelper.getDecoratedStart(child)
+            val childEnd = orientationHelper.getDecoratedEnd(child)
+            if (centerY in childStart..childEnd) {
+                return child
+            }
+            i += next
+        }
+        return partiallyVisible
+    }
+
+    fun findFirstVisibleItemPosition(): Int {
+        val child = findOneVisibleChild(0, childCount, false, true)
+        return if (child == null) RecyclerView.NO_POSITION else getPosition(child)
+    }
+
+    fun findLastVisibleItemPosition(): Int {
+        val child = findOneVisibleChild(childCount - 1, -1, false, true)
+        return if (child == null) RecyclerView.NO_POSITION else getPosition(child)
+    }
+
+    internal fun findOneVisibleChild(fromIndex: Int, toIndex: Int, completelyVisible: Boolean,
+                                     acceptPartiallyVisible: Boolean): View? {
+        val start = orientationHelper.startAfterPadding
+        val end = orientationHelper.endAfterPadding
+        val next = if (toIndex > fromIndex) 1 else -1
+        var partiallyVisible: View? = null
+        var i = fromIndex
+        while (i != toIndex) {
+            val child = getChildAt(i)
+            val childStart = orientationHelper.getDecoratedStart(child)
+            val childEnd = orientationHelper.getDecoratedEnd(child)
+            if (childStart < end && childEnd > start) {
+                if (completelyVisible) {
+                    if (childStart >= start && childEnd <= end) {
+                        return child
+                    } else if (acceptPartiallyVisible && partiallyVisible == null) {
+                        partiallyVisible = child
+                    }
+                } else {
+                    return child
+                }
+            }
+            i += next
+        }
+        return partiallyVisible
+    }
+
+    protected open fun nextView(recycler: RecyclerView.Recycler, state: RecyclerView.State): View {
         //获取一个控件,会走完缓存->onCreateViewHolder()
         debugLog("nextView:${layoutState.position}")
         val view=recycler.getViewForPosition(layoutState.position)
         layoutState.position+=layoutState.itemDirection
+        //测量控件
+        measureChildWithMargins(view,0,0)
         return view
     }
 
-    protected fun hasMore(state: RecyclerView.State):Boolean{
+    protected open fun hasMore(state: RecyclerView.State):Boolean{
         return layoutState.position in 0..state.itemCount-1
     }
 
@@ -298,8 +377,7 @@ open class SimpleLinearLayoutManager1 : RecyclerView.LayoutManager {
         /**
          * 当前操作条目方向
          */
-        var itemDirection=0
+        var itemDirection= DIRECTION_END
     }
-
 
 }
