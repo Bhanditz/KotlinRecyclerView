@@ -1,12 +1,11 @@
-package com.cz.sample.ui.layoutmanager.ui
+package com.cz.sample.ui.layoutmanager
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.SeekBar
-import android.widget.TextView
+import com.cz.recyclerlibrary.layoutmanager.base.CenterLinearLayoutManager
+import com.cz.recyclerlibrary.layoutmanager.callback.OnSelectPositionChangedListener
 
-import com.cz.recyclerlibrary.layoutmanager.wheel.WheelView
 import com.cz.sample.R
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.ui.layoutmanager.adapter.DateAdapter
@@ -14,7 +13,6 @@ import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_date.*
 
 import java.text.DecimalFormat
-import java.util.ArrayList
 import java.util.Calendar
 import java.util.LinkedList
 
@@ -36,8 +34,8 @@ class WheelDateActivity : ToolBarActivity() {
                 }
             }
 
-            override fun onStartTrackingTouch(seekBar: SeekBar) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar)=Unit
+            override fun onStopTrackingTouch(seekBar: SeekBar)=Unit
         }
         seekYear.setOnSeekBarChangeListener(listener)
         seekMonth.setOnSeekBarChangeListener(listener)
@@ -66,11 +64,11 @@ class WheelDateActivity : ToolBarActivity() {
         wheel3.adapter = dateAdapter3
 
         val formatter = DecimalFormat("00")
-        val onSelectPositionChangedListener = object : WheelView.OnSelectPositionChangedListener {
-            override fun onSelectPositionChanged(view: View?, position: Int) {
-                val year = dateAdapter1.getItem(wheel1.selectPosition)
-                val month = dateAdapter2.getItem(wheel2.selectPosition)
-                val day = dateAdapter3.getItem(wheel3.selectPosition)
+        val onSelectPositionChangedListener = object : OnSelectPositionChangedListener {
+            override fun onSelectPositionChanged(view: View?, position: Int,lastPosition:Int) {
+                val year = dateAdapter1.getItem(position)
+                val month = dateAdapter2.getItem(position)
+                val day = dateAdapter3.getItem(position)
                 dateText.text = getString(R.string.date_value, year, formatter.format(month), formatter.format(day))
             }
         }

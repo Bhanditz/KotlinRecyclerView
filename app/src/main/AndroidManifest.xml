@@ -37,11 +37,11 @@
         <activity android:name="com.cz.sample.ui.sticky.Sticky5SampleActivity"/>
         <activity android:name="cz.kotlinwidget.ui.NewViewPagerListActivity"/>
 
-        <activity android:name=".ui.layoutmanager.ui.VerticalLayoutActivity"/>
-        <activity android:name=".ui.layoutmanager.ui.HorizontalLayoutActivity"/>
-        <activity android:name=".ui.layoutmanager.ui.WheelDateActivity"/>
-        <activity android:name=".ui.layoutmanager.ui.GalleryActivity"/>
-        <activity android:name=".ui.layoutmanager.ui.TableActivity"/>
+        <activity android:name=".ui.layoutmanager.VerticalLayoutActivity"/>
+        <activity android:name=".ui.layoutmanager.HorizontalLayoutActivity"/>
+        <activity android:name=".ui.layoutmanager.WheelDateActivity"/>
+        <activity android:name=".ui.layoutmanager.GalleryActivity"/>
+        <activity android:name=".ui.layoutmanager.TableActivity"/>
     </application>
 
 </manifest>

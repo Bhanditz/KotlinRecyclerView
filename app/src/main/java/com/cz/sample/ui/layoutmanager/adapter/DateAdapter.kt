@@ -28,12 +28,12 @@ class DateAdapter(context: Context, numberFormatValue: String?, items: List<Int>
         }
     }
 
-    override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float) {
+    override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float,minOffset:Float) {
         val textView = view as TextView
-        textView.alpha = offset
-        textView.scaleX = offset
-        textView.scaleY = offset
-        textView.rotationX = 45 * (1f - offset)
+//        textView.alpha = offset
+//        textView.scaleX = offset
+//        textView.scaleY = offset
+//        textView.rotationX = 45 * (1f - offset)
     }
 
 

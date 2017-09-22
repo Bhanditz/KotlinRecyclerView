@@ -1,4 +1,4 @@
-package com.cz.sample.ui.layoutmanager
+package com.cz.sample.ui.layoutmanager.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -29,9 +29,9 @@ class GalleryImageAdapter(context: Context, imageItems: List<Int>?) : RecyclerVi
         }
     }
 
-    override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float) {
-//        view.scaleX = 0.2f + layoutOffset
-//        view.scaleY = 0.2f + layoutOffset
+    override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float,minOffset:Float) {
+        view.scaleX = 0.2f + Math.abs(minOffset)
+        view.scaleY = 0.2f + Math.abs(minOffset)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {

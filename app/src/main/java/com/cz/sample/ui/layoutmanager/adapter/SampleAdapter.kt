@@ -1,11 +1,10 @@
-package com.cz.sample.ui.layoutmanager
+package com.cz.sample.ui.layoutmanager.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.ListView
 import android.widget.TextView
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
 

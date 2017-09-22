@@ -51,17 +51,17 @@
         <attr name="wv_wheelEnable" format="integer"/>
     </declare-styleable>
 
-    <declare-styleable name="GalleryView">
-        <attr name="gv_minScrollOffset" format="float"/>
-        <attr name="gv_gravity" format="enum">
-            <enum name="start" value="0x00"/>
-            <enum name="center" value="0x01"/>
-        </attr>
+    <declare-styleable name="Gallery">
+        <attr name="gallery_minScrollOffset" format="float"/>
+        <attr name="gallery_minCycleCount" format="integer"/>
+        <attr name="gallery_cycle" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="TableView">
         <attr name="tv_columnCount" format="integer"/>
     </declare-styleable>
+
+
 
 
 

@@ -7,7 +7,10 @@ import com.cz.sample.ui.drag.CustomDragActivity
 import com.cz.sample.ui.drag.DynamicDragActivity
 import com.cz.sample.ui.drag.GridDragActivity
 import com.cz.sample.ui.drag.LinearDragActivity
-import com.cz.sample.ui.layoutmanager.ui.*
+import com.cz.sample.ui.layoutmanager.GalleryActivity
+import com.cz.sample.ui.layoutmanager.HorizontalLayoutActivity
+import com.cz.sample.ui.layoutmanager.VerticalLayoutActivity
+import com.cz.sample.ui.layoutmanager.WheelDateActivity
 import com.cz.sample.ui.recyclerview.GridPullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshActivity
 import com.cz.sample.ui.recyclerview.PullToRefreshExpandActivity
@@ -184,18 +187,19 @@ class FuncTemplate {
                         desc = "演示横向的居中LayoutManager"
                         clazz = HorizontalLayoutActivity::class.java
                     }
-                    /*item {
-                        pid = 5
-                        title = "Wheel"
-                        desc = "演示日期展示"
-                        clazz = WheelDateActivity::class.java
-                    }
                     item {
                         pid = 5
                         title = "Gallery"
                         desc = "演示Gallery图片展示"
                         clazz = GalleryActivity::class.java
                     }
+                    item {
+                        pid = 5
+                        title = "Wheel"
+                        desc = "演示日期展示"
+                        clazz = WheelDateActivity::class.java
+                    }
+                    /*
                     item {
                         pid = 5
                         title = "Table"

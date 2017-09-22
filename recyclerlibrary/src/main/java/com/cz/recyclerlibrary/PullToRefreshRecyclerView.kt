@@ -14,8 +14,8 @@ import com.cz.recyclerlibrary.callback.DividerInterceptCallback
 import com.cz.recyclerlibrary.callback.OnItemClickListener
 import com.cz.recyclerlibrary.divide.SimpleItemDecoration
 import com.cz.recyclerlibrary.footer.RefreshFrameFooter
-import com.cz.recyclerlibrary.layoutmanager.base.BaseLayoutManager
 import com.cz.recyclerlibrary.observe.DynamicAdapterDataObserve
+import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
 
 import cz.refreshlayout.library.PullToRefreshLayout
@@ -226,9 +226,8 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
             } else if (value is LinearLayoutManager) {
                 val orientation = value.orientation
                 itemDecoration.setDivideMode(if (OrientationHelper.HORIZONTAL == orientation) SimpleItemDecoration.HORIZONTAL else SimpleItemDecoration.VERTICAL)
-            } else if(value is BaseLayoutManager){
-                val orientation=value.getOrientation()
-                itemDecoration.setDivideMode(if (OrientationHelper.HORIZONTAL == orientation) SimpleItemDecoration.HORIZONTAL else SimpleItemDecoration.VERTICAL)
+            } else if(value is BaseLinearLayoutManager){
+                itemDecoration.setDivideMode(if (OrientationHelper.HORIZONTAL == value.orientation) SimpleItemDecoration.HORIZONTAL else SimpleItemDecoration.VERTICAL)
             }
         }
         get() = this.refreshView.layoutManager

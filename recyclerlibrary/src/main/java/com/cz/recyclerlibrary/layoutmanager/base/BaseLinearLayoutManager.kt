@@ -7,14 +7,13 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import com.cz.recyclerlibrary.debugLog
-import com.cz.recyclerlibrary.layoutmanager.base.BaseLayoutManager
 
 /**
  * Created by cz on 2017/9/14.
  * 一个LinearLayoutManager最精简核心实现
  * 无findFirstVisiblePosition
  */
-open class BaseLinearLayoutManager : RecyclerView.LayoutManager {
+open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VERTICAL) : RecyclerView.LayoutManager() {
     companion object {
         val DIRECTION_START = -1
         val DIRECTION_END = 1
@@ -23,15 +22,15 @@ open class BaseLinearLayoutManager : RecyclerView.LayoutManager {
         const val VERTICAL = OrientationHelper.VERTICAL
     }
     protected lateinit var orientationHelper: OrientationHelper
-    protected val layoutState=LayoutState()
+    protected var layoutState=LayoutState()
     /**
      * 当前排版方向
      * @see {@link .HORIZONTAL} or {@link .VERTICAL}
      */
-    var orientation: Int = BaseLayoutManager.VERTICAL
+    var orientation: Int = VERTICAL
         get() = field
         set(value) {
-            if (field != BaseLayoutManager.HORIZONTAL && field != BaseLayoutManager.VERTICAL) {
+            if (field != HORIZONTAL && field != VERTICAL) {
                 throw IllegalArgumentException("invalid orientation:" + field)
             }
             field = value
@@ -42,35 +41,54 @@ open class BaseLinearLayoutManager : RecyclerView.LayoutManager {
             }
         }
 
-    @JvmOverloads constructor(orientation: Int = BaseLayoutManager.VERTICAL) {
+    init {
         this.orientation=orientation
     }
 
+    /**
+     * 从RecyclerView 处初始化代码,顺应recyclerView 初始化逻辑
+     * 具体流程见:[android.support.v7.widget.RecyclerView.createLayoutManager]
+     * @param context
+     * *
+     * @param attrs
+     * *
+     * @param defStyleAttr
+     * *
+     * @param defStyleRes
+     */
+    constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr: Int=0, defStyleRes: Int=0):this(VERTICAL) {
+        layoutState = LayoutState()
+        val properties = RecyclerView.LayoutManager.getProperties(context, attrs, defStyleAttr, defStyleRes)
+        orientation=properties.orientation
+    }
 
     override fun generateDefaultLayoutParams() =RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        debugLog("onLayoutChildren")
-        if(0==itemCount){
+        if(0==itemCount||state.isPreLayout){
             //将当前所有的RecyclerView的ChildView进行回收
             detachAndScrapAttachedViews(recycler)
-        } else if(!state.isPreLayout){
-            detachAndScrapAttachedViews(recycler)
-            //当前有效空间
-            updateLayoutStateToFillEnd(0,0)
-            //填充控件
-            fill(recycler,state,true)
+            return
         }
+        if(0==childCount){
+            //初始化有效空间
+            updateLayoutStateToFillEnd()
+        } else if(state.didStructureChange()){
+            updateLayoutState(DIRECTION_END,0)
+        }
+        detachAndScrapAttachedViews(recycler)
+        //填充控件
+        fill(recycler,state,true)
     }
 
     /**
      * 以底部方向更新布局状态
      */
-    protected open fun updateLayoutStateToFillEnd(itemPosition: Int, offset: Int) {
-        layoutState.layoutOffset = offset
+    protected open fun updateLayoutStateToFillEnd() {
+        layoutState.layoutOffset = 0
+        layoutState.position = 0
         layoutState.available = orientationHelper.totalSpace
-        layoutState.position = itemPosition
         layoutState.itemDirection = DIRECTION_END
     }
 
@@ -151,7 +169,7 @@ open class BaseLinearLayoutManager : RecyclerView.LayoutManager {
      * 根据滚动偏移量,更新布局状态值
      */
     protected fun updateLayoutState(layoutDirection:Int,requiredSpace: Int) {
-        val scrollingOffset: Int
+        var scrollingOffset: Int
         if(layoutDirection== DIRECTION_END){
             val view=getChildAt(childCount-1)
             layoutState.itemDirection= DIRECTION_END

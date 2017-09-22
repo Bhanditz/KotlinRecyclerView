@@ -1,4 +1,4 @@
-package com.cz.sample.ui.layoutmanager
+package com.cz.sample.ui.layoutmanager.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView

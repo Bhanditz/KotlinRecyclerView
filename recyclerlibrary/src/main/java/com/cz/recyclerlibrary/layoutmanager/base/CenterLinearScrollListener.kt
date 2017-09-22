@@ -1,13 +1,17 @@
 package com.cz.recyclerlibrary.layoutmanager.base
 
 import android.support.v7.widget.RecyclerView
+import com.cz.recyclerlibrary.debugLog
+import com.cz.recyclerlibrary.layoutmanager.callback.OnSelectPositionChangedListener
 
 
 /**
  * Created by cz on 17/1/16
  */
 class CenterLinearScrollListener(private val layoutManager: CenterLinearLayoutManager) : RecyclerView.OnScrollListener() {
+    private var listener: OnSelectPositionChangedListener?=null
     private var isSmoothScrolling: Boolean = false
+    private var centerPosition=0
 
     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
         super.onScrollStateChanged(recyclerView, newState)
@@ -25,5 +29,19 @@ class CenterLinearScrollListener(private val layoutManager: CenterLinearLayoutMa
         } else if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
             isSmoothScrolling = false
         }
+    }
+
+    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        val currentCenterPosition=layoutManager.findCurrentItemPosition()
+        if(centerPosition!=currentCenterPosition){
+            val centerView=layoutManager.findViewByPosition(currentCenterPosition)
+            listener?.onSelectPositionChanged(centerView,currentCenterPosition,centerPosition)
+            centerPosition=currentCenterPosition
+        }
+    }
+
+    fun setOnSelectPositionChangedListener(listener: OnSelectPositionChangedListener) {
+        this.listener = listener
     }
 }

@@ -1,13 +1,12 @@
-package com.cz.sample.ui.layoutmanager.ui
+package com.cz.sample.ui.layoutmanager
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 
 import com.cz.recyclerlibrary.layoutmanager.table.TableLayoutManager
 import com.cz.sample.R
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
-import com.cz.sample.ui.layoutmanager.TableAdapter
+import com.cz.sample.ui.layoutmanager.adapter.TableAdapter
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_table.*
 

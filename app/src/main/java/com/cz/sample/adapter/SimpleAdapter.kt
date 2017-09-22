@@ -62,9 +62,9 @@ class SimpleAdapter<E>(context: Context, @param:LayoutRes private val layout: In
         super.onViewDetachedFromWindow(holder)
     }
 
-    override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float) {
+    override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float,minOffset:Float) {
         Log.e(TAG,"onViewScrollOffset:$position centerPosition:$centerPosition offset:$offset")
-        view.backgroundColor=evaluate(offset, Color.RED,Color.YELLOW)
+        view.backgroundColor=evaluate(Math.abs(offset), Color.RED,Color.YELLOW)
     }
 
     private fun evaluate(fraction: Float, startValue: Int, endValue: Int): Int {
