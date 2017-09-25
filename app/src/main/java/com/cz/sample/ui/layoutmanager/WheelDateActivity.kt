@@ -11,6 +11,7 @@ import com.cz.sample.annotation.ToolBar
 import com.cz.sample.ui.layoutmanager.adapter.DateAdapter
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_date.*
+import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
 
 import java.text.DecimalFormat
 import java.util.Calendar
@@ -66,14 +67,20 @@ class WheelDateActivity : ToolBarActivity() {
         val formatter = DecimalFormat("00")
         val onSelectPositionChangedListener = object : OnSelectPositionChangedListener {
             override fun onSelectPositionChanged(view: View?, position: Int,lastPosition:Int) {
-                val year = dateAdapter1.getItem(position)
-                val month = dateAdapter2.getItem(position)
-                val day = dateAdapter3.getItem(position)
+                val year = dateAdapter1.getItem(wheel1.currentCenterPosition)
+                val month = dateAdapter2.getItem(wheel2.currentCenterPosition)
+                val day = dateAdapter3.getItem(wheel3.currentCenterPosition)
                 dateText.text = getString(R.string.date_value, year, formatter.format(month), formatter.format(day))
             }
         }
         wheel1.setOnSelectPositionChangedListener(onSelectPositionChangedListener)
         wheel2.setOnSelectPositionChangedListener(onSelectPositionChangedListener)
         wheel3.setOnSelectPositionChangedListener(onSelectPositionChangedListener)
+
+        cycleCheckBox.onCheckedChange { _, isChecked ->
+            wheel1.setCycle(isChecked)
+            wheel2.setCycle(isChecked)
+            wheel3.setCycle(isChecked)
+        }
     }
 }

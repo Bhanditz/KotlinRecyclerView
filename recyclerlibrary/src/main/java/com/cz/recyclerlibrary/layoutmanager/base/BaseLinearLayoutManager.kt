@@ -3,6 +3,7 @@ package com.cz.sample.ui.layoutmanager
 import android.content.Context
 import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.RecyclerView.OnFlingListener
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
         const val VERTICAL = OrientationHelper.VERTICAL
     }
     protected lateinit var orientationHelper: OrientationHelper
+    protected lateinit var recyclerView:RecyclerView
     protected var layoutState=LayoutState()
     /**
      * 当前排版方向
@@ -62,43 +64,64 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
         orientation=properties.orientation
     }
 
-    override fun generateDefaultLayoutParams() =RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    override fun onAttachedToWindow(recyclerView: RecyclerView) {
+        super.onAttachedToWindow(recyclerView)
+        //设置惯性滚动事件
+        this.recyclerView = recyclerView
+        recyclerView.onFlingListener= object :OnFlingListener(){
+            override fun onFling(velocityX: Int, velocityY: Int): Boolean{
+                return onLayoutFling(velocityX,velocityY)
+            }
+        }
+    }
 
+    override fun generateDefaultLayoutParams() =RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         if(0==itemCount||state.isPreLayout){
             //将当前所有的RecyclerView的ChildView进行回收
             detachAndScrapAttachedViews(recycler)
             return
-        }
-        if(0==childCount){
+        } else if(0==childCount){
             //初始化有效空间
-            updateLayoutStateToFillEnd()
-        } else if(state.didStructureChange()){
-            updateLayoutState(DIRECTION_END,0)
+            updateLayoutStateFromEnd()
+            detachAndScrapAttachedViews(recycler)
+        }  else if(!state.isPreLayout){
+            updateLayoutStateStructureChange()
+            detachAndScrapAttachedViews(recycler)
         }
-        detachAndScrapAttachedViews(recycler)
         //填充控件
-        fill(recycler,state,true)
+        fill(recycler,state)
     }
 
     /**
      * 以底部方向更新布局状态
      */
-    protected open fun updateLayoutStateToFillEnd() {
+    private fun updateLayoutStateFromEnd() {
         layoutState.layoutOffset = 0
         layoutState.position = 0
-        layoutState.available = orientationHelper.totalSpace
+        layoutState.layoutChildren = true
         layoutState.itemDirection = DIRECTION_END
+        layoutState.available = orientationHelper.totalSpace
     }
+
+    private fun updateLayoutStateStructureChange() {
+        val child = getChildAt(0)
+        layoutState.layoutChildren = false
+        layoutState.position = getPosition(child)
+        layoutState.itemDirection = DIRECTION_END
+        layoutState.scrollingOffset = -orientationHelper.getDecoratedStart(child) + orientationHelper.startAfterPadding
+        layoutState.layoutOffset = orientationHelper.getDecoratedStart(child)
+        layoutState.available = orientationHelper.totalSpace-layoutState.layoutOffset
+    }
+
 
     /**
      * 填充控件
      * @param recycler 条目回收管理对象
      * @param state 当前操作状态
-     * @param layoutChildren 标记是否为布局排版
      */
-    protected open fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State,layoutChildren:Boolean):Int {
+    protected open fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State):Int {
         //当前可填充空间
         val start=layoutState.available
         //为避免回收时,scrollingOffset异常
@@ -112,7 +135,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
             //循环排版子控件,直到塞满为止
             val view=nextView(recycler,state)
             //测量并添加控件
-            addAdapterView(view,recycler,state)
+            addAdapterView(view)
             //添加一个新的控件
             val consumed=layoutChildView(view,recycler,state)
             layoutState.layoutOffset +=consumed*layoutState.itemDirection
@@ -149,7 +172,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
         //动态更新布局状态
         updateLayoutState(layoutDirection,absDy)
         //填充当前布局
-        var consumed=layoutState.scrollingOffset +fill(recycler,state,false)
+        var consumed=layoutState.scrollingOffset +fill(recycler,state)
         //做边界处理,absDy > consumed时,consumed可能为0,也可以为滚过新条目值,此时做滚动越界约束
         val scrolled = if (absDy > consumed) scrollOver(layoutDirection,consumed,dy) else dy
         if(orientation == HORIZONTAL){
@@ -158,6 +181,13 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
             offsetChildrenVertical(-scrolled)//纵向滚动
         }
         return scrolled
+    }
+
+    /**
+     * 惯性滚动事件处理
+     */
+    protected open fun onLayoutFling(velocityX: Int, velocityY: Int): Boolean{
+        return false
     }
 
     /**
@@ -195,7 +225,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
     /**
      * 添加一个方向控件,并返回
      */
-    protected open fun addAdapterView(view:View,recycler: RecyclerView.Recycler, state: RecyclerView.State){
+    protected open fun addAdapterView(view:View){
         //根据 layoutDirection 添加控件前或者后
         if (DIRECTION_END == layoutState.itemDirection) {
             addView(view)
@@ -286,15 +316,11 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
     }
 
     private fun recycleChildren(recycler: RecyclerView.Recycler, startIndex: Int, endIndex: Int) {
-        if (startIndex == endIndex) {
-            return
-        }
-        debugLog("recycleChildren:$startIndex $endIndex")
         if (endIndex > startIndex) {
             for (i in endIndex - 1 downTo startIndex) {
                 removeAndRecycleViewAt(i, recycler)
             }
-        } else {
+        } else if(endIndex < startIndex){
             for (i in startIndex downTo endIndex + 1) {
                 removeAndRecycleViewAt(i, recycler)
             }
@@ -388,6 +414,10 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
          * 当前滚动位置
          */
         var scrollingOffset =0
+        /**
+         * 是否为排版子控件,而非滑动排版
+         */
+        var layoutChildren=false
         /**
          * 当前位置
          */

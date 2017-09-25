@@ -41,7 +41,6 @@
             android:layout_marginRight="4dp"
             auto:wv_drawableSize="1dp"
             auto:wv_wheelCount="3"
-            android:visibility="gone"
             auto:wv_minScrollOffset="0.8"/>
 
         <com.cz.recyclerlibrary.layoutmanager.wheel.WheelView
@@ -53,7 +52,6 @@
             android:background="@color/colorPrimary"
             auto:wv_drawableSize="1dp"
             auto:wv_wheelCount="3"
-            android:visibility="gone"
             auto:wv_minScrollOffset="0.8"/>
 
     </LinearLayout>
@@ -102,10 +100,25 @@
         android:layout_marginRight="4dp"
         android:max="30"/>
 
-    <Button
-        android:id="@+id/scrollButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="Scroll"/>
+        android:gravity="right"
+        android:orientation="vertical">
+
+
+        <CheckBox
+            android:id="@+id/cycleCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cycle"/>
+        <Button
+            android:id="@+id/scrollButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Scroll"/>
+
+    </LinearLayout>
+
 </LinearLayout>

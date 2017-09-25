@@ -1,10 +1,8 @@
 package com.cz.recyclerlibrary.layoutmanager.base
 
-import android.content.Context
 import android.graphics.PointF
 import android.support.annotation.FloatRange
 import android.support.v7.widget.RecyclerView
-import android.util.AttributeSet
 import android.view.View
 import com.cz.recyclerlibrary.adapter.dynamic.DynamicAdapter
 import com.cz.recyclerlibrary.debugLog
@@ -26,11 +24,12 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
     var cycle=false
         set(value) {
             field=value
+            removeAllViews()
             requestLayout()
         }
 
-    override fun onAttachedToWindow(view: RecyclerView) {
-        super.onAttachedToWindow(view)
+    override fun onAttachedToWindow(recyclerView: RecyclerView) {
+        super.onAttachedToWindow(recyclerView)
         //设置滑动完成居中
         val scrollListener=CenterLinearScrollListener(this)
         scrollListener.setOnSelectPositionChangedListener(object :OnSelectPositionChangedListener{
@@ -38,7 +37,7 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
                 listener?.onSelectPositionChanged(view,position,lastPosition)
             }
         })
-        view.addOnScrollListener(scrollListener)
+        recyclerView.addOnScrollListener(scrollListener)
     }
 
     /**
@@ -55,11 +54,6 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
         this.minCycleCount=minCycleCount
     }
 
-    override fun onDetachedFromWindow(view: RecyclerView, recycler: RecyclerView.Recycler) {
-        super.onDetachedFromWindow(view, recycler)
-
-    }
-
     override fun onScrollStateChanged(state: Int) {
         super.onScrollStateChanged(state)
         if (0 < itemCount) {
@@ -71,16 +65,13 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
     override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
         super.onLayoutChildren(recycler, state)
         //排版完后,向上检测1次,以自动铺完中间距离顶部空间
-//        updateLayoutState(DIRECTION_START,0)
-//        fill(recycler,state,false)
+        if(0<childCount){
+            updateLayoutState(DIRECTION_START,0)
+            fill(recycler,state)
+        }
     }
 
-    override fun onLayoutCompleted(state: RecyclerView.State?) {
-        super.onLayoutCompleted(state)
-        debugLog("onLayoutCompleted")
-    }
-
-    override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State,layoutChildren:Boolean): Int {
+    override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
         //当前可填充空间
         val start=layoutState.available
         //为避免回收时,scrollingOffset异常
@@ -93,16 +84,18 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
         while(0<remainingSpace&&hasMore(state)){
             //循环排版子控件,直到塞满为止,
             val view = nextView(recycler,state)
-            if(layoutChildren&&0==childCount){
+            if(layoutState.layoutChildren){
 //                如果是初次排版,需要将控件排到中间
                 val totalSpace=orientationHelper.totalSpace
                 layoutState.available=(totalSpace+orientationHelper.getDecoratedMeasurement(view))/2
                 layoutState.layoutOffset =totalSpace-layoutState.available
                 //重新给定可排版空间
                 remainingSpace=layoutState.available
+                //初始化排版
+                layoutState.layoutChildren=false
             }
             //添加并测量控件
-            addAdapterView(view,recycler,state)
+            addAdapterView(view)
             val consumed= layoutChildView(view,recycler,state)
             layoutState.layoutOffset +=consumed*layoutState.itemDirection
             layoutState.available-=consumed
@@ -295,7 +288,7 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
         measureChildWithMargins(view,0,0)
         layoutState.position+=layoutState.itemDirection
 
-        view.setOnClickListener { v -> smoothScrollToView(v.parent as RecyclerView,v) }
+        view.setOnClickListener { v -> smoothScrollToView(recyclerView,v) }
         return view
     }
 

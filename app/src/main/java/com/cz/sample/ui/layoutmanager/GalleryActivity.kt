@@ -6,6 +6,7 @@ import com.cz.sample.annotation.ToolBar
 import com.cz.sample.ui.layoutmanager.adapter.GalleryImageAdapter
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_gallery.*
+import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
 
 import java.util.ArrayList
 
@@ -27,8 +28,9 @@ class GalleryActivity : ToolBarActivity() {
         gallery.setMinScrollOffset(0.8f)
         //设置最小可滚动个数为2个
 //        recyclerView.setCycleCount(1)
-        gallery.setCycle(true)
         gallery.adapter = GalleryImageAdapter(this, items)
         gallery.onSelectPositionChanged { _, i, _ -> text.text="Position:$i" }
+
+        cycleCheckBox.onCheckedChange { _, isChecked -> gallery.setCycle(isChecked) }
     }
 }

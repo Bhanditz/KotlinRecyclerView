@@ -18,7 +18,7 @@ import java.util.ArrayList
 /**
  * Created by cz on 1/18/17.
  */
-class GalleryImageAdapter(context: Context, imageItems: List<Int>?) : RecyclerView.Adapter<BaseViewHolder>(), ViewScrollOffsetCallback {
+class ViewPagerImageAdapter(context: Context, imageItems: List<Int>?) : RecyclerView.Adapter<BaseViewHolder>(), ViewScrollOffsetCallback {
     private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
     private val imageItems: MutableList<Int>
 
@@ -30,15 +30,13 @@ class GalleryImageAdapter(context: Context, imageItems: List<Int>?) : RecyclerVi
     }
 
     override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float,minOffset:Float) {
-        view.scaleX = 0.2f + Math.abs(minOffset)
-        view.scaleY = 0.2f + Math.abs(minOffset)
-        view.rotation=360*Math.abs(minOffset)
-
+//        view.scaleX = Math.abs(minOffset)
+//        view.scaleY = Math.abs(minOffset)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         Log.e(TAG, "onCreateViewHolder")
-        return BaseViewHolder(layoutInflater.inflate(R.layout.gallery_image_item, parent, false))
+        return BaseViewHolder(layoutInflater.inflate(R.layout.view_pager_image_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: BaseViewHolder, position: Int) {

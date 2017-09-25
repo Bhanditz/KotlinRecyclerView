@@ -10,6 +10,7 @@ import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_vertical_layout_manager.*
 import org.jetbrains.anko.sdk25.coroutines.onCheckedChange
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import java.util.*
 
 /**
  * Created by cz on 2017/1/21.
@@ -29,6 +30,12 @@ class VerticalLayoutActivity : ToolBarActivity() {
         cycleCheckBox.onCheckedChange { _, isChecked ->  layoutManager.cycle=isChecked}
         scrollButton.onClick {
             recyclerView.smoothScrollToPosition(30)
+        }
+
+        val random= Random()
+        addButton.onClick {
+            val index=random.nextInt(adapter.itemsCount)
+            adapter.addItemNotify("NewItem${adapter.itemCount}",5)
         }
     }
 }

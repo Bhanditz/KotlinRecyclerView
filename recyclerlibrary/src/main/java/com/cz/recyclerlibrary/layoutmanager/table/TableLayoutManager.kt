@@ -29,10 +29,10 @@ class TableLayoutManager : BaseLinearLayoutManager {
         } else if (state.didStructureChange()) {
             detachAndScrapAttachedViews(recycler)
             //初始化/重置 layoutState 状态
-            updateLayoutStateToFillEnd()
-            ensureColumnItem(recycler)
+//            updateLayoutStateToFillEnd(recycler,state)
+//            ensureColumnItem(recycler)
             //首次填充控件
-            fill(recycler, state,true)
+            fill(recycler, state)
         }
     }
 

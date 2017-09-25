@@ -27,7 +27,7 @@ open class CenterSmoothScroller(context: Context) : LinearSmoothScroller(context
         var dx = calculateDxToMakeVisible(targetView, horizontalSnapPreference)
         var dy = calculateDyToMakeVisible(targetView, verticalSnapPreference)
         val distance = Math.sqrt((dx * dx + dy * dy).toDouble()).toInt()
-        val time = calculateTimeForDeceleration(distance) * 10
+        val time = calculateTimeForDeceleration(distance) * 6
         val offsetX = (layoutManager.width - targetView.measuredWidth) / 2
         val offsetY = (layoutManager.height - targetView.measuredHeight) / 2
         if (null != mTargetVector) {
