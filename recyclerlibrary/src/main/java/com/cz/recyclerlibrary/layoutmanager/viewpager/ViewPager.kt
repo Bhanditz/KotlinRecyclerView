@@ -2,9 +2,11 @@ package com.cz.recyclerlibrary.layoutmanager.viewpager
 
 import android.content.Context
 import android.support.annotation.FloatRange
+import android.support.v7.widget.OrientationHelper
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.View
+import com.cz.recyclerlibrary.R
 import com.cz.recyclerlibrary.layoutmanager.callback.OnSelectPositionChangedListener
 import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
@@ -12,7 +14,28 @@ import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
  * Created by cz on 2017/9/25.
  */
 class ViewPager @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyle: Int=0) : RecyclerView(context, attrs, defStyle) {
-    val layoutManager=ViewPagerLayoutManager(context,BaseLinearLayoutManager.HORIZONTAL)
+    companion object {
+        const val HORIZONTAL = OrientationHelper.HORIZONTAL
+        const val VERTICAL = OrientationHelper.VERTICAL
+    }
+    private val layoutManager=ViewPagerLayoutManager(context,BaseLinearLayoutManager.HORIZONTAL)
+    init {
+        context.obtainStyledAttributes(attrs, R.styleable.ViewPager).apply{
+            setItemSizeFactor(getFloat(R.styleable.ViewPager_vp_itemSizeFactor,1f))
+        }
+    }
+
+    fun setOrientation(orientation:Int){
+        this.layoutManager.orientation=orientation
+    }
+
+    /**
+     * 条目显示
+     */
+    private fun setItemSizeFactor(factor: Float) {
+        this.layoutManager.setItemSizeFactor(factor)
+    }
+
     /**
      * @param layout
      */

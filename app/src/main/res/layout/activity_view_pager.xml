@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical"
+        app:vp_itemSizeFactor="0.8"/>
 
 
     <LinearLayout
@@ -23,11 +24,6 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <CheckBox
-            android:id="@+id/cycleCheckBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cycle"/>
 
         <TextView
             android:id="@+id/text"
@@ -39,6 +35,33 @@
             android:layout_marginBottom="24dp"
             android:textColor="@color/colorPrimary"/>
 
+        <CheckBox
+            android:id="@+id/cycleCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cycle"/>
+
+        <RadioGroup
+            android:id="@+id/orientationLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:checkedButton="@+id/horizontal">
+
+            <RadioButton
+                android:id="@+id/horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Horizontal"/>
+
+            <RadioButton
+                android:id="@+id/vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vertical"/>
+
+        </RadioGroup>
 
     </LinearLayout>
 </LinearLayout>

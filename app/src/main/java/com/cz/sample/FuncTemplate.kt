@@ -202,13 +202,12 @@ class FuncTemplate {
                         desc = "演示仿ViewPager示例"
                         clazz = ViewPagerActivity::class.java
                     }
-                    /*
                     item {
                         pid = 5
                         title = "Table"
                         desc = "演示表格数据"
                         clazz = TableActivity::class.java
-                    }*/
+                    }
                 }
 
             }

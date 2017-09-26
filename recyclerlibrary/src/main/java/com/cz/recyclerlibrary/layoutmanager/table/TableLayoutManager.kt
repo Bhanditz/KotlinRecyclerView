@@ -1,11 +1,10 @@
 package com.cz.recyclerlibrary.layoutmanager.table
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.AttributeSet
-import android.util.Log
 import android.util.SparseIntArray
 import android.view.View
+import android.view.ViewGroup
+import com.cz.recyclerlibrary.debugLog
 import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
 
@@ -17,60 +16,54 @@ import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
  * 此做法存在一些性能问题,如屏幕外一口气会加载过多控件.但设计上更符合如数据库这类设计.
  */
 class TableLayoutManager : BaseLinearLayoutManager {
-    private val columnItemSize: SparseIntArray = SparseIntArray()
+    private lateinit var columnArray:IntArray
     private var totalWidth: Int = 0
-
-    constructor() : super(BaseLinearLayoutManager.VERTICAL) {
-    }
-
-    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
-        if (0 == itemCount||state.isPreLayout) {
-            detachAndScrapAttachedViews(recycler)
-        } else if (state.didStructureChange()) {
-            detachAndScrapAttachedViews(recycler)
-            //初始化/重置 layoutState 状态
-//            updateLayoutStateToFillEnd(recycler,state)
-//            ensureColumnItem(recycler)
-            //首次填充控件
-            fill(recycler, state)
-        }
-    }
+    private var scrollX=0
+    constructor() : super(BaseLinearLayoutManager.VERTICAL)
 
     /**
-     * 预计算第一个控件个数宽,为以后每个列控件宽
-     * @param recycler
+     * 此处复写,完成第一次排版时,计算每一列宽度问题
      */
-    private fun ensureColumnItem(recycler: RecyclerView.Recycler) {
-        val view = recycler.getViewForPosition(0)
-        measureChildWithMargins(view, 0, 0)
-        if (view !is TableColumnLayout) {
-            throw IllegalArgumentException("the container layout must used TableColumnLayout!")
-        } else {
-            val tableColumnLayout = view
-            //计算每一个孩子宽,设定为后续每一列宽
-            val childCount = tableColumnLayout.childCount
-            if (0 < childCount) {
-                columnItemSize.clear()
-                totalWidth = getDecoratedMeasuredWidth(tableColumnLayout)
-                for (i in 0..childCount - 1) {
-                    val childView = tableColumnLayout.getChildAt(i)
-                    measureChild(childView, 0, 0)
-                    val childMeasuredWidth = childView.measuredWidth
-                    columnItemSize.put(i, childMeasuredWidth)
-                }
-            }
+    override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        //当前可填充空间
+        val start=layoutState.available
+        //为避免回收时,scrollingOffset异常
+        if(0>layoutState.available){
+            layoutState.scrollingOffset+=layoutState.available
         }
-    }
-
-    override fun measureChild(child: View, widthUsed: Int, heightUsed: Int) {
-        val lp = child.layoutParams
-        val widthSpec = RecyclerView.LayoutManager.getChildMeasureSpec(width, widthMode, paddingLeft + paddingRight + widthUsed, lp.width, canScrollHorizontally())
-        val heightSpec = RecyclerView.LayoutManager.getChildMeasureSpec(height, heightMode, paddingTop + paddingBottom + heightUsed, lp.height, canScrollVertically())
-        child.measure(widthSpec, heightSpec)
+        //铺满过程中,检测并回收控件
+        recycleByLayoutState(recycler)
+        var remainingSpace=layoutState.available
+        while(0<remainingSpace&&hasMore(state)){
+            //循环排版子控件,直到塞满为止,
+            val view = nextView(recycler,state)
+            if(view is TableColumnLayout){
+                if(layoutState.layoutChildren){
+                    //初始化排版
+                    totalWidth = getDecoratedMeasuredWidth(view)
+                    var array= (0..view.childCount - 1).map { view.getChildAt(it).measuredWidth }
+                    columnArray=array.toIntArray()
+                    layoutState.layoutChildren=false
+                }
+                view.setColumnSize(columnArray)
+            }
+            //添加控件
+            addAdapterView(view)
+            val consumed= layoutChildView(view,recycler,state)
+            layoutState.layoutOffset +=consumed*layoutState.itemDirection
+            layoutState.available-=consumed
+            remainingSpace-=consumed
+        }
+        //返回排版后,所占用空间
+        return start-layoutState.available
     }
 
     override fun canScrollHorizontally(): Boolean {
-        return totalWidth > width
+        return totalWidth>width
+    }
+
+    override fun canScrollVertically(): Boolean {
+        return true
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
@@ -78,19 +71,18 @@ class TableLayoutManager : BaseLinearLayoutManager {
             return 0
         }
         val childView = getChildAt(0)
-        val leftDecorationWidth = getRightDecorationWidth(childView)
         val decoratedLeft = getDecoratedLeft(childView)
         val decoratedRight = getDecoratedRight(childView) - width
-        val layoutDirection = if (0 > dx) BaseLinearLayoutManager.DIRECTION_START else BaseLinearLayoutManager.DIRECTION_END
+        val layoutDirection = if (0 > dx) DIRECTION_START else DIRECTION_END
         var scrolled = dx
-        if (BaseLinearLayoutManager.DIRECTION_START == layoutDirection) {
+        if (DIRECTION_START == layoutDirection) {
             //to left
             if (0 < decoratedLeft) {
                 scrolled = 0
             } else if (Math.abs(dx) + decoratedLeft > 0) {
                 scrolled = decoratedLeft
             }
-        } else if (BaseLinearLayoutManager.DIRECTION_END == layoutDirection) {
+        } else if (DIRECTION_END == layoutDirection) {
             //to right
             if (0 > decoratedRight) {
                 scrolled = 0
@@ -98,54 +90,38 @@ class TableLayoutManager : BaseLinearLayoutManager {
                 scrolled = decoratedRight
             }
         }
+        //记录横向滚动值
+        scrollX=decoratedLeft-scrolled
+        //横向滚动
         offsetChildrenHorizontal(-scrolled)
-        Log.e(TAG, "decoratedLeft:$decoratedLeft decoratedRight:$decoratedRight dx:$dx scrolled:$scrolled leftDecorationWidth:$leftDecorationWidth")
         return scrolled
     }
 
-    override fun layoutChildView(view: View, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        //处理 offset
-        var decoratedLeft = 0
-        if (0 < childCount) {
-            val childView = getChildAt(0)
-            decoratedLeft = getDecoratedLeft(childView)
-        }
-        //根据 layoutDirection 添加控件前或者后
-        if (BaseLinearLayoutManager.DIRECTION_END == layoutState.itemDirection) {
-            addView(view)
-        } else if (BaseLinearLayoutManager.DIRECTION_START == layoutState.itemDirection) {
-            addView(view, 0)
-        }
-        measureChildWithMargins(view, 0, 0)
+
+    /**
+     * 填充子控件
+     */
+    override fun layoutChildView(view:View,recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
+        var left: Int=paddingLeft
+        val top: Int
+        val right: Int
+        val bottom: Int
         val consumed = orientationHelper.getDecoratedMeasurement(view)
-        val left = decoratedLeft
-        var top = 0
-        val right = decoratedLeft + getDecoratedMeasuredWidth(view)
-        var bottom = 0
-        if (BaseLinearLayoutManager.DIRECTION_START == layoutState.itemDirection) {
-            top = layoutState.layoutOffset - consumed
+        //width+分隔线+左右margin,控制右排版位置
+        right = left + orientationHelper.getDecoratedMeasurementInOther(view)
+        if (layoutState.itemDirection == DIRECTION_START) {
             bottom = layoutState.layoutOffset
-        } else if (BaseLinearLayoutManager.DIRECTION_END == layoutState.itemDirection) {
+            top = layoutState.layoutOffset - consumed
+        } else {
             top = layoutState.layoutOffset
             bottom = layoutState.layoutOffset + consumed
         }
-        layoutDecorated(view, left, top, right, bottom)
+        layoutDecorated(view, scrollX, top, right+scrollX, bottom)
+        //返回控件高度/宽
         return consumed
     }
 
-    override fun canScrollVertically(): Boolean {
-        return true
-    }
-
     override fun nextView(recycler: RecyclerView.Recycler, state: RecyclerView.State): View {
-        val columnLayout = super.nextView(recycler,state) as TableColumnLayout
-        if (0 < columnItemSize.size()) {
-            columnLayout.setColumnSize(columnItemSize)
-        }
-        return columnLayout
-    }
-
-    companion object {
-        private val TAG = "TableLayoutManager"
+        return super.nextView(recycler,state) as? TableColumnLayout ?: throw RuntimeException("必须使用TableColumnLayout作用根布局!")
     }
 }

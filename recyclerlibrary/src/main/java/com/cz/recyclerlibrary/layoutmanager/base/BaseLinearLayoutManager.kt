@@ -36,6 +36,8 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
                 throw IllegalArgumentException("invalid orientation:" + field)
             }
             field = value
+            //移除所有控件,会在onLayoutChildren时,更新所有布局
+            removeAllViews()
             if (OrientationHelper.HORIZONTAL == field) {
                 orientationHelper = OrientationHelper.createHorizontalHelper(this)
             } else if (OrientationHelper.VERTICAL == field) {
@@ -97,7 +99,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
     /**
      * 以底部方向更新布局状态
      */
-    private fun updateLayoutStateFromEnd() {
+    protected fun updateLayoutStateFromEnd() {
         layoutState.layoutOffset = 0
         layoutState.position = 0
         layoutState.layoutChildren = true
@@ -105,7 +107,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
         layoutState.available = orientationHelper.totalSpace
     }
 
-    private fun updateLayoutStateStructureChange() {
+    protected fun updateLayoutStateStructureChange() {
         val child = getChildAt(0)
         layoutState.layoutChildren = false
         layoutState.position = getPosition(child)
@@ -167,6 +169,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
         if (childCount == 0 || dy == 0) {
             return 0
         }
+        debugLog("scrollBy:$dy")
         val layoutDirection = if (dy > 0) DIRECTION_END else DIRECTION_START
         val absDy = Math.abs(dy)
         //动态更新布局状态

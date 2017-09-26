@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.cz.recyclerlibrary.PullToRefreshRecyclerView
+    <com.cz.recyclerlibrary.layoutmanager.table.TableView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        auto:pv_listDivide="@color/divide"
-        auto:pv_listDivideHeight="@dimen/divideSize"
-        auto:pl_refreshMode="none"/>
+        android:scrollbars="vertical|horizontal"/>
 
 </LinearLayout>

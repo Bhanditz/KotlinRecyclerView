@@ -71,6 +71,9 @@ open class CenterLinearLayoutManager(orientation: Int=BaseLinearLayoutManager.VE
         }
     }
 
+    /**
+     * 此处复写,完成第一次排版时,居中排版问题,并取中心点,作滑动动作速率回调
+     */
     override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
         //当前可填充空间
         val start=layoutState.available

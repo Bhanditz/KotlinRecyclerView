@@ -2,6 +2,7 @@ package com.cz.sample.ui.layoutmanager
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.cz.recyclerlibrary.layoutmanager.viewpager.ViewPager
 
 import com.cz.sample.R
 import com.cz.sample.annotation.ToolBar
@@ -36,5 +37,12 @@ class ViewPagerActivity : ToolBarActivity() {
         viewPager.onSelectPositionChanged { _, i, _ -> text.text="Position:$i" }
 
         cycleCheckBox.onCheckedChange { _, isChecked -> viewPager.setCycle(isChecked) }
+
+        orientationLayout.setOnCheckedChangeListener { _, checkedId ->
+            when(checkedId){
+                R.id.horizontal->viewPager.setOrientation(ViewPager.HORIZONTAL)
+                else->viewPager.setOrientation(ViewPager.VERTICAL)
+            }
+        }
     }
 }

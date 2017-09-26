@@ -22,7 +22,6 @@ class TableActivity : ToolBarActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_table)
         setTitle(intent.getStringExtra("title"))
-        recyclerView.layoutManager = TableLayoutManager()
         recyclerView.adapter = TableAdapter(this, Arrays.asList(*Data.ITEMS))
     }
 }

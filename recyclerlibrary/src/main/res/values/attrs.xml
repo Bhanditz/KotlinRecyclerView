@@ -57,6 +57,10 @@
         <attr name="gallery_cycle" format="integer"/>
     </declare-styleable>
 
+
+    <declare-styleable name="ViewPager">
+        <attr name="vp_itemSizeFactor" format="float"/>
+    </declare-styleable>
     <declare-styleable name="TableView">
         <attr name="tv_columnCount" format="integer"/>
     </declare-styleable>
