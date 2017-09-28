@@ -136,7 +136,7 @@ open class BaseLinearLayoutManager(orientation: Int = BaseLinearLayoutManager.VE
         while(0<remainingSpace&&hasMore(state)){
             //循环排版子控件,直到塞满为止
             val view=nextView(recycler,state)
-            //测量并添加控件
+            //添加控件
             addAdapterView(view)
             //添加一个新的控件
             val consumed=layoutChildView(view,recycler,state)

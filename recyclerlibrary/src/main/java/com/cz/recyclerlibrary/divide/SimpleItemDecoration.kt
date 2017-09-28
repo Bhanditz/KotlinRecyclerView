@@ -86,15 +86,15 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
         this.footerCount = footerCount
     }
 
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        super.onDraw(c, parent, state)
+    override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
+        super.onDraw(canvas, parent, state)
         if (null == drawable) return
         when (divideMode) {
-            VERTICAL -> drawLinearVertical(c, parent, state)
-            HORIZONTAL -> drawLinearHorizontal(c, parent, state)
+            VERTICAL -> drawLinearVertical(canvas, parent, state)
+            HORIZONTAL -> drawLinearHorizontal(canvas, parent, state)
             GRID -> {
-                drawGridVertical(c, parent, state)
-                drawGridHorizontal(c, parent, state)
+                drawGridVertical(canvas, parent, state)
+                drawGridHorizontal(canvas, parent, state)
             }
         }
     }

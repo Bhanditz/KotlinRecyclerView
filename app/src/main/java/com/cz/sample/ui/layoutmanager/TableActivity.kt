@@ -2,11 +2,10 @@ package com.cz.sample.ui.layoutmanager
 
 import android.os.Bundle
 
-import com.cz.recyclerlibrary.layoutmanager.table.TableLayoutManager
 import com.cz.sample.R
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
-import com.cz.sample.ui.layoutmanager.adapter.TableAdapter
+import com.cz.sample.ui.layoutmanager.adapter.TableItemAdapter
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_table.*
 
@@ -22,6 +21,6 @@ class TableActivity : ToolBarActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_table)
         setTitle(intent.getStringExtra("title"))
-        recyclerView.adapter = TableAdapter(this, Arrays.asList(*Data.ITEMS))
+        recyclerView.adapter = TableItemAdapter(this, Arrays.asList(*Data.ITEMS))
     }
 }

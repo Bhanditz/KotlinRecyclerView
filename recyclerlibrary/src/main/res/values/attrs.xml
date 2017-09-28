@@ -62,7 +62,10 @@
         <attr name="vp_itemSizeFactor" format="float"/>
     </declare-styleable>
     <declare-styleable name="TableView">
-        <attr name="tv_columnCount" format="integer"/>
+        <attr name="tv_columnMinWidth" format="dimension"/>
+        <attr name="tv_columnMaxWidth" format="dimension"/>
+        <attr name="tv_divider" format="reference"/>
+        <attr name="tv_dividerSize" format="dimension"/>
     </declare-styleable>
 
 

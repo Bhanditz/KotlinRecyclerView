@@ -1,7 +1,8 @@
 package com.cz.recyclerlibrary.layoutmanager.table
 
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
-import android.util.SparseIntArray
 import android.view.View
 import android.view.ViewGroup
 import com.cz.recyclerlibrary.debugLog
@@ -17,22 +18,81 @@ import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
  */
 class TableLayoutManager : BaseLinearLayoutManager {
     private lateinit var columnArray:IntArray
+    private lateinit var adapter: TableAdapter<*>
+    private var headerView:TableColumnLayout?=null
+    private var columnMinWidth=0f
+    private var columnMaxWidth=0f
     private var totalWidth: Int = 0
+    private var strokeWidth: Float = 0f
+    private var drawable: Drawable? = null
     private var scrollX=0
     constructor() : super(BaseLinearLayoutManager.VERTICAL)
+
+    /**
+     * 设置条目列最小宽度
+     */
+    fun setColumnMinWidth(minWidth: Float) {
+        this.columnMinWidth=minWidth
+    }
+
+    /**
+     * 设置条目列最大宽度
+     */
+    fun setColumnMaxWidth(maxWidth: Float) {
+        this.columnMaxWidth=maxWidth
+    }
+
+
+    fun setDrawable(drawable: Drawable?) {
+        this.drawable = drawable
+    }
+
+    fun setStrokeWidth(strokeWidth: Float) {
+        this.strokeWidth = strokeWidth
+    }
+
+    fun setAdapter(adapter: TableAdapter<*>) {
+        this.adapter=adapter
+    }
+
+    override fun onAttachedToWindow(recyclerView: RecyclerView) {
+        super.onAttachedToWindow(recyclerView)
+        recyclerView.addItemDecoration(object :RecyclerView.ItemDecoration(){
+            override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
+                super.onDraw(canvas, parent, state)
+                if(parent is TableView){
+                    //绘背景
+                    canvas.save()
+                    canvas.translate(scrollX*1f,parent.originalPaddingTop*1f)
+                    headerView?.draw(canvas)
+                    canvas.restore()
+                }
+            }
+        },-1)
+    }
+
+    override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
+        super.onLayoutChildren(recycler, state)
+        //解决首次排版header后,paddingTop重设导致的底部排版问题.待更优解决方法
+        if(0<childCount){
+            updateLayoutState(DIRECTION_END,0)
+            fill(recycler,state)
+        }
+    }
+
 
     /**
      * 此处复写,完成第一次排版时,计算每一列宽度问题
      */
     override fun fill(recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        //当前可填充空间
-        val start=layoutState.available
         //为避免回收时,scrollingOffset异常
         if(0>layoutState.available){
             layoutState.scrollingOffset+=layoutState.available
         }
         //铺满过程中,检测并回收控件
         recycleByLayoutState(recycler)
+        //当前可填充空间
+        val start=layoutState.available
         var remainingSpace=layoutState.available
         while(0<remainingSpace&&hasMore(state)){
             //循环排版子控件,直到塞满为止,
@@ -41,11 +101,24 @@ class TableLayoutManager : BaseLinearLayoutManager {
                 if(layoutState.layoutChildren){
                     //初始化排版
                     totalWidth = getDecoratedMeasuredWidth(view)
-                    var array= (0..view.childCount - 1).map { view.getChildAt(it).measuredWidth }
+                    var array= (0..view.childCount - 1).map { view.getChildAt(it) }.map {
+                        Math.min(columnMaxWidth.toInt(),Math.max(columnMinWidth.toInt(),it.measuredWidth))
+                    }
                     columnArray=array.toIntArray()
+//                    //初始化并排版headerView
+                    layoutHeaderView(view,columnArray)
+                    //从此位置开始排版
+                    layoutState.layoutOffset = paddingTop
+                    //记录横向滚动起始
+                    scrollX=paddingLeft
+                    //标记为己排版
                     layoutState.layoutChildren=false
                 }
+                view.setDividerSize(strokeWidth)
+                view.setDividerDrawable(drawable)
                 view.setColumnSize(columnArray)
+                //再次测试,改变大小
+                measureChildWithMargins(view,0,0)
             }
             //添加控件
             addAdapterView(view)
@@ -55,7 +128,37 @@ class TableLayoutManager : BaseLinearLayoutManager {
             remainingSpace-=consumed
         }
         //返回排版后,所占用空间
-        return start-layoutState.available
+        return start-remainingSpace
+    }
+
+    /**
+     * 排版HeaderView
+     */
+    private fun layoutHeaderView(childView:View,columnArray:IntArray){
+        val tableView=recyclerView as? TableView?:return
+        val columnCount= (childView as? ViewGroup)?.childCount ?: 1
+        val layout=TableColumnLayout(recyclerView.context)
+        layout.setColumnSize(columnArray)
+        for (index in (0..columnCount - 1)) {
+            //获取headerItem
+            val headerItemView=adapter.getHeaderItemView(layout,index)
+            layout.addView(headerItemView)
+            //绑定header数据
+            adapter.onBindHeaderItemView(layout,headerItemView,index)
+        }
+        //绑定headerView
+        adapter.onBindHeaderView(layout)
+        //模仿测量
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(childView.measuredWidth, View.MeasureSpec.EXACTLY)
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(childView.measuredHeight, View.MeasureSpec.AT_MOST)
+        val headerWidth=ViewGroup.getChildMeasureSpec(widthSpec,paddingLeft+paddingRight,childView.measuredWidth)
+        val headerHeight=ViewGroup.getChildMeasureSpec(heightSpec,paddingTop+paddingBottom,childView.measuredHeight)
+        layout.measure(headerWidth,headerHeight)
+        //模仿排版
+        layout.layout(0,0,layout.measuredWidth,layout.measuredHeight)
+        headerView=layout
+        //空出header空间
+        tableView.setOriginalPadding(paddingLeft, tableView.originalPaddingTop+layout.measuredHeight, paddingRight, paddingBottom)
     }
 
     override fun canScrollHorizontally(): Boolean {
@@ -67,20 +170,21 @@ class TableLayoutManager : BaseLinearLayoutManager {
     }
 
     override fun scrollHorizontallyBy(dx: Int, recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        if (0 == itemCount) {
+        if (0 == itemCount||0==dx) {
             return 0
         }
         val childView = getChildAt(0)
+        //横向最大滚动距离
         val decoratedLeft = getDecoratedLeft(childView)
         val decoratedRight = getDecoratedRight(childView) - width
         val layoutDirection = if (0 > dx) DIRECTION_START else DIRECTION_END
         var scrolled = dx
         if (DIRECTION_START == layoutDirection) {
             //to left
-            if (0 < decoratedLeft) {
-                scrolled = 0
-            } else if (Math.abs(dx) + decoratedLeft > 0) {
-                scrolled = decoratedLeft
+            if(decoratedLeft>paddingLeft){
+                scrolled=0
+            } else if (decoratedLeft-dx > paddingLeft) {
+                scrolled = decoratedLeft-paddingLeft
             }
         } else if (DIRECTION_END == layoutDirection) {
             //to right
@@ -94,6 +198,7 @@ class TableLayoutManager : BaseLinearLayoutManager {
         scrollX=decoratedLeft-scrolled
         //横向滚动
         offsetChildrenHorizontal(-scrolled)
+        debugLog("scrollHorizontallyBy:$dx scrollX:$scrollX Direction:$layoutDirection scrolled:$scrolled Left:$decoratedLeft Right:$decoratedRight")
         return scrolled
     }
 
@@ -102,13 +207,11 @@ class TableLayoutManager : BaseLinearLayoutManager {
      * 填充子控件
      */
     override fun layoutChildView(view:View,recycler: RecyclerView.Recycler, state: RecyclerView.State): Int {
-        var left: Int=paddingLeft
         val top: Int
-        val right: Int
         val bottom: Int
         val consumed = orientationHelper.getDecoratedMeasurement(view)
         //width+分隔线+左右margin,控制右排版位置
-        right = left + orientationHelper.getDecoratedMeasurementInOther(view)
+        val right = orientationHelper.getDecoratedMeasurementInOther(view)+paddingRight
         if (layoutState.itemDirection == DIRECTION_START) {
             bottom = layoutState.layoutOffset
             top = layoutState.layoutOffset - consumed
@@ -116,7 +219,9 @@ class TableLayoutManager : BaseLinearLayoutManager {
             top = layoutState.layoutOffset
             bottom = layoutState.layoutOffset + consumed
         }
+        //scrollX内己包含paddingLeft数值
         layoutDecorated(view, scrollX, top, right+scrollX, bottom)
+        debugLog("layoutChildView paddingLeft:$paddingLeft scrollX:$scrollX top:$top right:${right+scrollX} bottom:$bottom consumed:${view.measuredWidth}")
         //返回控件高度/宽
         return consumed
     }

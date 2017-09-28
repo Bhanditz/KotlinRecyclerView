@@ -32,7 +32,7 @@ class GalleryImageAdapter(context: Context, imageItems: List<Int>?) : RecyclerVi
     override fun onViewScrollOffset(view: View, position: Int, centerPosition: Int, offset: Float,minOffset:Float) {
         view.scaleX = 0.2f + Math.abs(minOffset)
         view.scaleY = 0.2f + Math.abs(minOffset)
-        view.rotation=360*Math.abs(minOffset)
+//        view.rotation=360*Math.abs(minOffset)
 
     }
 
