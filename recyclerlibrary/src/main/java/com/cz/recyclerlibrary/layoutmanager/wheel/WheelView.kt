@@ -37,8 +37,10 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         setDivideDrawable(a.getDrawable(R.styleable.WheelView_wv_divideDrawable))
         setDrawableSize(a.getDimension(R.styleable.WheelView_wv_drawableSize, 0f).toInt())
         setDrawablePadding(a.getDimension(R.styleable.WheelView_wv_drawablePadding, 0f).toInt())
+        setWheelCount(a.getInteger(R.styleable.WheelView_wv_wheelCount,5))
         a.recycle()
     }
+
 
     fun setDivideDrawable(drawable: Drawable) {
         this.divideDrawable = drawable
@@ -59,7 +61,11 @@ class WheelView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         layoutManager.cycle=cycle
     }
 
-    fun setOritation(orientation:Int){
+    fun setWheelCount(wheelCount: Int) {
+        layoutManager.setWheelCount(wheelCount)
+    }
+
+    fun setOrientation(orientation:Int){
         layoutManager.orientation=orientation
     }
 
