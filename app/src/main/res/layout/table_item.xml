@@ -1,62 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.cz.recyclerlibrary.layoutmanager.table.TableColumnLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TextView
+    android:id="@+id/text"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingTop="12dp"
-    android:paddingBottom="12dp">
-
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:padding="4dp" />
-
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:padding="4dp" />
-
-    <TextView
-        android:id="@+id/text3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:padding="4dp" />
-
-    <TextView
-        android:id="@+id/text4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:padding="4dp" />
-
-    <TextView
-        android:id="@+id/text5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:padding="4dp" />
-
-    <TextView
-        android:id="@+id/text6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:lines="1"
-        android:singleLine="true"
-        android:ellipsize="end"
-        android:padding="4dp"/>
-
-</com.cz.recyclerlibrary.layoutmanager.table.TableColumnLayout>
+    android:singleLine="true"
+    android:ellipsize="end"
+    android:padding="12dp" />

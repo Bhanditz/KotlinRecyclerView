@@ -24,22 +24,15 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
 
 class TableItemAdapter(context: Context, items: List<String>) : TableAdapter<String>(context, items) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
-        return BaseViewHolder(inflateView(parent, R.layout.table_item))
+    override fun getItemView(parent: TableColumnLayout, row: Int, column: Int): View=inflateView(parent,R.layout.table_item)
+
+    override fun onBindItemView(parent: TableColumnLayout, view: View, row: Int, column: Int) {
+        val item=getItem(row)
+        val textView=view as TextView
+        textView.text="Value:$item"
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = getItem(position)
-        val viewGroup = holder.itemView as ViewGroup
-        val childCount = viewGroup.childCount
-        for (i in 0..childCount - 1) {
-            val textView = viewGroup.getChildAt(i) as TextView
-            textView.onClick {
-                Toast.makeText(it?.context,"点击$position $i!",Toast.LENGTH_SHORT).show()
-            }
-            textView.text = item + " column:" + i
-        }
-    }
+    override fun getColumnCount(): Int =8
 
     override fun getHeaderItemView(headerLayout:TableColumnLayout,index:Int): View {
         return inflateView(headerLayout, R.layout.table_header_item)
@@ -51,6 +44,6 @@ class TableItemAdapter(context: Context, items: List<String>) : TableAdapter<Str
     }
     override fun onBindHeaderItemView(parent: TableColumnLayout, view: View, column: Int) {
         val childView=view.find<TextView>(R.id.text)
-        childView.text="Header$column"
+        childView.text="Header${column+1}"
     }
 }

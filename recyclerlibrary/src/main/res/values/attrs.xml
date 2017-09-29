@@ -66,6 +66,18 @@
         <attr name="tv_columnMaxWidth" format="dimension"/>
         <attr name="tv_divider" format="reference"/>
         <attr name="tv_dividerSize" format="dimension"/>
+        <attr name="tv_headerBackground" format="reference"/>
+        <attr name="tv_headerPadding" format="dimension"/>
+        <attr name="tv_headerPaddingLeft" format="dimension"/>
+        <attr name="tv_headerPaddingTop" format="dimension"/>
+        <attr name="tv_headerPaddingRight" format="dimension"/>
+        <attr name="tv_headerPaddingBottom" format="dimension"/>
+        <attr name="tv_itemBackground" format="reference"/>
+        <attr name="tv_itemPadding" format="dimension"/>
+        <attr name="tv_itemPaddingLeft" format="dimension"/>
+        <attr name="tv_itemPaddingTop" format="dimension"/>
+        <attr name="tv_itemPaddingRight" format="dimension"/>
+        <attr name="tv_itemPaddingBottom" format="dimension"/>
     </declare-styleable>
 
 

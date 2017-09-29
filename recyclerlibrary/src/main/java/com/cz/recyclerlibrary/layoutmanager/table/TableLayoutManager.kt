@@ -2,9 +2,11 @@ package com.cz.recyclerlibrary.layoutmanager.table
 
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
+import com.cz.recyclerlibrary.BuildConfig
 import com.cz.recyclerlibrary.debugLog
 import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
@@ -18,8 +20,11 @@ import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
  */
 class TableLayoutManager : BaseLinearLayoutManager {
     private lateinit var columnArray:IntArray
-    private lateinit var adapter: TableAdapter<*>
     private var headerView:TableColumnLayout?=null
+    private var headerBackgroundDrawable:Drawable?=null
+    private val headerItemPadding=ItemPadding()
+    private var itemBackgroundDrawable:Drawable?=null
+    private val itemPadding=ItemPadding()
     private var columnMinWidth=0f
     private var columnMaxWidth=0f
     private var totalWidth: Int = 0
@@ -51,8 +56,52 @@ class TableLayoutManager : BaseLinearLayoutManager {
         this.strokeWidth = strokeWidth
     }
 
-    fun setAdapter(adapter: TableAdapter<*>) {
-        this.adapter=adapter
+    fun setItemBackground(drawable: Drawable?) {
+        itemBackgroundDrawable=drawable
+    }
+
+    fun setItemPadding(padding: Int) {
+        itemPadding.padding=padding
+    }
+
+    fun setItemPaddingLeft(padding: Int) {
+        itemPadding.left=padding
+    }
+
+    fun setItemPaddingTop(padding: Int) {
+        itemPadding.top=padding
+    }
+
+    fun setItemPaddingRight(padding: Int) {
+        itemPadding.right=padding
+    }
+
+    fun setItemPaddingBottom(padding: Int) {
+        itemPadding.bottom=padding
+    }
+
+    fun setHeaderBackground(drawable: Drawable?) {
+        headerBackgroundDrawable=drawable
+    }
+
+    fun setHeaderPadding(padding: Int) {
+        headerItemPadding.padding=padding
+    }
+
+    fun  setHeaderPaddingLeft(padding: Int) {
+        headerItemPadding.left=padding
+    }
+
+    fun setHeaderPaddingTop(padding: Int) {
+        headerItemPadding.top=padding
+    }
+
+    fun setHeaderPaddingRight(padding: Int) {
+        headerItemPadding.right=padding
+    }
+
+    fun setHeaderPaddingBottom(padding: Int) {
+        headerItemPadding.bottom=padding
     }
 
     override fun onAttachedToWindow(recyclerView: RecyclerView) {
@@ -136,7 +185,8 @@ class TableLayoutManager : BaseLinearLayoutManager {
      */
     private fun layoutHeaderView(childView:View,columnArray:IntArray){
         val tableView=recyclerView as? TableView?:return
-        val columnCount= (childView as? ViewGroup)?.childCount ?: 1
+        val adapter=recyclerView.adapter as TableAdapter<*>
+        val columnCount= adapter.getColumnCount()
         val layout=TableColumnLayout(recyclerView.context)
         layout.setColumnSize(columnArray)
         for (index in (0..columnCount - 1)) {
@@ -156,6 +206,13 @@ class TableLayoutManager : BaseLinearLayoutManager {
         layout.measure(headerWidth,headerHeight)
         //模仿排版
         layout.layout(0,0,layout.measuredWidth,layout.measuredHeight)
+        //初始化属性
+        layout.setPadding(itemPadding.left, itemPadding.top,itemPadding.right,itemPadding.bottom)
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.JELLY_BEAN) {
+            layout.setBackgroundDrawable(itemBackgroundDrawable)
+        } else {
+            layout.background=itemBackgroundDrawable
+        }
         headerView=layout
         //空出header空间
         tableView.setOriginalPadding(paddingLeft, tableView.originalPaddingTop+layout.measuredHeight, paddingRight, paddingBottom)
@@ -227,6 +284,27 @@ class TableLayoutManager : BaseLinearLayoutManager {
     }
 
     override fun nextView(recycler: RecyclerView.Recycler, state: RecyclerView.State): View {
-        return super.nextView(recycler,state) as? TableColumnLayout ?: throw RuntimeException("必须使用TableColumnLayout作用根布局!")
+        val view=super.nextView(recycler,state) as? TableColumnLayout ?: throw RuntimeException("必须使用TableColumnLayout作用根布局!")
+        //初始化item属性
+        view.setPadding(itemPadding.left, itemPadding.top,itemPadding.right,itemPadding.bottom)
+        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.JELLY_BEAN) {
+            view.setBackgroundDrawable(itemBackgroundDrawable)
+        } else {
+            view.background=itemBackgroundDrawable
+        }
+        return view
+    }
+
+    class ItemPadding{
+        var padding:Int=0
+        var left:Int=0
+            get()=if(0==left) padding else left
+        var top:Int=0
+            get()=if(0==top) padding else top
+        var right:Int=0
+            get()=if(0==right) padding else right
+        var bottom:Int=0
+            get()=if(0==bottom) padding else bottom
+
     }
 }

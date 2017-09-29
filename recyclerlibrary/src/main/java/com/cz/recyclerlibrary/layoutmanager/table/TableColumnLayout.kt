@@ -20,6 +20,7 @@ class TableColumnLayout @JvmOverloads constructor(context: Context, attrs: Attri
     private var columnSize: IntArray? = null
     private var orientation:Int=OrientationHelper.HORIZONTAL
     private var dividerDrawable:Drawable?=null
+    private var columnCount:Int=0
     private var dividerSize=0f
 
     init {
@@ -30,6 +31,10 @@ class TableColumnLayout @JvmOverloads constructor(context: Context, attrs: Attri
         this.columnSize = columnItem
     }
 
+    fun setColumnCount(columnCount:Int){
+        this.columnCount=columnCount
+    }
+
     fun setOrientation(orientation:Int){
         this.orientation=orientation
     }
@@ -38,9 +43,11 @@ class TableColumnLayout @JvmOverloads constructor(context: Context, attrs: Attri
         this.dividerDrawable=drawable
     }
 
-    fun setDividerSize(dividerSize:Float){
-        this.dividerSize=dividerSize
+    fun setDividerSize(dividerSize:Float) {
+        this.dividerSize = dividerSize
     }
+
+    fun layoutComplete()=columnCount==childCount
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         var totalWidth = 0

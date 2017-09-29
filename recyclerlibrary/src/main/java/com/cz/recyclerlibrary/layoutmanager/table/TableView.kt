@@ -26,10 +26,72 @@ class TableView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
             setColumnMaxWidth(getDimension(R.styleable.TableView_tv_columnMaxWidth,Integer.MAX_VALUE*1f))
             setDivider(getDrawable(R.styleable.TableView_tv_divider))
             setDividerSize(getDimension(R.styleable.TableView_tv_dividerSize,0f))
+
+            setHeaderBackground(getDrawable(R.styleable.TableView_tv_headerBackground))
+            setHeaderPadding(getDimension(R.styleable.TableView_tv_headerPadding,0f))
+            setHeaderPaddingLeft(getDimension(R.styleable.TableView_tv_headerPaddingLeft,0f))
+            setHeaderPaddingTop(getDimension(R.styleable.TableView_tv_headerPaddingTop,0f))
+            setHeaderPaddingRight(getDimension(R.styleable.TableView_tv_headerPaddingRight,0f))
+            setHeaderPaddingBottom(getDimension(R.styleable.TableView_tv_headerPaddingBottom,0f))
+            setItemBackground(getDrawable(R.styleable.TableView_tv_itemBackground))
+            setItemPadding(getDimension(R.styleable.TableView_tv_itemPadding,0f))
+            setItemPaddingLeft(getDimension(R.styleable.TableView_tv_itemPaddingLeft,0f))
+            setItemPaddingTop(getDimension(R.styleable.TableView_tv_itemPaddingTop,0f))
+            setItemPaddingRight(getDimension(R.styleable.TableView_tv_itemPaddingRight,0f))
+            setItemPaddingBottom(getDimension(R.styleable.TableView_tv_itemPaddingBottom,0f))
+
             recycle()
         }
         //记录当前设置padding
         setPaddingInner()
+    }
+
+    private fun setItemBackground(drawable: Drawable?) {
+
+    }
+
+    private fun setItemPadding(padding: Float) {
+
+    }
+
+    private fun setItemPaddingLeft(padding: Float) {
+
+    }
+
+    private fun setItemPaddingTop(padding: Float) {
+
+    }
+
+    private fun setItemPaddingRight(padding: Float) {
+
+    }
+
+    private fun setItemPaddingBottom(padding: Float) {
+
+    }
+
+    private fun setHeaderBackground(drawable: Drawable?) {
+
+    }
+
+    private fun setHeaderPadding(padding: Float) {
+
+    }
+
+    private fun  setHeaderPaddingLeft(padding: Float) {
+
+    }
+
+    private fun setHeaderPaddingTop(padding: Float) {
+
+    }
+
+    private fun setHeaderPaddingRight(padding: Float) {
+
+    }
+
+    private fun setHeaderPaddingBottom(padding: Float) {
+
     }
 
     override fun setPadding(left: Int, top: Int, right: Int, bottom: Int) {
@@ -97,7 +159,6 @@ class TableView @JvmOverloads constructor(context: Context, attrs: AttributeSet?
         if(adapter !is TableAdapter<*>){
             throw ClassCastException("Adapter必须继承自TableAdapter")
         } else {
-            layoutManager.setAdapter(adapter)
             super.setLayoutManager(layoutManager)
             super.setAdapter(adapter)
         }
