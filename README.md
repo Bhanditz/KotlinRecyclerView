@@ -5,8 +5,8 @@ Android RecyclerView
 仓库引用
 > compile 'com.cz.recyclerlibrary:recyclerlibrary:1.2.8'
 
-<br>
-[Sample下载](https://github.com/momodae/KotlinRecyclerView/blob/master/apk/app-debug.apk)
+
+Sample[下载](https://github.com/momodae/KotlinRecyclerView/blob/master/apk/app-debug.apk?raw=true) 
 
 > 主要实现功能模块
 >
@@ -68,6 +68,6 @@ Android RecyclerView
 > ![CenterLayoutManager](https://github.com/momodae/KotlinRecyclerView/blob/master/app/screenshot/image7.gif?raw=true)
 > * Table:为LayoutManager支持了横向纵向滚动表格的功能.<br>
 
-
+<br><br><br><br>
 本库为以前[RecyclerViewLibrary](https://github.com/momodae/RecyclerViewLibrary)改良库,首先采用Kotlin完全重写,将以前DynamicAdapter复杂的逻辑简化,使其最核心逻辑,动态条目映射代码,以及其他代码,更清晰异懂.并修正了其映射变化的bug,增加了LayoutManager模块
 -2017/10/10
