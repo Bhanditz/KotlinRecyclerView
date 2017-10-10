@@ -53,19 +53,19 @@ Android RecyclerView
 > * 自动同步数据变化
 > * 无缝支持以前所有的功能
 ><br>
-> ![](image3.gif)
+> ![Image](https://github.com/momodae/KotlinRecyclerView/blob/master/app/screenshot/image3.gif?raw=true)
 
 *自定义LayoutManager*
 > 主要用于做其他类列表功能,以及横纵向,天生无限排版,的原生LayoutManager支持
 >
 > * CenterLayoutManager支持居中列表排版,以及点击<br>
-> ![CenterLayoutManager](image4.gif)
+> ![CenterLayoutManager](https://github.com/momodae/KotlinRecyclerView/blob/master/app/screenshot/image4.gif?raw=true)
 > * Gallery:横纵向的类Gallery的LayoutManager<br>
-> ![Gallery](image5.gif)
+> ![CenterLayoutManager](https://github.com/momodae/KotlinRecyclerView/blob/master/app/screenshot/image5.gif?raw=true)
 > * Wheel:支持Wheel功能的LayoutManager封装<br>
-> ![Wheel](image6.gif)
+> ![CenterLayoutManager](https://github.com/momodae/KotlinRecyclerView/blob/master/app/screenshot/image6.gif?raw=true)
 > * ViewPager:增加了速率滚动单页的限制,以及无限滚动,可做为图片滚播图<br>
-> ![ViewPager](image7.gif)
+> ![CenterLayoutManager](https://github.com/momodae/KotlinRecyclerView/blob/master/app/screenshot/image7.gif?raw=true)
 > * Table:为LayoutManager支持了横向纵向滚动表格的功能.<br>
 
 
