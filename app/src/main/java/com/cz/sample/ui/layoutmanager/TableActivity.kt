@@ -8,6 +8,7 @@ import com.cz.sample.data.Data
 import com.cz.sample.ui.layoutmanager.adapter.TableItemAdapter
 import cz.volunteerunion.ui.ToolBarActivity
 import kotlinx.android.synthetic.main.activity_table.*
+import org.jetbrains.anko.toast
 
 import java.util.Arrays
 
@@ -21,6 +22,13 @@ class TableActivity : ToolBarActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_table)
         setTitle(intent.getStringExtra("title"))
-        recyclerView.adapter = TableItemAdapter(this, Arrays.asList(*Data.ITEMS))
+        tableView.adapter = TableItemAdapter(this, Arrays.asList(*Data.ITEMS))
+        tableView.onItemClick { _, i ->
+            toast("Click:$i")
+        }
+        tableView.onItemLongClick { _, i ->
+            toast("Long Click:$i")
+            false
+        }
     }
 }

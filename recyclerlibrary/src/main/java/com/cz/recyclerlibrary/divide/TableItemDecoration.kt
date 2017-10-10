@@ -42,11 +42,6 @@ class TableItemDecoration : RecyclerView.ItemDecoration() {
         this.drawable = drawable
     }
 
-    override fun onDrawOver(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-        super.onDrawOver(canvas, parent, state)
-
-    }
-
     override fun onDraw(canvas: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDraw(canvas, parent, state)
         if (null == drawable) return

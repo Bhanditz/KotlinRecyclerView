@@ -62,10 +62,15 @@
         <attr name="vp_itemSizeFactor" format="float"/>
     </declare-styleable>
     <declare-styleable name="TableView">
-        <attr name="tv_columnMinWidth" format="dimension"/>
-        <attr name="tv_columnMaxWidth" format="dimension"/>
+        <attr name="tv_headerMinWidth" format="dimension"/>
+        <attr name="tv_headerMaxWidth" format="dimension"/>
+        <!--单列时,铺满-->
         <attr name="tv_divider" format="reference"/>
         <attr name="tv_dividerSize" format="dimension"/>
+        <attr name="tv_headerFullMode" format="enum">
+            <enum name="auto" value="0x00"/>
+            <enum name="fix" value="0x01"/>
+        </attr>
         <attr name="tv_headerBackground" format="reference"/>
         <attr name="tv_headerPadding" format="dimension"/>
         <attr name="tv_headerPaddingLeft" format="dimension"/>

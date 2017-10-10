@@ -6,11 +6,12 @@
     android:layout_height="match_parent">
 
     <com.cz.recyclerlibrary.layoutmanager.table.TableView
-        android:id="@+id/recyclerView"
+        android:id="@+id/tableView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical|horizontal"
         auto:tv_divider="@color/gray"
-        auto:tv_dividerSize="1dp"/>
+        auto:tv_dividerSize="0.6dp"
+        auto:tv_itemBackground="@drawable/primary_item_selector"/>
 
 </LinearLayout>

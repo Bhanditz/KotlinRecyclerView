@@ -102,69 +102,70 @@ class FuncTemplate {
                         clazz = SelectAdapterActivity::class.java
                     }
                 }
-                item {
-                    id = 3
-                    title = "增加StickyHeader效果"
-                    desc = "扩展使RecyclerView支持复杂的Sticky效果"
-                    item {
-                        pid = 3
-                        title = "StickyActivity1"
-                        desc = "演示一个普通的Sticky效果"
-                        clazz = Sticky1SampleActivity::class.java
-                    }
-                    item {
-                        pid = 3
-                        title = "StickyActivity2"
-                        desc = "演示一个复杂的Sticky效果"
-                        clazz = Sticky2SampleActivity::class.java
-                    }
-                    item {
-                        pid = 3
-                        title = "StickyActivity3"
-                        desc = "演示添加头与尾的Sticky效果"
-                        clazz = Sticky3SampleActivity::class.java
-                    }
-                    item {
-                        pid = 3
-                        title = "StickyActivity4"
-                        desc = "演示GridLinearLayout的Sticky效果"
-                        clazz = Sticky4SampleActivity::class.java
-                    }
-                    item {
-                        pid = 3
-                        title = "StickyActivity5"
-                        desc = "演示GridLinearLayout的Sticky效果,加入动态移除自动更新测试"
-                        clazz = Sticky5SampleActivity::class.java
-                    }
-                }
 
                 item {
-                    id = 4
+                    id = 3
                     title = "拖动的RecyclerView"
                     desc = "扩展使之支持Linear/Grid的拖动,以及其他局部拖动控制"
                     item {
-                        pid = 4
+                        pid = 3
                         title = "LinearDrag"
                         desc = "演示LinearLayoutManager拖动效果"
                         clazz = LinearDragActivity::class.java
                     }
                     item {
-                        pid = 4
+                        pid = 3
                         title = "GridDrag"
                         desc = "演示Grid的拖动效果"
                         clazz = GridDragActivity::class.java
                     }
                     item {
-                        pid = 4
+                        pid = 3
                         title = "DynamicDrag"
                         desc = "演示动态条目拖动效果"
                         clazz = DynamicDragActivity::class.java
                     }
                     item {
-                        pid = 4
+                        pid = 3
                         title = "Sample"
                         desc = "演示资讯的联动拖动排版"
                         clazz = CustomDragActivity::class.java
+                    }
+                }
+
+                item {
+                    id = 4
+                    title = "增加StickyHeader效果"
+                    desc = "扩展使RecyclerView支持复杂的Sticky效果"
+                    item {
+                        pid = 4
+                        title = "StickyActivity1"
+                        desc = "演示一个普通的Sticky效果"
+                        clazz = Sticky1SampleActivity::class.java
+                    }
+                    item {
+                        pid = 4
+                        title = "StickyActivity2"
+                        desc = "演示一个复杂的Sticky效果"
+                        clazz = Sticky2SampleActivity::class.java
+                    }
+                    item {
+                        pid = 4
+                        title = "StickyActivity3"
+                        desc = "演示添加头与尾的Sticky效果"
+                        clazz = Sticky3SampleActivity::class.java
+                    }
+                    item {
+                        pid = 4
+                        title = "StickyActivity4"
+                        desc = "演示GridLinearLayout的Sticky效果"
+                        clazz = Sticky4SampleActivity::class.java
+                    }
+                    item {
+                        pid = 4
+                        title = "StickyActivity5"
+                        desc = "演示GridLinearLayout的Sticky效果,加入动态移除自动更新测试"
+                        clazz = Sticky5SampleActivity::class.java
                     }
                 }
 

@@ -6,7 +6,8 @@ import android.os.Build
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.cz.recyclerlibrary.BuildConfig
+import com.cz.recyclerlibrary.callback.OnItemLongClickListener
+import com.cz.recyclerlibrary.callback.OnTableItemClickListener
 import com.cz.recyclerlibrary.debugLog
 import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
@@ -19,14 +20,21 @@ import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
  * 此做法存在一些性能问题,如屏幕外一口气会加载过多控件.但设计上更符合如数据库这类设计.
  */
 class TableLayoutManager : BaseLinearLayoutManager {
-    private lateinit var columnArray:IntArray
+    companion object {
+        const val AUTO=0x00
+        const val FIX=0x01
+    }
+    private var onItemClickListener:OnTableItemClickListener?=null
+    private var onItemLongClickListener:OnItemLongClickListener?=null
+    private lateinit var headerSizeArray:IntArray
     private var headerView:TableColumnLayout?=null
     private var headerBackgroundDrawable:Drawable?=null
     private val headerItemPadding=ItemPadding()
     private var itemBackgroundDrawable:Drawable?=null
     private val itemPadding=ItemPadding()
-    private var columnMinWidth=0f
-    private var columnMaxWidth=0f
+    private var headerFullMode= AUTO
+    private var headerMinWidth =0f
+    private var headerMaxWidth =0f
     private var totalWidth: Int = 0
     private var strokeWidth: Float = 0f
     private var drawable: Drawable? = null
@@ -36,15 +44,15 @@ class TableLayoutManager : BaseLinearLayoutManager {
     /**
      * 设置条目列最小宽度
      */
-    fun setColumnMinWidth(minWidth: Float) {
-        this.columnMinWidth=minWidth
+    fun setHeaderMinWidth(minWidth: Float) {
+        this.headerMinWidth =minWidth
     }
 
     /**
      * 设置条目列最大宽度
      */
-    fun setColumnMaxWidth(maxWidth: Float) {
-        this.columnMaxWidth=maxWidth
+    fun setHeaderMaxWidth(maxWidth: Float) {
+        this.headerMaxWidth =maxWidth
     }
 
 
@@ -78,6 +86,10 @@ class TableLayoutManager : BaseLinearLayoutManager {
 
     fun setItemPaddingBottom(padding: Int) {
         itemPadding.bottom=padding
+    }
+
+    fun setHeaderFullMode(mode:Int){
+        this.headerFullMode= mode
     }
 
     fun setHeaderBackground(drawable: Drawable?) {
@@ -148,14 +160,27 @@ class TableLayoutManager : BaseLinearLayoutManager {
             val view = nextView(recycler,state)
             if(view is TableColumnLayout){
                 if(layoutState.layoutChildren){
+                    val adapter=recyclerView.adapter as TableAdapter<*>
+                    val headerCount= adapter.getColumnCount()
                     //初始化排版
                     totalWidth = getDecoratedMeasuredWidth(view)
-                    var array= (0..view.childCount - 1).map { view.getChildAt(it) }.map {
-                        Math.min(columnMaxWidth.toInt(),Math.max(columnMinWidth.toInt(),it.measuredWidth))
+                    //设定头排列模式,自动,以及固定
+                    val totalSpace=width-paddingLeft-paddingRight
+                    //条目剩余填充空间
+                    val itemSpace=when(headerFullMode){
+                        AUTO->if(totalSpace>totalWidth) (totalSpace-totalWidth)/headerCount else 0
+                        else->0
                     }
-                    columnArray=array.toIntArray()
+                    //获得每个条目长度
+                    var array= (0..view.childCount - 1).map { index->
+                        val childView=view.getChildAt(index)
+                        val size=Math.min(headerMaxWidth.toInt(),Math.max(headerMinWidth.toInt(),childView.measuredWidth))+itemSpace
+                        //返回最终adapter返回的size,此处可用于adapter做一些修改
+                        adapter.getHeaderSize(index,size)
+                    }
+                    headerSizeArray =array.toIntArray()
 //                    //初始化并排版headerView
-                    layoutHeaderView(view,columnArray)
+                    layoutHeaderView(view, headerSizeArray,adapter,headerCount)
                     //从此位置开始排版
                     layoutState.layoutOffset = paddingTop
                     //记录横向滚动起始
@@ -165,7 +190,7 @@ class TableLayoutManager : BaseLinearLayoutManager {
                 }
                 view.setDividerSize(strokeWidth)
                 view.setDividerDrawable(drawable)
-                view.setColumnSize(columnArray)
+                view.setColumnSize(headerSizeArray)
                 //再次测试,改变大小
                 measureChildWithMargins(view,0,0)
             }
@@ -183,13 +208,11 @@ class TableLayoutManager : BaseLinearLayoutManager {
     /**
      * 排版HeaderView
      */
-    private fun layoutHeaderView(childView:View,columnArray:IntArray){
+    private fun layoutHeaderView(childView:View,columnArray:IntArray,adapter:TableAdapter<*>,headerCount:Int){
         val tableView=recyclerView as? TableView?:return
-        val adapter=recyclerView.adapter as TableAdapter<*>
-        val columnCount= adapter.getColumnCount()
         val layout=TableColumnLayout(recyclerView.context)
         layout.setColumnSize(columnArray)
-        for (index in (0..columnCount - 1)) {
+        for (index in (0..headerCount - 1)) {
             //获取headerItem
             val headerItemView=adapter.getHeaderItemView(layout,index)
             layout.addView(headerItemView)
@@ -209,9 +232,9 @@ class TableLayoutManager : BaseLinearLayoutManager {
         //初始化属性
         layout.setPadding(itemPadding.left, itemPadding.top,itemPadding.right,itemPadding.bottom)
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.JELLY_BEAN) {
-            layout.setBackgroundDrawable(itemBackgroundDrawable)
+            layout.setBackgroundDrawable(headerBackgroundDrawable?.constantState?.newDrawable())
         } else {
-            layout.background=itemBackgroundDrawable
+            layout.background=headerBackgroundDrawable?.constantState?.newDrawable()
         }
         headerView=layout
         //空出header空间
@@ -288,23 +311,35 @@ class TableLayoutManager : BaseLinearLayoutManager {
         //初始化item属性
         view.setPadding(itemPadding.left, itemPadding.top,itemPadding.right,itemPadding.bottom)
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.JELLY_BEAN) {
-            view.setBackgroundDrawable(itemBackgroundDrawable)
+            view.setBackgroundDrawable(itemBackgroundDrawable?.constantState?.newDrawable())
         } else {
-            view.background=itemBackgroundDrawable
+            view.background=itemBackgroundDrawable?.constantState?.newDrawable()
         }
+        //点击事件
+        view.setOnClickListener { onItemClickListener?.onItemClick(it,getPosition(it)) }
+        //长按事件
+        view.setOnLongClickListener{ onItemLongClickListener?.onItemLongClick(it,getPosition(it))?:false }
         return view
     }
 
     class ItemPadding{
         var padding:Int=0
         var left:Int=0
-            get()=if(0==left) padding else left
+            get()=if(0==field) padding else field
         var top:Int=0
-            get()=if(0==top) padding else top
+            get()=if(0==field) padding else field
         var right:Int=0
-            get()=if(0==right) padding else right
+            get()=if(0==field) padding else field
         var bottom:Int=0
-            get()=if(0==bottom) padding else bottom
+            get()=if(0==field) padding else field
 
+    }
+
+    fun setOnItemClickListener(listener: OnTableItemClickListener) {
+        this.onItemClickListener=listener
+    }
+
+    fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
+        this.onItemLongClickListener=listener
     }
 }
