@@ -53,21 +53,20 @@ Android RecyclerView
 > * 自动同步数据变化
 > * 无缝支持以前所有的功能
 ><br>
-> ![](pullrefresh3.gif)
+> ![](image3.gif)
 
 *自定义LayoutManager*
 > 主要用于做其他类列表功能,以及横纵向,天生无限排版,的原生LayoutManager支持
 >
 > * CenterLayoutManager支持居中列表排版,以及点击<br>
-> ![CenterLayoutManager](pullrefresh4.gif)
+> ![CenterLayoutManager](image4.gif)
 > * Gallery:横纵向的类Gallery的LayoutManager<br>
-> ![CenterLayoutManager](pullrefresh5.gif)
+> ![Gallery](image5.gif)
 > * Wheel:支持Wheel功能的LayoutManager封装<br>
-> ![CenterLayoutManager](pullrefresh6.gif)
+> ![Wheel](image6.gif)
 > * ViewPager:增加了速率滚动单页的限制,以及无限滚动,可做为图片滚播图<br>
-> ![CenterLayoutManager](pullrefresh7.gif)
+> ![ViewPager](image7.gif)
 > * Table:为LayoutManager支持了横向纵向滚动表格的功能.<br>
-> ![CenterLayoutManager](pullrefresh8.gif)
 
 
 本库为以前[RecyclerViewLibrary](https://github.com/momodae/RecyclerViewLibrary)改良库,首先采用Kotlin完全重写,将以前DynamicAdapter复杂的逻辑简化,使其最核心逻辑,动态条目映射代码,以及其他代码,更清晰异懂.并修正了其映射变化的bug,增加了LayoutManager模块
