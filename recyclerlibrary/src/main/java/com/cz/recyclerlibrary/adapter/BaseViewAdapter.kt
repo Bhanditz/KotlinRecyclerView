@@ -68,8 +68,9 @@ abstract class BaseViewAdapter<E>(context: Context, items: List<E>?) : RecyclerV
      * 移除所有条目
      */
     open fun clearNotify() {
+        val size=originalItems.size
         this.originalItems.clear()
-        notifyItemRangeRemoved(0,itemsCount)
+        notifyItemRangeRemoved(0,size)
     }
 
 
