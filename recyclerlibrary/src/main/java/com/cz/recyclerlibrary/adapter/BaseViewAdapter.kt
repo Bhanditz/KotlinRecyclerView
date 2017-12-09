@@ -228,7 +228,7 @@ abstract class BaseViewAdapter<E>(context: Context, items: List<E>?) : RecyclerV
         }
     }
 
-    open fun swapItemsNotify(items: List<E>) {
+    open fun swapItemsNotify(items: List<E>?) {
         if (0 < itemCount) {
             clearNotify()
         }

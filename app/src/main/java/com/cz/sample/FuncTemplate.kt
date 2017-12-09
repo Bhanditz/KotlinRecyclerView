@@ -101,6 +101,12 @@ class FuncTemplate {
                         desc = "装饰设计使之支持简单的选中模式,如单选,多选,块选等"
                         clazz = SelectAdapterActivity::class.java
                     }
+                    item {
+                        pid = 2
+                        title = "IndicatorRecyclerView"
+                        desc = "演示RecyclerView添加IndicatorView指示器"
+                        clazz = IndicatorListActivity::class.java
+                    }
                 }
 
                 item {

@@ -11,7 +11,8 @@
         auto:pv_divideVerticalPadding="@dimen/activity_margin"
         auto:pl_minRefreshDuration="2000"
         auto:pv_listDivideHeight="0.8dp"
-        auto:pv_listDivide="@color/divide" />
+        auto:pv_listDivide="@color/divide"
+        auto:pl_resistance="3.0"/>
 
 
     <LinearLayout

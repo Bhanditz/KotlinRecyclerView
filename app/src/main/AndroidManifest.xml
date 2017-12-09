@@ -41,7 +41,9 @@
         <activity android:name=".ui.layoutmanager.WheelDateActivity" />
         <activity android:name=".ui.layoutmanager.GalleryActivity" />
         <activity android:name=".ui.layoutmanager.TableActivity" />
-        <activity android:name=".ui.layoutmanager.ViewPagerActivity"></activity>
+        <activity android:name=".ui.layoutmanager.ViewPagerActivity" />
+        <activity android:name=".ui.adapter.IndicatorListActivity"
+            android:windowSoftInputMode="adjustNothing"></activity>
     </application>
 
 </manifest>

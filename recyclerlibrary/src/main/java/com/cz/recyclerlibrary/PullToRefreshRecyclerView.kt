@@ -20,6 +20,10 @@ import com.cz.sample.ui.layoutmanager.BaseLinearLayoutManager
 
 import cz.refreshlayout.library.PullToRefreshLayout
 import cz.refreshlayout.library.RefreshMode
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+
+
 
 
 /**
@@ -339,9 +343,41 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * 滚动到指定位置
      * @param position
      */
-    fun scrollToPosition(position: Int)=refreshView.scrollToPosition(position)
+    fun scrollToPosition(position: Int) {
+        val layoutManager = refreshView.layoutManager
+        if (layoutManager !is LinearLayoutManager) {
+            layoutManager.scrollToPosition(position)
+        } else {
+            layoutManager.scrollToPositionWithOffset(position,0)
+        }
+    }
 
-
+    fun smoothScrollToPosition(position: Int){
+        val layoutManager = refreshView.layoutManager
+        if (layoutManager !is LinearLayoutManager) {
+            refreshView.smoothScrollToPosition(position)
+        } else {
+            val firstPosition = layoutManager.findFirstVisibleItemPosition()
+            val lastPosition = layoutManager.findLastVisibleItemPosition()
+            if (position !in firstPosition..lastPosition-1) {
+                refreshView.smoothScrollToPosition(position)
+            } else {
+                val childView = refreshView.getChildAt(position)
+                val firstChildView = refreshView.getChildAt(firstPosition)
+                if(null==childView||null==firstChildView){
+                    refreshView.smoothScrollToPosition(position)
+                } else {
+                    if(LinearLayoutManager.VERTICAL==layoutManager.orientation){
+                        val start=refreshView.getChildAt(position).top-refreshView.getChildAt(firstPosition).top
+                        refreshView.smoothScrollBy(0, start)
+                    } else {
+                        val start = refreshView.getChildAt(position).left - refreshView.getChildAt(firstPosition).left
+                        refreshView.smoothScrollBy(start, 0)
+                    }
+                }
+            }
+        }
+    }
     private fun initFooterViewByMode(mode: RefreshMode) {
         val footerView = refreshFooter.footerView
         if (mode.enableEnd()) {

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.cz.recyclerlibrary.PullToRefreshStickyRecyclerView
+            android:id="@+id/refreshRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:pl_refreshMode="none">
+
+            <TextView
+                android:id="@+id/tv_sticky_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textColor="@color/dark_red"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                app:pv_layoutStickyView="true"
+                android:background="@color/green"/>
+
+        </com.cz.recyclerlibrary.PullToRefreshStickyRecyclerView>
+
+        <cz.widget.list.ListIndicator
+            android:id="@+id/listIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/indicator_item_selector"
+            android:padding="4dp"
+            app:li_textColor="@color/dark_gray"
+            app:li_textSelectColor="@color/blue"
+            app:li_indicatorDrawable="@drawable/circle_indicator_shape"
+            android:layout_gravity="right|center_vertical"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:textSize="42sp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:background="@color/dark_gray"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
+
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="100dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/blue">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/editor"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="0"
+            android:inputType="number"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginRight="8dp"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/scrollButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scroll"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

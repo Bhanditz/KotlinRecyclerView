@@ -2,7 +2,6 @@ package com.cz.sample.adapter
 
 import android.content.Context
 import android.os.Parcel
-import android.os.Parcelable
 import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
@@ -22,14 +21,15 @@ import org.jetbrains.anko.find
  */
 
 class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseViewAdapter<String>(context, items), StickyCallback<String>,DividerInterceptCallback {
-
-    private val groupingStrategy= GroupingStrategy.of(this).reduce{ t1, t2 -> t1[0] != t2[0] }
-
-    constructor(parcel: Parcel) : this(
-            TODO("context"),
-            TODO("items")) {
-    }
-
+    val indicateItems= mutableListOf<String>()
+    val strategy = GroupingStrategy.of(this).reduce(BinaryCondition<String> { t1, t2 ->
+        val result=t1[0] != t2[0]
+        if(result){
+            if(indicateItems.isEmpty()) indicateItems.add("${t1[0]}")
+            indicateItems.add(t2[0].toString())
+        }
+        result
+    })
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return BaseViewHolder(inflateView(parent, R.layout.sticky_text_item1))
@@ -39,7 +39,7 @@ class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseView
         val item = getItem(position)
         val stickyView = holder.itemView.find<TextView>(R.id.tv_sticky_view)
         val textView = holder.itemView.find<TextView>(R.id.tv_view)
-        val isStickyPosition = groupingStrategy.isGroupIndex(position)
+        val isStickyPosition = strategy.isGroupIndex(position)
         stickyView.visibility = if (isStickyPosition) View.VISIBLE else View.GONE
         if (isStickyPosition) {
             stickyView.text = item[0].toString()
@@ -55,9 +55,9 @@ class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseView
         }
     }
 
-    override fun getGroupingStrategy(): GroupingStrategy<String> =groupingStrategy
+    override fun getGroupingStrategy(): GroupingStrategy<String> = strategy
 
-    override fun intercept(position: Int): Boolean =groupingStrategy.isGroupIndex(position)
+    override fun intercept(position: Int): Boolean = strategy.isGroupIndex(position)
 
 
 }
