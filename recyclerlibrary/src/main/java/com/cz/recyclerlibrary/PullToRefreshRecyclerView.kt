@@ -344,7 +344,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
      * @param position
      */
     fun scrollToPosition(position: Int) {
-        val layoutManager = refreshView.layoutManager
+        val layoutManager = refreshView?.layoutManager?:return
         if (layoutManager !is LinearLayoutManager) {
             layoutManager.scrollToPosition(position)
         } else {
@@ -353,7 +353,7 @@ open class PullToRefreshRecyclerView @JvmOverloads constructor(context: Context,
     }
 
     fun smoothScrollToPosition(position: Int){
-        val layoutManager = refreshView.layoutManager
+        val layoutManager = refreshView?.layoutManager?:return
         if (layoutManager !is LinearLayoutManager) {
             refreshView.smoothScrollToPosition(position)
         } else {
