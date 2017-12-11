@@ -12,6 +12,7 @@ import com.cz.recyclerlibrary.adapter.BaseViewAdapter
 import com.cz.recyclerlibrary.adapter.BaseViewHolder
 import com.cz.recyclerlibrary.callback.BinaryCondition
 import com.cz.recyclerlibrary.callback.DividerInterceptCallback
+import com.cz.recyclerlibrary.callback.Function
 import com.cz.recyclerlibrary.callback.StickyCallback
 import com.cz.recyclerlibrary.strategy.GroupingStrategy
 import org.jetbrains.anko.find
@@ -22,14 +23,12 @@ import org.jetbrains.anko.find
 
 class LinearSticky1ItemAdapter(context: Context, items: List<String>) : BaseViewAdapter<String>(context, items), StickyCallback<String>,DividerInterceptCallback {
     val indicateItems= mutableListOf<String>()
-    val strategy = GroupingStrategy.of(this).reduce(BinaryCondition<String> { t1, t2 ->
-        val result=t1[0] != t2[0]
-        if(result){
-            if(indicateItems.isEmpty()) indicateItems.add("${t1[0]}")
-            indicateItems.add(t2[0].toString())
-        }
-        result
-    })
+    val strategy = GroupingStrategy.of(this).reduce(BinaryCondition<String> { t1, t2 -> t1[0] != t2[0] })
+    init {
+        //取出分组第一个首字母
+        val items = strategy.map(Function<String, String> { it.first().toString() })
+        indicateItems.addAll(items)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder {
         return BaseViewHolder(inflateView(parent, R.layout.sticky_text_item1))

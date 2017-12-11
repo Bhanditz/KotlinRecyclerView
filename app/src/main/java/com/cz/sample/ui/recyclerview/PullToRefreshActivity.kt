@@ -92,12 +92,12 @@ class PullToRefreshActivity : ToolBarActivity() {
                     0 -> {
                         //设置刷新头为MaterialDesign样式,刷新策略为前置
                         recyclerView.setRefreshHeader(MaterialDesignHeader(v.context))
-                        recyclerView.setHeaderStrategy(FrontStrategy(recyclerView))
+                        recyclerView.setHeaderStrategy(FrontStrategy())
                     }
                     1 -> {
                         //设置刷新头为钱包样式,刷新策略为刷新头追随
                         recyclerView.setRefreshHeader(WalletHeader(v.context))
-                        recyclerView.setHeaderStrategy(FollowStrategy(recyclerView))
+                        recyclerView.setHeaderStrategy(FollowStrategy())
                     }
                 }
             }
