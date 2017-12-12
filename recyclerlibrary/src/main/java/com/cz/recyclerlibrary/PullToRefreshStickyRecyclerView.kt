@@ -4,9 +4,10 @@ import android.content.Context
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.view.LayoutInflater
+import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
+import com.cz.recyclerlibrary.callback.MultiStickyCallback
 
 import com.cz.recyclerlibrary.callback.StickyCallback
 import com.cz.recyclerlibrary.strategy.GroupingStrategy
@@ -32,17 +33,9 @@ import com.cz.recyclerlibrary.strategy.GroupingStrategy
  * 4:app/ui/sticky/Sticky4SampleActivity 演示GridLayoutManager的Sticky效果
  */
 class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : PullToRefreshRecyclerView(context, attrs, defStyleAttr) {
-    private val layoutInflater: LayoutInflater = LayoutInflater.from(context)
     private var observer: AdapterDataObserver? = null
     private var listener: StickyScrollListener? = null
-    private var stickyView: View? = null
-
-    init {
-        val a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefreshStickyRecyclerView)
-        setStickyView(a.getResourceId(R.styleable.PullToRefreshStickyRecyclerView_pv_stickyView, View.NO_ID))
-        a.recycle()
-    }
-
+    private val stickyItem=StickyItem()
     override fun onFinishInflate() {
         removeLayoutStickyView()
         super.onFinishInflate()
@@ -53,13 +46,13 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
      */
     private fun removeLayoutStickyView() {
         val childCount = childCount
-        if (0 < childCount && null == stickyView) {
+        if (0 < childCount) {
             for (i in 0..childCount - 1) {
                 val childView = getChildAt(i)
                 val layoutParams = childView.layoutParams
                 if (layoutParams is PullToRefreshStickyRecyclerView.LayoutParams) {
                     if (layoutParams.layoutStickyView) {
-                        stickyView = childView
+                        stickyItem.addStickyView(0,childView)
                         removeView(childView)
                         break
                     }
@@ -68,34 +61,29 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
         }
     }
 
-    fun setStickyView(resourceId: Int) {
-        if (View.NO_ID != resourceId) {
-            setStickyView(layoutInflater.inflate(resourceId, this, false))
-        }
+    /**
+     * 测量stickyView
+     */
+    private fun measureStickyView(childView:View){
+        val widthMeasureSpec=MeasureSpec.makeMeasureSpec(width-paddingLeft-paddingRight,MeasureSpec.EXACTLY)
+        val heightMeasureSpec=MeasureSpec.makeMeasureSpec(ViewGroup.LayoutParams.WRAP_CONTENT,MeasureSpec.AT_MOST)
+        measureChild(childView,widthMeasureSpec,heightMeasureSpec)
     }
 
-
-    fun setStickyView(view: View) {
-        if (null != this.stickyView) {
-            removeView(this.stickyView)
-        }
-        //不添加,等待setAdapter时添加,避免出现无数据显示一个空的头情况
-        this.stickyView = view
+    /**
+     * 排版stickyView
+     */
+    private fun layoutStickyView(stickyView:View){
+        stickyView.layout(paddingLeft, paddingTop, width-paddingRight, paddingTop+stickyView.measuredHeight)
     }
 
-    override fun onLayout(changed: Boolean, l: Int, t: Int, r: Int, b: Int) {
-        super.onLayout(changed, l, t, r, b)
-        stickyView?.let { it.layout(l, 0, r, it.measuredHeight) }
-    }
-
-    override var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>? = null
+    override var adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>?
+        get() = super.adapter
         set(adapter) {
             super.adapter=adapter
             if (adapter !is StickyCallback<*>) {
                 throw IllegalArgumentException("RecyclerView.Adapter must be implements StickyCallback!")
-            } else if (null != stickyView) {
-                removeView(stickyView)
-                addView(stickyView)
+            } else {
                 val targetView = refreshView
                 targetView.removeOnScrollListener(listener)
                 listener = StickyScrollListener(adapter)
@@ -132,8 +120,9 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
             val groupingStrategy = callback.getGroupingStrategy()
             val itemCount = itemCount
             val startIndex = groupingStrategy.getGroupStartIndex(firstVisiblePosition)
-            if (startIndex < itemCount) {
-                callback.initStickyView(stickyView!!, startIndex)
+            val stickyView = stickyItem.getCurrentSticky()
+            if (startIndex < itemCount&&null!=stickyView) {
+                callback.initStickyView(stickyView, startIndex)
             }
         }
     }
@@ -145,15 +134,15 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
         init {
             //初始化第一个节点信息,若数据罗多,延持到滑动时,会导致初始化第一个失败
             val itemCount = itemCount
-            if (0 < itemCount) {
-                this.callback.initStickyView(stickyView!!, 0)
+            val stickyView = stickyItem.getCurrentSticky()
+            if (0 < itemCount&&null!=stickyView) {
+                this.callback.initStickyView(stickyView, 0)
             }
             this.lastVisibleItemPosition = RecyclerView.NO_POSITION
         }
 
         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            val stickyView=stickyView?:return
             val layoutManager = layoutManager?:return
             var spanCount = 1
             if (layoutManager is GridLayoutManager) {
@@ -161,10 +150,10 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
             }
             val headerViewCount = headerViewCount
             val firstVisibleItemPosition = firstVisiblePosition
-            if (firstVisibleItemPosition < headerViewCount) {
-                stickyView.visibility = View.GONE
-            } else {
-                stickyView.visibility = View.VISIBLE
+            //直接移除当前stickyView
+            var stickyView = stickyItem.getCurrentSticky()
+            removeView(stickyView)
+            if (firstVisibleItemPosition >= headerViewCount) {
                 val realVisibleItemPosition = firstVisibleItemPosition - headerViewCount
                 //初始化当前位置Sticky信息
                 val lastRealPosition = realVisibleItemPosition + spanCount
@@ -173,18 +162,35 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
                         lastVisibleItemPosition = firstVisibleItemPosition
                         val startIndex = groupingStrategy.getGroupStartIndex(realVisibleItemPosition)
                         if (startIndex < layoutManager.itemCount) {
-                            callback.initStickyView(stickyView, startIndex)
+                            //更新新的viewType
+                            if(callback !is MultiStickyCallback<*>){
+                                stickyView = stickyItem.getCurrentSticky()
+                            } else {
+                                val viewType = callback.getStickyViewType(startIndex)
+                                stickyView =stickyItem.getMultiStickyView(callback,viewType)
+                            }
+                            if(null!=stickyView){
+                                callback.initStickyView(stickyView, startIndex)
+                            }
                         }
                         break
                     }
                 }
-                stickyView.translationY = 0f
-                //在这个范围内,找到本页内可能出现的下一个阶段的条目位置.
-                val stickyPosition = findStickyPosition(realVisibleItemPosition + 1, lastVisiblePosition)
-                if (RecyclerView.NO_POSITION != stickyPosition) {
-                    val nextAdapterView = layoutManager.findViewByPosition(stickyPosition + headerViewCount)
-                    if (null != nextAdapterView && nextAdapterView.top < stickyView.height) {
-                        stickyView.translationY = (nextAdapterView.top - stickyView.height).toFloat()
+                if(null!=stickyView){
+                    //添加控件
+                    addView(stickyView,ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+                    //排版并测量stickyView
+                    measureStickyView(stickyView)
+                    //排版stickyView
+                    layoutStickyView(stickyView)
+                    stickyView.translationY = 0f
+                    //在这个范围内,找到本页内可能出现的下一个阶段的条目位置.
+                    val stickyPosition = findStickyPosition(realVisibleItemPosition + 1, lastVisiblePosition)
+                    if (RecyclerView.NO_POSITION != stickyPosition) {
+                        val nextAdapterView = layoutManager.findViewByPosition(stickyPosition + headerViewCount)
+                        if (null != nextAdapterView && nextAdapterView.top < stickyView.height) {
+                            stickyView.translationY = (nextAdapterView.top - stickyView.height).toFloat()
+                        }
                     }
                 }
             }
@@ -193,5 +199,27 @@ class PullToRefreshStickyRecyclerView @JvmOverloads constructor(context: Context
         fun findStickyPosition(position: Int, lastVisibleItemPosition: Int): Int {
             return (position..lastVisibleItemPosition).firstOrNull { groupingStrategy.isGroupIndex(it) } ?: RecyclerView.NO_POSITION
         }
+    }
+
+    inner class StickyItem{
+        private val stickyItems=SparseArray<View>()
+        private var stickyViewType=0//默认使用0分类的
+
+        fun addStickyView(viewType:Int,view:View){
+            stickyItems.put(viewType,view)
+        }
+
+        fun getMultiStickyView(callback:MultiStickyCallback<*>, viewType:Int):View{
+            stickyViewType = viewType
+            var stickyView = stickyItems.get(viewType)
+            //添加新的stickyView
+            if(null==stickyView){
+                stickyView = callback.getStickyView(this@PullToRefreshStickyRecyclerView, stickyViewType)
+                addStickyView(viewType,stickyView)
+            }
+            return stickyView
+        }
+
+        fun getCurrentSticky():View?=stickyItems.get(stickyViewType)
     }
 }

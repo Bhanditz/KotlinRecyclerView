@@ -23,7 +23,6 @@
     </declare-styleable>
 
     <declare-styleable name="PullToRefreshStickyRecyclerView">
-        <attr name="pv_stickyView" format="reference"/>
         <attr name="pv_layoutStickyView" format="boolean"/>
     </declare-styleable>
 

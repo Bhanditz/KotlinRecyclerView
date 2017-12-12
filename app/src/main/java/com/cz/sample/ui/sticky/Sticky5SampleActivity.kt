@@ -5,6 +5,7 @@ import android.support.v7.widget.GridLayoutManager
 
 import com.cz.sample.R
 import com.cz.sample.adapter.GridStickyItem2Adapter
+import com.cz.sample.adapter.GridStickyItem3Adapter
 import com.cz.sample.annotation.ToolBar
 import com.cz.sample.data.Data
 import com.cz.sample.model.Sticky2Item
@@ -20,7 +21,7 @@ import java.util.ArrayList
 class Sticky5SampleActivity : ToolBarActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sticky3)
+        setContentView(R.layout.activity_sticky5)
         setTitle(intent.getStringExtra("title"))
         val items = ArrayList<Sticky2Item>()
         var lastItem: String? = null
@@ -33,7 +34,7 @@ class Sticky5SampleActivity : ToolBarActivity() {
             lastItem = item[0].toString()
         }
         refreshStickyRecyclerView.layoutManager = GridLayoutManager(this, 3)
-        refreshStickyRecyclerView.adapter=GridStickyItem2Adapter(this, items)
+        refreshStickyRecyclerView.adapter= GridStickyItem3Adapter(this, items)
 
     }
 }

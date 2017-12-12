@@ -14,21 +14,6 @@
         auto:pv_listDivideHeight="1dp"
         auto:pv_divideVerticalPadding="12dp">
 
-        <!--将top层直接写在布局内,需要配置auto:pv_layoutStickyView="true" 因为父类PullToRefreshRecyclerView,可以直接将header/footer写到布局内,会引起冲突-->
-        <TextView
-            android:id="@+id/tv_sticky_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textColor="@color/dark_red"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            auto:pv_layoutStickyView="true"
-            android:background="@color/green"
-            />
-
         <!--headerView-->
         <TextView
             android:layout_width="match_parent"
