@@ -84,12 +84,13 @@ open class SelectAdapter(adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>?
     var singleSelectPosition: Int
         get() = this.selectPosition
         set(position) {
-            this.selectPosition = position
             val lastPosition = selectPosition
+            this.selectPosition = position
+            if(lastPosition in 0..(itemCount-1)){
+                notifyItemChanged(lastPosition)
+            }
             if (position in 0..(itemCount - 1)) {
                 notifyItemChanged(position)
-            } else {
-                notifyItemChanged(lastPosition)
             }
         }
 

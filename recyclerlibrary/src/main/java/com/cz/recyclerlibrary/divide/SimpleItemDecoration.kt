@@ -18,7 +18,7 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
         //分隔线模式
         const val VERTICAL = 0
         const val HORIZONTAL = 1
-        const val GRID = 2
+        const val GRID = 3
     }
 
     //分隔线绘制拦截器
@@ -209,11 +209,10 @@ class SimpleItemDecoration : RecyclerView.ItemDecoration() {
                 GRID -> {
                     val layoutManager = parent.layoutManager
                     if (layoutManager is GridLayoutManager) {
-                        val gridLayoutManager = layoutManager
-                        val sizeLookup = gridLayoutManager.spanSizeLookup
+                        val sizeLookup = layoutManager.spanSizeLookup
                         val spanSize = sizeLookup.getSpanSize(itemPosition)
-                        val spanCount = gridLayoutManager.spanCount
-                        if (spanSize == spanCount) {
+                        val spanCount = layoutManager.spanCount
+                        if (1!=spanCount&&spanSize == spanCount) {
                             outRect.set(0, 0, 0, 0)
                             return
                         }
